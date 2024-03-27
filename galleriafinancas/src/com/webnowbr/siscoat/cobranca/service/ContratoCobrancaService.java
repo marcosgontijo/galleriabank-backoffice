@@ -20,6 +20,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetal
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaLogsAlteracaoDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaLogsAlteracaoDetalheDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -190,5 +191,4 @@ public class ContratoCobrancaService {
 			contraLogsAlteracaoDetalheDao.merge(logAlteracaoDetalhe);
 
 	}
-	
 }

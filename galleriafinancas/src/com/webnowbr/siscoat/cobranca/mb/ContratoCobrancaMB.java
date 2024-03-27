@@ -917,7 +917,6 @@ public class ContratoCobrancaMB {
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
 	private ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
-
 	
 	private boolean continuar;
 	
@@ -33788,6 +33787,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			files = listaArquivos();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Inicial");
 		}
 	}
 
@@ -33874,6 +33874,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesInterno = listaArquivosInterno();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Juridico");
 		}
 	}
 
@@ -33891,6 +33892,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesFaltante = listaArquivosFaltante();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Faltantes");
 		}
 	}
 
@@ -33901,7 +33903,6 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
 					event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
@@ -33909,6 +33910,8 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
+			
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Juridico");
 		}
 	}
 
@@ -33927,6 +33930,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesNotaFiscal = listaArquivosNotaFiscal();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Nota Fiscal");
 		}
 	}
 
@@ -33944,6 +33948,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesComite = listaArquivosComite();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Comite");
 		}
 	}
 
@@ -33970,6 +33975,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesPagar = listaArquivosPagar();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Pagar");
 		}
 	}
 
@@ -34017,6 +34023,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesCci = listaArquivosCci();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo CCI");
 		}
 	}
 
@@ -34034,6 +34041,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Pre Laudo");
 		}
 	}
 
@@ -34051,7 +34059,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFile() {
 		for (FileUploaded f : deletefiles) {
-			deleteFile(f);
+			deleteFile(f, "Arquivo Inicial");
 		}
 
 		deletefiles = new ArrayList<FileUploaded>();
@@ -34077,22 +34085,23 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileInterno() {
 		for (FileUploaded f : deletefilesInterno) {
-			deleteFile(f);
+			deleteFile(f, "Interno");
 		}
 
 		deletefilesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
 	}
 
-	private void deleteFile(FileUploaded f) {
+	private void deleteFile(FileUploaded f, String componente) {
 		FileService fileService = new FileService();
 		fileService.excluirDocumento(this.objetoContratoCobranca.getNumeroContrato(), f.getPathOrigin(), f.getName(),
 				getUsuarioLogado());
+		removeArquivoNoLogsDetalhesPopPup(f.getName(), componente);
 	}
 
 	public void deleteFileFaltante() {
 		for (FileUploaded f : deletefilesFaltante) {
-			deleteFile(f);
+			deleteFile(f, "Faltante");
 		}
 
 		deletefilesFaltante = new ArrayList<FileUploaded>();
@@ -34101,7 +34110,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileJuridico() {
 		for (FileUploaded f : deletefilesJuridico) {
-			deleteFile(f);
+			deleteFile(f, "Juridico");
 		}
 
 		deletefilesJuridico = new ArrayList<FileUploaded>();
@@ -34110,7 +34119,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileNotaFiscal() {
 		for (FileUploaded f : deletefilesNotaFiscal) {
-			deleteFile(f);
+			deleteFile(f, "Nota Fiscal");
 		}
 
 		deletefilesNotaFiscal = new ArrayList<FileUploaded>();
@@ -34119,7 +34128,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileComite() {
 		for (FileUploaded f : deletefilesComite) {
-			deleteFile(f);
+			deleteFile(f, "Comite");
 		}
 
 		deletefilesComite = new ArrayList<FileUploaded>();
@@ -34128,7 +34137,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFilePagar() {
 		for (FileUploaded f : deletefilesPagar) {
-			deleteFile(f);
+			deleteFile(f, "Pagar");
 		}
 
 		deletefilesPagar = new ArrayList<FileUploaded>();
@@ -34137,7 +34146,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileCci() {
 		for (FileUploaded f : deletefilesCci) {
-			deleteFile(f);
+			deleteFile(f, "FileCCI");
 		}
 
 		deletefilesCci = new ArrayList<FileUploaded>();
@@ -34146,13 +34155,13 @@ public class ContratoCobrancaMB {
 
 	public void deleteFiles(Collection<FileUploaded> lista) {
 		for (FileUploaded f : lista) {
-			deleteFile(f);
+			deleteFile(f, "Arquivo Inicial");
 		}
 	}
 
 	public void deleteFilesCci(Collection<FileUploaded> lista) {
 		for (FileUploaded f : lista) {
-			deleteFile(f);
+			deleteFile(f, "CCI");
 		}
 	}
 
@@ -34245,30 +34254,44 @@ public class ContratoCobrancaMB {
 	public void adicionaEstado() {
 		
 		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		
 		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Adicionado (" +  estadoConsultaAdd + " )";
 		
-		//System.out.println("Identificação: " + this.getDocumentoAnalisePopup().getIdentificacao());
-		
 		documentoAnalisePopup.adicionaEstados(estadoConsultaAdd);
-		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnalisePopup);
 		
 		contratoCobrancaService.adicionaNovoDetalhe(getUsuarioLogado(), this.getObjetoContratoCobranca(),
 				valorAlteradoEstado, "", "Estado");
-		
 	}
 	
 	public void removerEstado(String estado) {
 		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
-		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Removido (" +  estado + " )";
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		
+		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Removido ( " + estado + " )";
 		
 		documentoAnalisePopup.removerEstado(estado);
-		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnalisePopup);
 
 			contratoCobrancaService.adicionaNovoDetalhe(loginBean.getUsuarioLogado(), this.getObjetoContratoCobranca(), "",
 					valorAlteradoEstado, "Estado");
+	}
+	
+	public void adicionaArquivoNoLogsDetalhesPopPup(String nomeArquivo, String nomeCampo) {
+
+		String arquivoAdicionado = "Arquivo Adicionado(" + nomeArquivo + ")";
+
+		contratoCobrancaService.adicionaNovoDetalhe(loginBean.getUsuarioLogado(), this.getObjetoContratoCobranca(),
+				arquivoAdicionado, " ", nomeCampo);
+	}
+
+	public void removeArquivoNoLogsDetalhesPopPup(String nomeArquivo, String nomeCampo) {
+
+		String arquivoAdicionado = "Arquivo Removido(" + nomeArquivo + ")";
+
+		contratoCobrancaService.adicionaNovoDetalhe(loginBean.getUsuarioLogado(), this.getObjetoContratoCobranca(),
+				"", arquivoAdicionado, nomeCampo);
 	}
 	
 	public List<DocumentoAnalise> getListaDocumentoAnalise() {
@@ -37622,7 +37645,7 @@ public class ContratoCobrancaMB {
 		if(descricao.isPresent()) {
 			return descricao.get();
 		} 
-		return null;
+		return nomePropiedade;
 	}
 	
 	public boolean verificaQuantidadeCampoObservacao(String observacao) {
@@ -37800,6 +37823,5 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
-	
-	
+
 }
