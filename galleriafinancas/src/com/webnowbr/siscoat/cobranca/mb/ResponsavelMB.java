@@ -60,6 +60,7 @@ public class ResponsavelMB {
 	private String nomeResponsavel = null;
 	private Responsavel selectedResponsavel;
 	private List<Responsavel> listResponsaveis;
+	private List<Responsavel> listResponsaveisGeral;
 	
 	
 	private long idResponsavelCaptador;
@@ -359,14 +360,17 @@ public class ResponsavelMB {
 	}
 	
 	public void pesquisaResponsavel() {	
+		this.setListResponsaveis(listResponsaveisGeral);
 		this.tipoPesquisa = "Responsavel";
 	}
 	
 	public void pesquisaResponsavelCaptador() {
+		this.setListResponsaveis(listResponsaveisGeral);
 		this.tipoPesquisa = "Captador";
 	}
 	
 	public void pesquisaAssistenteComercial() {
+		this.setListResponsaveis(this.listResponsaveisGeral.stream().filter(Responsavel::isAssistenteComercial).collect(Collectors.toList()));
 		this.tipoPesquisa = "Assistente";
 	}
 	
@@ -413,7 +417,7 @@ public class ResponsavelMB {
 	
 	public void loadLovResponsavel() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
-		this.listResponsaveis = responsavelDao.findAll();
+		this.listResponsaveisGeral = responsavelDao.findAll();
 	}
 	
 	public void loadResponsavel() {
