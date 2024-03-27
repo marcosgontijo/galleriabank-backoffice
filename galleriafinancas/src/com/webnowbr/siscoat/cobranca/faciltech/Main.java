@@ -71,6 +71,8 @@ public class Main {
 		//OK CONTRATO - 		null, null, "/Emprestimo.svc/InserirContratoDeEmprestimoBNPL", body);
 		//OK CONTRATO - System.out.printf("POST InserirContratoDeEmprestimoBNP: %s\r\n", respostaInserirContratoBNPL);
 		
+		JSONObject bodyContrato = buildRequisicaoInserirContratoBNPL();
+		
 		JSONObject body = buildRequisicaoInserirImovelComoGarantiaNoEmprestimo();
 
 		JSONObject respostaInserirImovelComoGarantiaNoEmprestimo = wsCredApiServerToServer.post(
@@ -133,7 +135,8 @@ public class Main {
 		result.put("AreaTotalDoImovelm2" , 500);
 		result.put("QuantidadeDeDormitoriosDoImovel" , 1);
 		result.put("QuantidadeDeVagasDoImovel" , 1);
-		
+		result.put("AreaPrivadaDoImovelm2" , 400);
+
 		return result;
 	}	
 	

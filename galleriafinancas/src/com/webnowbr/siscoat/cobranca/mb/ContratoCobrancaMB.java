@@ -20825,7 +20825,7 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setDescricaoStarkBank("Pagamento de Conta");
 
 					StarkBankBaixa baixa = registraBaixaStarkBank(this.contasPagarSelecionada.getDataPagamento(),
-							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.contasPagarSelecionada.getValorPagamento(),
+							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -20839,7 +20839,7 @@ public class ContratoCobrancaMB {
 					//this.contasPagarSelecionada.setDescricaoStarkBank("Pagamento de Conta");
 
 					StarkBankBaixa baixa = registraBaixaStarkBank(this.contasPagarSelecionada.getDataPagamento(),
-							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.contasPagarSelecionada.getValorPagamento(),
+							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -20859,7 +20859,7 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setTipoContaBancaria(this.tipoContaBancariaOrdemPagamentoStark);
 					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(),
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -20877,7 +20877,7 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setTipoContaBancaria(this.tipoContaBancariaOrdemPagamentoStark);
 					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(),
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -24023,8 +24023,12 @@ public class ContratoCobrancaMB {
 					// } else {
 					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();
 					// }
-
-					this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
+					if (boletosKokanaSelecionados.getParcela().getVlrBoletoKobana() != null && 
+							boletosKokanaSelecionados.getParcela().getVlrBoletoKobana().compareTo(BigDecimal.ZERO) > 0) {
+						this.vlrRecebido = boletosKokanaSelecionados.getParcela().getVlrBoletoKobana();
+					} else {
+						this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
+					}
 
 					baixarParcelaParcial();
 				}
