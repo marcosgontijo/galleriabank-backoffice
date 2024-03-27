@@ -101,6 +101,8 @@ public class Responsavel implements Serializable {
 	private String cidadeFilial;
 
 	private PagadorReceborDadosBancarios dadosBancariosOriginal;
+	
+	private boolean assistenteComercial;
 
 	public Responsavel() {
 	}
@@ -794,6 +796,14 @@ public class Responsavel implements Serializable {
 
 	public void setPixValidado(boolean pixValidado) {
 		this.pixValidado = pixValidado;
+	}
+
+	public boolean isAssistenteComercial() {
+		return assistenteComercial;
+	}
+
+	public void setAssistenteComercial(boolean assistenteComercial) {
+		this.assistenteComercial = assistenteComercial;
 	}
 
 }
