@@ -301,16 +301,6 @@ public class TermoMB {
 			objetoTermo.setDeletado(false);
 			objetoTermo.setUsuarioCriador(nomeUsuario);
 
-		} 
-		else if(isDeleteMode()) {
-			setNomeUsuario();
-			objetoTermo.setUsuarioDelete(nomeUsuario);
-			objetoTermo.setDataDelete(DateUtil.gerarDataHoje());
-			objetoTermo.setDeletado(true);
-			termoDao.merge(objetoTermo);
-			return "Cadastros/Cobranca/TermoConsultar.xhtml";
-			
-
 		} else {
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.objetoTermo.getUserPerfil().getId());
 			this.tituloPainel = "Editar";
@@ -332,7 +322,16 @@ public class TermoMB {
 		return "/Cadastros/Cobranca/TermoInserir.xhtml";
 
 	}
-	
+	public void excluirTermo(Termo objetoTermoExcluir) {
+	    TermoDao termoDao = new TermoDao();
+	    setNomeUsuario();
+	    objetoTermoExcluir.setUsuarioDelete(nomeUsuario);
+	    objetoTermoExcluir.setDataDelete(DateUtil.gerarDataHoje());
+	    objetoTermoExcluir.setDeletado(true);
+	    termoDao.merge(objetoTermoExcluir);    
+	    FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "/Cadastros/Cobranca/TermoConsultar.xhtml?faces-redirect=true");
+	}
+
 
 	private void carregaListaPerfil() {
 		if (perfil == null) {

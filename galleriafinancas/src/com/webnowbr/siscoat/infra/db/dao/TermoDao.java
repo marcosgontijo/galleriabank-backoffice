@@ -17,22 +17,18 @@ import com.webnowbr.siscoat.infra.db.model.User;
  */
 public class TermoDao extends HibernateDao<Termo, Long> {
 
-	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = "select t.id from infra.termo t " +
-	        "left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? " +
-	        "where ((t.iduserPerfil <= ? " +
-	        "       and (tu.idtermo is null or tu.dataAceite is null) " +
-	        "       and (tu.dataAdiado is null or cast(tu.dataAdiado as date) < cast(?::timestamp as date)) " +
-	        "       and cast(t.inicioValidade as date) <= cast(?::timestamp as date) " +
-	        "       and (cast(t.fimValidade as date) >= cast(?::timestamp as date) or t.fimValidade is null)) " +
-	        "       or (t.iduserPerfil = 5000 " +
-	        "           and tu.idTermo is not null " +
-	        "           and tu.dataAceite is null " +
-	        "           and (tu.dataAdiado is null or cast(tu.dataAdiado as date) < cast(?::timestamp as date)) " +
-	        "           and cast(t.inicioValidade as date) <= cast(?::timestamp as date) " +
-	        "           and cast(t.fimValidade as date) >= cast(?::timestamp as date))) " +
-	        "      and t.deletado is false";
-
-			
+	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = "select t.id from infra.termo t "
+			+ "left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? "
+			+ "where ((t.iduserPerfil <= ? " + "       and (tu.idtermo is null or tu.dataAceite is null) "
+			+ "       and (tu.dataAdiado is null or cast(tu.dataAdiado as date) < cast(?::timestamp as date)) "
+			+ "       and cast(t.inicioValidade as date) <= cast(?::timestamp as date) "
+			+ "       and (cast(t.fimValidade as date) >= cast(?::timestamp as date) or t.fimValidade is null)) "
+			+ "       or (t.iduserPerfil = 5000 " + "           and tu.idTermo is not null "
+			+ "           and tu.dataAceite is null "
+			+ "           and (tu.dataAdiado is null or cast(tu.dataAdiado as date) < cast(?::timestamp as date)) "
+			+ "           and cast(t.inicioValidade as date) <= cast(?::timestamp as date) "
+			+ "           and cast(t.fimValidade as date) >= cast(?::timestamp as date))) "
+			+ "      and t.deletado is false";
 
 	@SuppressWarnings("unchecked")
 	public List<Termo> termosNaoAssinadosUsuario(User usuario) {
@@ -83,8 +79,9 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 			}
 		});
 	}
+
 	@SuppressWarnings("unchecked")
-	public List<Termo> termosAssinados (User usuario) {
+	public List<Termo> termosAssinados(User usuario) {
 		return (List<Termo>) executeDBOperation(new DBRunnable() {
 
 			@Override
@@ -97,26 +94,22 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 				if (CommonsUtil.semValor(usuario))
 					return new ArrayList<>();
 
-			
-					connection = getConnection();
-					StringBuilder query = new StringBuilder();
-					query.append("select t.id" +
-							" from infra.termo t" + 
-							" inner join infra.termousuario t2 on t2.idtermo = t.id" +
-							" where t2.idusuario  = ?" );
+				connection = getConnection();
+				StringBuilder query = new StringBuilder();
+				query.append("select t.id" + " from infra.termo t"
+						+ " inner join infra.termousuario t2 on t2.idtermo = t.id" + " where t2.idusuario  = ?");
 
-					ps = connection.prepareStatement(query.toString());
+				ps = connection.prepareStatement(query.toString());
 
-				
-					ps.setLong(1, usuario.getId());
+				ps.setLong(1, usuario.getId());
 
-					rs = ps.executeQuery();
+				rs = ps.executeQuery();
 
-					while (rs.next()) {
-						TermoDao termoDao = new TermoDao();
+				while (rs.next()) {
+					TermoDao termoDao = new TermoDao();
 					retorno.add(termoDao.findById(rs.getLong(1)));
-					}
-				
+				}
+
 				return retorno;
 			}
 		});
