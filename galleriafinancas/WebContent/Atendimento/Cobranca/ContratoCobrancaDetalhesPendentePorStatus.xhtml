@@ -2131,22 +2131,32 @@
 
 							<p:outputLabel for="DtNascimento" value="Data de Nascimento: "
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:outputLabel for="DtNascimento" value="Data da Fundação: "
+							<p:outputLabel for="DtNascimentoEmpresa" value="Data da Fundação: "
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<h:panelGroup>
 								<p:outputLabel id="DtNascimento"
 									value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
-									label="Data de Nascimento">
+									label="Data de Nascimento"
+									rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 									<f:convertDateTime locale="pt_BR" />
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-
-									<p:outputLabel for="idade" value="Idade: "
-										rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-									<p:outputLabel id="idade"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}"
-										rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 								</p:outputLabel>
+								
+								<p:outputLabel id="DtNascimentoEmpresa"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.inicioEmpresa}"
+									label="Data de Nascimento"
+									rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+								
+								<p:outputLabel for="idade" value="Idade: "
+									rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+								<p:outputLabel id="idade"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}"
+									rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+								
 							</h:panelGroup>
 
 							<p:outputLabel for="TelCelular" value="Telefone Celular: " />

@@ -64,7 +64,7 @@ public class BigDataService {
 							!CommonsUtil.semValor(retornoProcessoB.getStatus().getDate_of_birth_validation()) &&
 							retornoProcessoB.getStatus().getDate_of_birth_validation().size() > 0 ) {
 						String mesagem = retornoProcessoB.getStatus().getDate_of_birth_validation().get(0).getMessage();
-						if(mesagem.contains("MINOR")) {
+						if(mesagem.contains("THIS CPF BELONGS TO A MINOR. DATE OF BIRTH IS NEEDED TO PROCESS REQUEST.")) {
 							documentoAnalise.addObservacao("Pessoa menor de idade");
 						}
 					}
