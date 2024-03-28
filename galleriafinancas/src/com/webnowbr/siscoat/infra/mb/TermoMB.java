@@ -171,7 +171,7 @@ public class TermoMB {
 	}
 
 	public void setNomeUsuario() {
-		this.nomeUsuario = loginBean.getUsuarioLogado().getName();
+		this.nomeUsuario = loginBean.getUsuarioLogado().getLogin();
 	}
 
 	public void listaUsuario(Long id) {
@@ -278,7 +278,6 @@ public class TermoMB {
 	public String clearFieldsEditar() {
 		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 		TermoDao termoDao = new TermoDao();
-
 		UserDao userdao = new UserDao();
 
 		this.todosUsuario = userdao.carregarUsuariosLista();
@@ -294,25 +293,25 @@ public class TermoMB {
 		this.listaDeUsuariosPickList = new DualListModel<>(this.listaOrigem, this.listaDestino);
 
 		if (objetoTermo == null) {
+			setNomeUsuario();
 			objetoTermo = new Termo();
-//			if (idPerfilSelecionado == "PUBLICO" && userPerfilPublico == null) {
-//				objetoTermo.setUserPerfil(userPerfilIndividual.get());
-//			}
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
 			objetoTermo.setUserPerfil(userPerfilPublico.get());
 			this.tituloPainel = "Inserir";
 			objetoTermo.setDeletado(false);
-			objetoTermo.setUsuarioDelete(nomeUsuario);
+			objetoTermo.setUsuarioCriador(nomeUsuario);
 
 		} 
 		else if(isDeleteMode()) {
+			setNomeUsuario();
 			objetoTermo.setUsuarioDelete(nomeUsuario);
 			objetoTermo.setDataDelete(DateUtil.gerarDataHoje());
 			objetoTermo.setDeletado(true);
 			termoDao.merge(objetoTermo);
 			return "Cadastros/Cobranca/TermoConsultar.xhtml";
 			
-		}else {
+
+		} else {
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.objetoTermo.getUserPerfil().getId());
 			this.tituloPainel = "Editar";
 			usuariosVinculados = termoUsuarioDao.findUsersByTermoId(objetoTermo.getId()).stream()
@@ -328,11 +327,12 @@ public class TermoMB {
 			listaDestino = usuariosVinculados;
 			DualListModel<UserVO> novaListaDeUsuariosPickList = new DualListModel<>(listaOrigem, listaDestino);
 			this.listaDeUsuariosPickList = novaListaDeUsuariosPickList;
-		
 		}
-	
+
 		return "/Cadastros/Cobranca/TermoInserir.xhtml";
+
 	}
+	
 
 	private void carregaListaPerfil() {
 		if (perfil == null) {
@@ -900,58 +900,8 @@ public class TermoMB {
 					}
 				}
 			}
-//				
-//				
-//				
-//				
-////	        builder.append(usuario.getName()).append(", ");
-//				if (event.isAdd()) {
-//					this.listaExcluir.remove(usuario); // Se o usuário foi transferido para a lista target, remova-o da
-//														// lista de removidos
-//				} else {
-//					this.listaExcluir.add(usuario); // Se o usuário foi transferido para a lista source, adicione-o à lista
-//													// de removidos
-//				}
-//			}
-//			
-//			
-//			for (Object item : event.getItems()) {
-//				if (item != null) {
-//					User usuario = new User();
-//					usuario = fromString(item.toString());
-//					this.listaExcluir.add(usuario);
-//					this.listaOrigem.add(usuario);
-//				}
-//			}
-//		} else {
-//			for (Object item : event.getItems()) {
-//				if (item != null) {
-//					final User usuario = fromString(item.toString());
-//					Optional<User> userR = this.listaExcluir.stream()
-//							.filter(u -> CommonsUtil.mesmoValor(u.getId(), usuario.getId())).findAny();
-//
-//					if (userR.isPresent())
-//						this.listaExcluir.remove(userR.get());
-//					this.listaDestino.add(usuario);
-//
-//				}
-//			}
-//		}
-//	
-//		
-//		for (Object item : event.getItems()) {
-//			UserVO usuario = (UserVO) item;
-////        builder.append(usuario.getName()).append(", ");
-//			if (event.isAdd()) {
-//				this.listaExcluir.remove(usuario); // Se o usuário foi transferido para a lista target, remova-o da
-//													// lista de removidos
-//			} else {
-//				this.listaExcluir.add(usuario); // Se o usuário foi transferido para a lista source, adicione-o à lista
-//												// de removidos
-//			}
-//		}
 	}
-	
+
 
 	public void onSelect(SelectEvent event) {
 		FacesContext context = FacesContext.getCurrentInstance();
