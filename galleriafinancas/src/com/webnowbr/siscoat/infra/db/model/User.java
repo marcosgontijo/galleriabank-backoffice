@@ -17,11 +17,11 @@ public final class User implements Serializable {
     /** serial. */
     private static final long serialVersionUID = -408744079447543740L;
     /** Chave primaria. */
-    private Long id;
+    private long id;
     /** Nome do usuario. */
     private String name;
     /** Nivel de operacao. */
-    private Integer level;
+    private int level;
     /** Nome de login do usuario. */
     private String login;
     /** Senha. */
@@ -129,9 +129,7 @@ public final class User implements Serializable {
      */
     public User() {
     }
-<<<<<<< HEAD
-=======
-    
+
     
     public User(Long id, String name, String login) {
 		super();
@@ -144,15 +142,15 @@ public final class User implements Serializable {
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", login=" + login + "]";
 	}
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
+
     
-    
-    public User(Long id, String name, String login) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.login = login;
-	}
+//    
+//    public User(Long id, String name, String login) {
+//		super();
+//		this.id = id;
+//		this.name = name;
+//		this.login = login;
+//	}
 
 //    @Override
 //	public String toString() {
@@ -163,22 +161,19 @@ public final class User implements Serializable {
      * @see id.
      * @return the id
      */
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
     /**
      * @see id.
-     * @param idI the id to set
+     * @param id the id to set
      */
-    public void setId(final Long idI) {
-        this.id = idI;
+    public void setId(final long id) {
+        this.id = id;
     }
     
-    public void setId(final Integer idI) {
-        this.id = CommonsUtil.castAsLong(idI);
-    }
-
+   
     /**
      * Get.
      * @return lista de grupos.
@@ -215,7 +210,7 @@ public final class User implements Serializable {
      * Get.
      * @return level.
      */
-    public Integer getLevel() {
+    public int getLevel() {
         return level;
     }
 
@@ -223,7 +218,7 @@ public final class User implements Serializable {
      * Set.
      * @param value - level
      */
-    public void setLevel(final Integer value) {
+    public void setLevel(final int value) {
         this.level = value;
     }
 

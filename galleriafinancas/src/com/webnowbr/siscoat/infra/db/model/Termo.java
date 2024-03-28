@@ -28,6 +28,15 @@ public class Termo {
 	private UserPerfil userPerfil;
 
 	private transient TermoUsuario termoUsuario;
+	
+	private String usuarioCriador;
+	
+	private String usuarioDelete;
+	
+	private Date dataDelete;
+
+	private Boolean deletado;
+
 
 	public boolean isAceiteExpirado() {
 		if (CommonsUtil.semValor(termoUsuario))
@@ -127,6 +136,37 @@ public class Termo {
 
 	public void setTermoUsuario(TermoUsuario termoUsuario) {
 		this.termoUsuario = termoUsuario;
+	}
+
+	public String getUsuarioCriador() {
+		return usuarioCriador;
+	}
+
+	public void setUsuarioCriador(String usuarioCriador) {
+		this.usuarioCriador = usuarioCriador;
+	}
+
+	public String getUsuarioDelete() {
+		return usuarioDelete;
+	}
+
+	public void setUsuarioDelete(String usuarioDelete) {
+		this.usuarioDelete = usuarioDelete;
+	}
+	public Date getDataDelete() {
+		return dataDelete;
+	}
+
+	public void setDataDelete(Date dataDelete) {
+		this.dataDelete = dataDelete;
+	}
+
+	public Boolean getDeletado() {
+		return deletado;
+	}
+
+	public void setDeletado(Boolean deletado) {
+		this.deletado = deletado;
 	}
 
 }

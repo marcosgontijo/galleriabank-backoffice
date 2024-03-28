@@ -25,7 +25,7 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 			+ " and( tu.dataAdiado is null or "//
 			+ " cast(tu.dataAdiado as date) < cast( ?::timestamp as date)) "//
 			+ "and cast(t.inicioValidade as date) <= cast(?::timestamp as date) " //
-			+ "and cast(t.fimValidade as date) >= cast(?::timestamp as date)) "//
+			+ "and (CAST(t.fimValidade AS DATE) >= CAST(?::TIMESTAMP AS DATE) OR t.fimValidade IS NULL))  "//
 			+ "or (t.iduserPerfil = 5000 and tu.idTermo is not null and tu.dataAceite is null "//
 			+ "and( tu.dataAdiado is null or "//
 			+ " cast(tu.dataAdiado as date) < cast( ?::timestamp as date)) "//
