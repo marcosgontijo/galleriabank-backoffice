@@ -204,8 +204,23 @@ public class FacilTechMB {
 			jsonDadosPessoais.put("DataDeNascimento", pagadorRecebedor.getDtNascimento());
 			jsonDadosPessoais.put("Naturalidade", " ");
 			jsonDadosPessoais.put("Nacionalidade", " ");
-			jsonDadosPessoais.put("EstadoCivil", 0);
+
+			if (pagadorRecebedor.getEstadocivil().equals("SOLTEIRO")) {
+				jsonDadosPessoais.put("EstadoCivil", "S");
+			} else if (pagadorRecebedor.getEstadocivil().equals("CASADO")) {
+				jsonDadosPessoais.put("EstadoCivil", "C");
+			} else if (pagadorRecebedor.getEstadocivil().equals("VIÚVO")) {
+				jsonDadosPessoais.put("EstadoCivil", "V");
+			} else if (pagadorRecebedor.getEstadocivil().equals("DIVORCIADO")) {
+				jsonDadosPessoais.put("EstadoCivil", "D");
+			} else if (pagadorRecebedor.getEstadocivil().equals("SEPARADO JUDICIALMENTE")) {
+				jsonDadosPessoais.put("EstadoCivil", "J");
+			} else {
+				jsonDadosPessoais.put("EstadoCivil", "O");
+			}
+
 			jsonDadosPessoais.put("Genero", 0);
+			jsonDadosPessoais.put("Cooperado", true);
 			
 			JSONObject jsonDocumentoIdentidade = new JSONObject();
 			jsonDocumentoIdentidade.put("Numero", pagadorRecebedor.getRg());

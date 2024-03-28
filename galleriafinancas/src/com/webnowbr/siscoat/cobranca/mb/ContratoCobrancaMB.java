@@ -51,7 +51,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20759,6 +20758,19 @@ public class ContratoCobrancaMB {
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 				"Ordem de Pagamento StarkBank: Ordem de Pagamento excluída com sucesso!", ""));
 	}
+	
+	public void enviarOrdemPagamentoStarkBank(StarkBankBaixa baixa) {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+
+		baixa.setStatusPagamento("Aguardando Aprovação");
+		
+		sbDAO.merge(baixa);
+		
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Ordem de Pagamento StarkBank: Ordem de Pagamento enviada com sucesso!", ""));
+	}
 
 	public void registrarPagamentoForaSistema() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -20813,7 +20825,7 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setDescricaoStarkBank("Pagamento de Conta");
 
 					StarkBankBaixa baixa = registraBaixaStarkBank(this.contasPagarSelecionada.getDataPagamento(),
-							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.contasPagarSelecionada.getValorPagamento(),
+							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -20827,7 +20839,7 @@ public class ContratoCobrancaMB {
 					//this.contasPagarSelecionada.setDescricaoStarkBank("Pagamento de Conta");
 
 					StarkBankBaixa baixa = registraBaixaStarkBank(this.contasPagarSelecionada.getDataPagamento(),
-							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.contasPagarSelecionada.getValorPagamento(),
+							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -20847,7 +20859,7 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setTipoContaBancaria(this.tipoContaBancariaOrdemPagamentoStark);
 					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(),
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -20865,7 +20877,7 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setTipoContaBancaria(this.tipoContaBancariaOrdemPagamentoStark);
 					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(),
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.valorOrdemPagamentoStark,
 							this.contasPagarSelecionada, "Aguardando Aprovação");
 
 					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
@@ -21615,7 +21627,7 @@ public class ContratoCobrancaMB {
 			starkBankBaixa.setDataPagamento(DateUtil.gerarDataHoje());
 			starkBankBaixa.setValor(contrato.getContaPagarValorTotal());
 			starkBankBaixa.setContasPagar(contaPagar);
-			starkBankBaixa.setStatusPagamento("Aguardando Aprovação");
+			starkBankBaixa.setStatusPagamento("Enviar Aprovação");
 			starkBankBaixa.setDocumento(contrato.getNumeroContrato());		
 			starkBankBaixa.setNomePagador(contrato.getNomeBancarioCartaSplit());	
 			starkBankBaixa.setFormaPagamento("Pix");
@@ -24011,8 +24023,12 @@ public class ContratoCobrancaMB {
 					// } else {
 					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();
 					// }
-
-					this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
+					if (boletosKokanaSelecionados.getParcela().getVlrBoletoKobana() != null && 
+							boletosKokanaSelecionados.getParcela().getVlrBoletoKobana().compareTo(BigDecimal.ZERO) > 0) {
+						this.vlrRecebido = boletosKokanaSelecionados.getParcela().getVlrBoletoKobana();
+					} else {
+						this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
+					}
 
 					baixarParcelaParcial();
 				}
@@ -31456,12 +31472,19 @@ public class ContratoCobrancaMB {
 		 * int noOfColumns = sheet.getRow(0).getLastCellNum(); for (int i = 0; i <
 		 * noOfColumns; i++) { sheet.autoSizeColumn(i); }
 		 */
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+		ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
 
 		// write this workbook to an Outputstream.
 		wb.write(fileOut);
 		fileOut.flush();
 		fileOut.close();
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+
+		String nomeArquivoDownload = String.format("Relatório Atraso " + relatorioTipo + ".xlsx", "");
+		gerador.open(nomeArquivoDownload);		
+		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
 
 		this.contratoGerado = true;
 	}

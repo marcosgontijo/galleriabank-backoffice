@@ -1098,7 +1098,7 @@ public class ContractService {
 				usuario = usuarioLogado.get(0);
 			}
 		}
-
+		
 		return usuario;
 	}
 

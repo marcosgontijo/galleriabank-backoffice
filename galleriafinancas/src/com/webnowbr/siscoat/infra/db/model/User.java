@@ -17,7 +17,7 @@ public final class User implements Serializable {
     /** serial. */
     private static final long serialVersionUID = -408744079447543740L;
     /** Chave primaria. */
-    private Long id;
+    private long id;
     /** Nome do usuario. */
     private String name;
     /** Nivel de operacao. */
@@ -147,22 +147,19 @@ public final class User implements Serializable {
      * @see id.
      * @return the id
      */
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
     /**
      * @see id.
-     * @param idI the id to set
+     * @param id the id to set
      */
-    public void setId(final Long idI) {
-        this.id = idI;
+    public void setId(final long id) {
+        this.id = id;
     }
     
-    public void setId(final Integer idI) {
-        this.id = CommonsUtil.castAsLong(idI);
-    }
-
+   
     /**
      * Get.
      * @return lista de grupos.
