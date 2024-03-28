@@ -27,6 +27,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsultaVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;

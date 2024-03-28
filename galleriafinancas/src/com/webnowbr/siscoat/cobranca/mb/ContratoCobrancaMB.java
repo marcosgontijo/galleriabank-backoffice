@@ -4251,11 +4251,20 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
+		
+			if (!CommonsUtil.semValor( contratoCobrancaLogsAlteracao.getDetalhes())) {
 			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
-			this.contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);
-			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 			
+			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+
+			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(),
+					objetoContratoCobranca);
+			
+			
+			this.contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe : this.detalhes) {
+				detalhe.setLogsalteracao(contratoCobrancaLogsAlteracaoBase);
+			}
 			
 			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracaoBase);
 			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {
@@ -37675,7 +37684,7 @@ public class ContratoCobrancaMB {
 			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 
 			this.comparativoCamposEsteira = comparativosCamposEsteraDao.findByFilter("validar", true);
-			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(),
+			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaLogsAlteracao(getUsuarioLogado(),
 					objetoContratoCobranca);
 
 			ContratoCobranca objetoContratoCobrancaBanco = contratoCobrancaDao
@@ -37687,11 +37696,13 @@ public class ContratoCobrancaMB {
 
 			this.detalhes = contratoCobrancaService
 					.comparandoValores(this.objetoContratoCobranca, objetoContratoCobrancaBanco,
-							comparativoCamposEsteira, this.contratoCobrancaLogsAlteracaoBase)
+							comparativoCamposEsteira, this.contratoCobrancaLogsAlteracao)
 					.stream().collect(Collectors.toSet());
-
-			this.contratoCobrancaLogsAlteracao.getDetalhes().addAll(this.detalhes);
-			if (!CommonsUtil.semValor(contratoCobrancaLogsAlteracaoBase.getDetalhes()))
+			
+			if (!CommonsUtil.semValor(this.detalhes)) 
+				this.contratoCobrancaLogsAlteracao.getDetalhes().addAll(this.detalhes);
+			
+			if (!CommonsUtil.semValor(contratoCobrancaLogsAlteracaoBase) && !CommonsUtil.semValor(contratoCobrancaLogsAlteracaoBase.getDetalhes()))
 				this.contratoCobrancaLogsAlteracao.getDetalhes()
 						.addAll(contratoCobrancaLogsAlteracaoBase.getDetalhes());
 
@@ -37702,7 +37713,7 @@ public class ContratoCobrancaMB {
 			}
 
 			return true;
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
@@ -37764,9 +37775,18 @@ public class ContratoCobrancaMB {
 		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
-		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
+		if (!CommonsUtil.semValor( contratoCobrancaLogsAlteracao.getDetalhes())) {
 			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
-			contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);	
+			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+
+			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(),
+					objetoContratoCobranca);
+			
+			
+			this.contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe : this.detalhes) {
+				detalhe.setLogsalteracao(contratoCobrancaLogsAlteracaoBase);
+			}
 			
 			contratoCobrancaLogsAlteracaoDao.merge(contratoCobrancaLogsAlteracaoBase);
 			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {

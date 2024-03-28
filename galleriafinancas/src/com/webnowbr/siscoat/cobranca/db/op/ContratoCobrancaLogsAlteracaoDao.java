@@ -51,5 +51,36 @@ public class ContratoCobrancaLogsAlteracaoDao extends HibernateDao<ContratoCobra
 		});	
 	}
 	
+	private static final String QUERY_RETORNO_LOG_JUSTIFICADO = "select id "
+			+ " from cobranca.contratocobrancalogsalteracao c " 
+			+ " where logjustificado = false and usuario = ?";
+   
+ 	public ContratoCobrancaLogsAlteracao consultaLogsNaoJustificados(String login) {
+ 		return (ContratoCobrancaLogsAlteracao) executeDBOperation(new DBRunnable() {
+ 			@Override
+			public Object run() throws Exception {
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				ContratoCobrancaLogsAlteracao result = null;
+
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_RETORNO_LOG_JUSTIFICADO);
+
+					ps.setString(1, login);
+					rs = ps.executeQuery();
+					if( rs.next())					
+						result = findById(rs.getLong("id"));
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return result;
+			}
+ 		});
+ 	}
 	
 }
