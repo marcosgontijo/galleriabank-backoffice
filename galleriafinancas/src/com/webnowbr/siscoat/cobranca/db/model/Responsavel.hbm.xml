@@ -182,6 +182,9 @@
 			<column name="pixValidado" not-null="true" default="false" />
 		</property>
 	
+		<property name="assistenteComercial" type="boolean">
+			<column name="assistenteComercial" not-null="true" default="false" />
+		</property>
 		    
     </class>
 </hibernate-mapping>

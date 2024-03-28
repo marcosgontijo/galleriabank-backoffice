@@ -89,17 +89,16 @@ public class RelatoriosService {
 
 		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
 		ContratoCobranca con = cDao.findById(idContrato);
+		
+		SimuladorMB simuladorMB = new SimuladorMB();
+		simuladorMB.clearFields();
+		
 		String cpf = "";
 		if (!CommonsUtil.semValor(con.getPagador().getCpf())) {
 			cpf = con.getPagador().getCpf();
-		} else {
-			cpf = con.getPagador().getCnpj();
-		}
-		SimuladorMB simuladorMB = new SimuladorMB();
-		simuladorMB.clearFields();
-		if (con.getPagador() != null) {
 			simuladorMB.setTipoPessoa("PF");
 		} else {
+			cpf = con.getPagador().getCnpj();
 			simuladorMB.setTipoPessoa("PJ");
 		}
 		simuladorMB.setTipoCalculo("Price");
@@ -212,7 +211,7 @@ public class RelatoriosService {
 				(!CommonsUtil.semValor(con.getAprovadoComiteData()) ? con.getAprovadoComiteData()
 						: con.getDataContrato()),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), observacao, con.getImovel().getCidade(),
-				con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(), con.getPrazoMaxAprovado().toString(),
+				con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(), con.getPrazoAprovadoCCB().toString(),
 				simulador.getValorCredito(), con.getValorMercadoImovel(), parcelaPGTO, con.getTipoValorComite(), cep,
 				carencia, despesa, valorCustoEmissao, valorIOF, valorLiquido, detalhesDespesas,
 				simulador.getParcelas());

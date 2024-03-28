@@ -209,26 +209,8 @@
 				</textElement>
 				<text><![CDATA[Sistema de Amortização:]]></text>
 			</staticText>
-			<textField pattern="#,##0.00">
-				<reportElement mode="Transparent" x="407" y="90" width="110" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="d9ae22cd-7353-4364-b99c-b000b9a79c39">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorImovel})]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement mode="Transparent" x="289" y="90" width="110" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="2f160151-043f-4183-8743-498ed2387116">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Valor da Garantia:]]></text>
-			</staticText>
 			<textField>
-				<reportElement mode="Transparent" x="158" y="140" width="100" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="9e114352-ff06-4850-b182-e8d58589cb8f">
+				<reportElement mode="Transparent" x="399" y="115" width="100" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="9e114352-ff06-4850-b182-e8d58589cb8f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -237,7 +219,7 @@
 				<textFieldExpression><![CDATA[$F{carencia} + ($F{carencia}.intValue() == 1 ? " mês":" meses")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Transparent" x="48" y="140" width="60" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="f8e982a8-4d59-41a6-959f-e4d57a3b63e5">
+				<reportElement mode="Transparent" x="289" y="115" width="60" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="f8e982a8-4d59-41a6-959f-e4d57a3b63e5">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -266,16 +248,7 @@
 				<text><![CDATA[Custo Efetivo Total (CET): ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="289" y="115" width="29" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="041016df-ccd2-4fdd-90db-584b827f2507">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[LTV:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Transparent" x="289" y="140" width="118" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="58ec2bbe-8973-4463-8c0e-8b915d06800a">
+				<reportElement mode="Transparent" x="289" y="90" width="118" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="58ec2bbe-8973-4463-8c0e-8b915d06800a">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
@@ -285,7 +258,7 @@
 				<text><![CDATA[Data da Simulação:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="407" y="140" width="100" height="25" uuid="3a2f0ef4-ae36-4a88-87cf-bd0bf1c6daf7"/>
+				<reportElement x="407" y="90" width="100" height="25" uuid="3a2f0ef4-ae36-4a88-87cf-bd0bf1c6daf7"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
@@ -299,15 +272,6 @@
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{cetAoMes}) + "% a.m. " + (($P{MOSTRARIPCA})?"+ IPCA":"" )]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00">
-				<reportElement mode="Transparent" x="407" y="115" width="110" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="8d7b5ce6-04fc-4b33-b610-8e0d1fd35cc7">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{ltv}) + "%"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

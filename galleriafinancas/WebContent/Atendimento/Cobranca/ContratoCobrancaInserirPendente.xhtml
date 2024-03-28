@@ -1824,9 +1824,9 @@
 											counterTemplate="{0} characters remaining." autoResize="false"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
 			
-										<p:outputLabel value="Operação vai pro Fundo? "
+										<p:outputLabel value="Operação NÃO vai pro Fundo? "
 											styleClass="labelBold" />
-										<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+										<shiro:hasAnyRoles name="ROOT, COMITEEDITAR, PROFILE_CONTRATO">
 											<p:selectBooleanCheckbox
 												value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" />
 										</shiro:hasAnyRoles>
@@ -5730,8 +5730,6 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter">
-							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
-								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
 						<p:outputLabel value="Numero: " styleClass="labelBold"
@@ -5739,17 +5737,20 @@
 						<p:inputText
 							value="#{contratoCobrancaMB.processoSelecionado.numero}"
 							label="Contrato">
-							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
-								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
 						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
-						<p:inputText id="valorAtualizadoProcesso"
-							value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
-							label="Contrato" onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" />						
+						<h:panelGroup>
+							<p:inputText id="valorAtualizadoProcesso"
+								value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
+								label="Contrato" onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter" />
+							<p:commandButton action="#{contratoCobrancaMB.atualizarValorProcesso()}"
+								icon="ui-icon ui-icon-arrowrefresh-1-e" ajax="true"
+								update="valorAtualizadoProcesso" />
+						</h:panelGroup>						
 
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

@@ -16,7 +16,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.util.io.pem.PemReader; 
+import org.bouncycastle.util.io.pem.PemReader;
 
 public class PemSignature {
 	private final X509Certificate publicCertificate;

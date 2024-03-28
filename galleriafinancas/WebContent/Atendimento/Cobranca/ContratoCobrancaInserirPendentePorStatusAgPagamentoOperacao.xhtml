@@ -662,6 +662,9 @@
 												<p:commandButton value="Excluir Ordem de Pagamento" ajax="false" icon="ui-icon-trash" 
 													action="#{contratoCobrancaMB.excluirOrdemPagamentoStarkBank(pagamento.contasPagar, pagamento)}" 
 													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"/>
+												<p:commandButton value="Enviar Ordem para Aprovação" ajax="false" icon="ui-icon-trash" 
+													action="#{contratoCobrancaMB.enviarOrdemPagamentoStarkBank(pagamento)}" 
+													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"/>
 											</shiro:hasAnyRoles>     
 											<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar" rendered="#{pagamento.statusPagamento eq 'Aprovado'}">						       	 	
 									       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(pagamento)}" />
@@ -913,9 +916,7 @@
 					
 				</h:panelGroup>
 				<p:messages id="msgArquivo"/> 	
-				
-				
-			
+
 				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA, ASSISTENTEFINANCEIRO">  	
 					<p:panel id="UploadArquivosJuridico" header="Arquivo Juridico(s)" style="margin-bottom:10px;" >						
 						<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
