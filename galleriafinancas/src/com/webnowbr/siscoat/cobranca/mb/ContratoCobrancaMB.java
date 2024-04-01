@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -109,6 +110,7 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
+import com.google.gson.JsonObject;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -122,6 +124,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.starkbank.PaymentPreview;
 import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
@@ -917,6 +920,9 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorOrdemPagamentoStark;
 	
 	private Date dataPagamentoOrdemPagamentoStark;
+	
+	private Date dataVencimentoOrdemPagamentoStark;
+	private String nomePagadorOrdemPagamentoStark;
 	/***
 	 * FIM ORDEM PAGAMENTO STARK BANK
 	 */
@@ -20656,6 +20662,9 @@ public class ContratoCobrancaMB {
 		this.valorOrdemPagamentoStark = BigDecimal.ZERO;
 		
 		this.dataPagamentoOrdemPagamentoStark = DateUtil.gerarDataHoje();
+		
+		this.dataVencimentoOrdemPagamentoStark = null;
+		this.nomePagadorOrdemPagamentoStark = "";
 	}
 
 	public void updateFieldsOrdemPagamentoForaSistema() {
@@ -20913,6 +20922,71 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	public void insereDadosStarkBank(String metodoPagamento) {
+		try {
+			String consulta = "";
+			if(CommonsUtil.mesmoValor(metodoPagamento, "boleto")) {
+				if(CommonsUtil.semValor(linhaBoletoOrdemPagamentoStark)) 
+					return;
+				
+				consulta = linhaBoletoOrdemPagamentoStark;
+			}
+			
+			if(CommonsUtil.mesmoValor(metodoPagamento, "pix")) {
+				if(CommonsUtil.semValor(pixOrdemPagamentoStark)) 
+					return;
+				
+				consulta = pixOrdemPagamentoStark;
+			}
+			
+			PaymentPreview previsao = StarkBankAPI.paymentPreview(consulta);
+			if(CommonsUtil.semValor(previsao))
+				return;
+			
+			String payment = GsonUtil.toJson(previsao.payment);
+			JsonObject object = GsonUtil.fromJson(payment, JsonObject.class);
+			
+			
+			if(object.has("amount")) {
+				BigDecimal valor = CommonsUtil.bigDecimalValue(object.get("amount"));
+				valor = valor.divide(BigDecimal.valueOf(100),MathContext.DECIMAL128);
+				valorOrdemPagamentoStark = valor;
+			}
+			
+			//documento do recebedor
+			if(object.has("taxId"))
+				documentoRecebedorOrdemPagamentoStark = CommonsUtil.stringValue(object.get("taxId")).replace("\"", "");
+			
+			//nome do recebedor
+			if(object.has("name"))
+				nomeRecebedorOrdemPagamentoStark = CommonsUtil.stringValue(object.get("name")).replace("\"", "");
+			
+			//documento do pagador
+			if(object.has("payerTaxId")){
+				String documentoPagador = CommonsUtil.stringValue(object.get("payerTaxId")).replace("\"", "");
+			}
+			
+			//nome do pagador
+			if(object.has("payerName")){
+				nomePagadorOrdemPagamentoStark  = CommonsUtil.stringValue(object.get("payerName")).replace("\"", "");
+			}
+			
+			if(object.has("due")){
+				Date dataVencimento;
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX");
+				formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+				dataVencimento = formatter.parse(CommonsUtil.stringValue(object.get("due")).replace("\"", ""));
+				//System.out.println(dataVencimento);
+				dataVencimento = DateUtil.adicionarPeriodo(dataVencimento, -3, Calendar.HOUR);
+				//System.out.println(dataVencimento);
+				dataVencimentoOrdemPagamentoStark = dataVencimento;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public ContasPagar buscaDespesaCartaSplit(String despesa, String numeroContrato) {
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		List<ContasPagar> despesaBD = new ArrayList<ContasPagar>();
@@ -22123,12 +22197,14 @@ public class ContratoCobrancaMB {
 
 		StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
 		starkBankBaixa.setDataPagamento(dataPagamento);
+		starkBankBaixa.setDataVencimento(dataVencimentoOrdemPagamentoStark);
 		starkBankBaixa.setValor(valorPago);
 		starkBankBaixa.setContasPagar(contaPagar);
 		starkBankBaixa.setIdTransacao(idTransacao);
 		starkBankBaixa.setStatusPagamento(statusPagamento);
 		starkBankBaixa.setDocumento(this.documentoRecebedorOrdemPagamentoStark);		
-		starkBankBaixa.setNomePagador(this.nomeRecebedorOrdemPagamentoStark);		
+		starkBankBaixa.setNomePagador(this.nomePagadorOrdemPagamentoStark);		
+		//starkBankBaixa.setNomePagador(this.nomeRecebedorOrdemPagamentoStark);		
 		starkBankBaixa.setFormaPagamento(this.formaTransferenciaDespesaBaixa);
 		starkBankBaixa.setTipoContaBancaria(this.tipoContaBancariaOrdemPagamentoStark);
 		starkBankBaixa.setBanco(this.bancoOrdemPagamentoStark);
@@ -38148,6 +38224,22 @@ public class ContratoCobrancaMB {
 
 	public void setValorTotalContrato(BigDecimal valorTotalContrato) {
 		this.valorTotalContrato = valorTotalContrato;
+	}
+
+	public Date getDataVencimentoOrdemPagamentoStark() {
+		return dataVencimentoOrdemPagamentoStark;
+	}
+
+	public void setDataVencimentoOrdemPagamentoStark(Date dataVencimentoOrdemPagamentoStark) {
+		this.dataVencimentoOrdemPagamentoStark = dataVencimentoOrdemPagamentoStark;
+	}
+
+	public String getNomePagadorOrdemPagamentoStark() {
+		return nomePagadorOrdemPagamentoStark;
+	}
+
+	public void setNomePagadorOrdemPagamentoStark(String nomePagadorOrdemPagamentoStark) {
+		this.nomePagadorOrdemPagamentoStark = nomePagadorOrdemPagamentoStark;
 	}
 	
 }

@@ -14,6 +14,7 @@ public class StarkBankBaixa implements Serializable {
     public String nomePagador;
     public String idTransacao;
     public Date dataPagamento;
+    public Date dataVencimento;
     public String documento;
     public String linhaBoleto;
     public String formaPagamento;
@@ -248,6 +249,12 @@ public class StarkBankBaixa implements Serializable {
 	public void setContaIndividual(boolean contaIndividual) {
 		this.contaIndividual = contaIndividual;
 	}
-	
-	
+
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}	
 }

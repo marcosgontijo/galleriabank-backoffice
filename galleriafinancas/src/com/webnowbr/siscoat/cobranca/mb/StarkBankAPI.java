@@ -1008,12 +1008,13 @@ public class StarkBankAPI{
 	}
 	
 
-	public void paymentPreview(String idPagamento) {
+	public static PaymentPreview paymentPreview(String idPagamento) {
 		List<PaymentPreview> previews = new ArrayList<>();
 		
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("id", idPagamento);
-		params.put("scheduled", DateUtil.getDataHojeAmericano());
+		//params.put("scheduled", DateUtil.getDataHojeAmericano());
+		loginStarkBank();
 		
 		try {
 			previews.add(new PaymentPreview(params));
@@ -1022,13 +1023,17 @@ public class StarkBankAPI{
 			
 			previews = (List<PaymentPreview>) PaymentPreview.create(previews);
 			
-			for (PaymentPreview preview : previews) {
-			    System.out.println(preview);
+			if(previews.size() > 0) {
+				for (PaymentPreview preview : previews) {
+				    System.out.println(preview);
+				}
+				return previews.get(0);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 		
 		/*
 			PaymentPreview({

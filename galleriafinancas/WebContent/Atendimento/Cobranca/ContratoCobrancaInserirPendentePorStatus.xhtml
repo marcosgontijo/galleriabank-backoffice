@@ -5679,13 +5679,27 @@
 							<p:outputLabel for="linhaDigitavel" styleClass="labelBold" value="Linha Digitável: " />
 							<p:inputText id="linhaDigitavel" value="#{contratoCobrancaMB.linhaBoletoOrdemPagamentoStark}"
 							 style="width:100px;" required="true">
-							 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank}"
-							 	update="cpfcnpjStark ContaPagarValorPagoBoletoStarkBank" ></p:ajax>
+							 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank('boleto')}"
+							 	update="nomeRecebedorContaPagarBoletoStarkBank cpfcnpjStark ContaPagarDataVencimentoBoletoStarkBank
+							 	 nomePagadorContaPagarBoletoStarkBank ContaPagarValorPagoBoletoStarkBank " ></p:ajax>
 							 
 							</p:inputText>
 							
+							<p:outputLabel for="nomeRecebedorContaPagarBoletoStarkBank" value="Nome Recebedor:" 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="nomeRecebedorContaPagarBoletoStarkBank"
+								style="width:250px;"
+								value="#{contratoCobrancaMB.nomeRecebedorOrdemPagamentoStark}" required="true" />
+								
 							<p:outputLabel for="cpfcnpjStark" styleClass="labelBold" value="CPF/CNPJ Recebedor boleto: " />
 							<p:inputText id="cpfcnpjStark" value="#{contratoCobrancaMB.documentoRecebedorOrdemPagamentoStark}" required="true"/>
+							
+							<p:outputLabel for="ContaPagarDataVencimentoBoletoStarkBank"
+								value="Data Vencimento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataVencimentoBoletoStarkBank"
+								value="#{contratoCobrancaMB.dataVencimentoOrdemPagamentoStark}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
 							
 							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBank" value="Valor a Pagar: "
 								styleClass="labelBold" />
@@ -5694,6 +5708,12 @@
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
+								
+							<p:outputLabel for="nomePagadorContaPagarBoletoStarkBank" value="Nome Pagador:" 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="nomePagadorContaPagarBoletoStarkBank"
+								style="width:250px;"
+								value="#{contratoCobrancaMB.nomePagadorOrdemPagamentoStark}" />
 								
 							<p:outputLabel for="ContaPagarDataPagamentoBoletoStarkBank"
 								value="Data Pagamento: " styleClass="labelBold" />
@@ -5746,7 +5766,7 @@
 							<p:inputText id="qrCodeContaPagar"
 								style="width:250px;"
 								value="#{contratoCobrancaMB.pixOrdemPagamentoStark}" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'QR Code Copia e Cola'}">
-								 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank}"
+								 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank('pix')}"
 							 		update="nomeBancarioContaPagarPixStarkBank cpfCnpjBancarioContaPagarPixStarkBank ContaPagarValorPagoPixStarkBank" ></p:ajax>
 							</p:inputText>
 								
@@ -5755,7 +5775,7 @@
 							<p:inputText id="chavePIXBancarioContaPagar"
 								style="width:250px;"
 								value="#{contratoCobrancaMB.pixOrdemPagamentoStark}" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}">
-								 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank}"
+								 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank('pix')}"
 							 		update="nomeBancarioContaPagarPixStarkBank cpfCnpjBancarioContaPagarPixStarkBank ContaPagarValorPagoPixStarkBank" ></p:ajax>
 							</p:inputText>
 								

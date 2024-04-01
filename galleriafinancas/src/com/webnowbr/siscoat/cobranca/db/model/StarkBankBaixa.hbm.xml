@@ -94,5 +94,9 @@
 		<property name="contaIndividual" type="boolean">
 			<column name="contaIndividual" not-null="true" default="false"/>
 		</property>	        
+		
+		<property name="dataVencimento" type="java.util.Date">
+            <column name="dataVencimento"/>
+        </property>
     </class>
 </hibernate-mapping>
