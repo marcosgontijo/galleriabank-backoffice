@@ -11,14 +11,25 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
+
+import org.primefaces.PrimeFaces;
 
 import com.webnowbr.siscoat.cobranca.db.model.ComparativoCamposEsteira;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaLogsAlteracaoDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaLogsAlteracaoDetalheDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.infra.db.model.User;
+
 
 public class ContratoCobrancaService {
 	
@@ -96,8 +107,46 @@ public class ContratoCobrancaService {
 		return listaDeAlteracoes;
 	}
 	
+	
+	public ContratoCobrancaLogsAlteracao buscaLogsAlteracao(User usuario, ContratoCobranca contratoCobranca)  {
+		ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+		ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+		
+		contratoCobrancaLogsAlteracao = contratoCobrancaLogsAlteracaoDao.buscaLogAlteracao(usuario.getLogin(), contratoCobranca.getId());
+		return contratoCobrancaLogsAlteracao;
+	}
+	
+	public ContratoCobrancaLogsAlteracao buscaOuCriaLogsAlteracao(User usuario, ContratoCobranca contratoCobranca) {
+		
+		ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+		ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+		
+		contratoCobrancaLogsAlteracao = buscaLogsAlteracao(usuario, contratoCobranca);
+		
+		if (contratoCobrancaLogsAlteracao != null ) {
+			return contratoCobrancaLogsAlteracao;
+		} 
+			
+		contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+			
+		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoje());
+		contratoCobrancaLogsAlteracao.setUsuario(usuario.getLogin());
+		contratoCobrancaLogsAlteracao.setStatusEsteira(contratoCobranca.getStatusEsteira());
+		contratoCobrancaLogsAlteracao.setContratoCobranca(contratoCobranca);
+		contratoCobrancaLogsAlteracaoDao.create(contratoCobrancaLogsAlteracao);
+		
+		return contratoCobrancaLogsAlteracao;
+	}
+	
+	public void adicionaAlteracoesNoPopPupParaCamposDireto() {
+		ContratoCobrancaMB contratoCobrancaMb = new ContratoCobrancaMB();
+		contratoCobrancaMb.setEstadoConsultaAdd(contratoCobrancaMb.getEstadoConsultaAdd());
+		contratoCobrancaMb.getEstadoConsultaAdd();
+		
+	}
+	
 	public void zerarListaDeDuplicidade() {
-		this.verificaDuplicidadeDeIdParaNaoVerificar = new HashSet<Integer>();
+		this.verificaDuplicidadeDeIdParaNaoVerificar.clear();
 	}
 
 	public static Object callGetMethods(Object obj, String propriedade) {
@@ -134,5 +183,35 @@ public class ContratoCobrancaService {
         }
         return true;
     }
+	
+	public void adicionaNovoDetalhe(User usuario, ContratoCobranca contratoCobranca, String valorAtual,
+			String valorBanco, String nomeCampo) {
+
+		ContratoCobrancaLogsAlteracao logAlteracao = buscaOuCriaLogsAlteracao(usuario, contratoCobranca);
+		ContratoCobrancaLogsAlteracaoDetalhe logAlteracaoDetalhe = new ContratoCobrancaLogsAlteracaoDetalhe();
+
+		logAlteracaoDetalhe.setLogsalteracao(logAlteracao);
+		logAlteracaoDetalhe.setValorAlterado(valorAtual);
+		logAlteracaoDetalhe.setValorBanco(valorBanco);
+		logAlteracaoDetalhe.setNomeCampo(nomeCampo);
+		adicionaNovoDetalhe(logAlteracaoDetalhe);
+	}
+	
+	public void adicionaNovoDetalhe(ContratoCobrancaLogsAlteracaoDetalhe logAlteracaoDetalhe) {
+		ContratoCobrancaLogsAlteracaoDetalheDao contraLogsAlteracaoDetalheDao = new ContratoCobrancaLogsAlteracaoDetalheDao();
+		if (CommonsUtil.semValor(logAlteracaoDetalhe.getId()))
+			contraLogsAlteracaoDetalheDao.create(logAlteracaoDetalhe);
+		else
+			contraLogsAlteracaoDetalheDao.merge(logAlteracaoDetalhe);
+	}
+	
+	public ContratoCobrancaLogsAlteracao exibePopPupSeNaoConfirmar(String usuario) {
+		ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+		ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+		
+		contratoCobrancaLogsAlteracao = contratoCobrancaLogsAlteracaoDao.consultaLogsNaoJustificados(usuario);
+		
+		return contratoCobrancaLogsAlteracao;
+	}
 	
 }

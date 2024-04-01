@@ -5,10 +5,20 @@
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
 	
-	<p:dialog header="Comparações dos campos que foram alterados."
+	<p:dialog  
 		id="comparacoesPopPupId" widgetVar="comparacoesPopPupIdvar"
 		resizable="false"  width="1000" height="700" closable="true"
 		 showEffect="explode" hideEffect="fold">
+			 <f:facet name="header">
+				<h:outputLabel escape = "false"
+					value= "Comparações dos campos que foram alterados."/> 
+			 </f:facet>
+			 <div>
+				<h2 style="display: block; text-align: center">
+    				<span style="color: red;">Número Contrato :</span>
+    				<h:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"></h:outputLabel> 
+				</h2>
+			</div>
 		 <p:messages />
 			<div class="card">
 				<p:dataTable id="tableId" var="item" 

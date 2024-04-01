@@ -423,6 +423,8 @@ public class ContratoCobrancaMB {
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
 	private ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+	private ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracaoBase;
+	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
 	
 	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
 	
@@ -915,7 +917,6 @@ public class ContratoCobrancaMB {
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
 	private ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
-
 	
 	private boolean continuar;
 	
@@ -3501,7 +3502,6 @@ public class ContratoCobrancaMB {
 	       
 	public String editPreContrato() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		try {
 			if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
@@ -3512,22 +3512,17 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return "";
 		}
-
-		verificaPreContrato();
 		
-		updateCheckList();
-		
-		geraParcelasSeContratoAgRegistro();
-		salvarContasProcessos();
+		if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(4000000)) == 1) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$4.000.000,00. !", ""));
+			return null;
+		}
 
 		if (validaDiferencasCamposEsteira(context) == false) {
 			return null;
-		} 
-
-		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
-		contratoCobrancaDao.merge(this.objetoContratoCobranca);
-		
-		return verificaContratoSeAprovadoEnviaEmail();
+		} else 
+		   return editarPreContrato();
 	}
 
 	public void atualizaResponsavel() {
@@ -4205,7 +4200,6 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 
 			// gerar contas stark bank
-			// TODO: HERMES OLHAR AQUI
 			ContasPagarDao contasPagarDao = new ContasPagarDao();
 
 			List<ContasPagar> listDespesaNotaFiscal = contasPagarDao.buscarDespesa("Pagamento nota fiscal",
@@ -4257,11 +4251,27 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
+		
+			if (!CommonsUtil.semValor( contratoCobrancaLogsAlteracao.getDetalhes())) {
 			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
-			contratoCobrancaLogsAlteracaoDao.create(contratoCobrancaLogsAlteracao);
+			
+			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+
+			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(),
+					objetoContratoCobranca);
+			
+			
+			this.contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe : this.detalhes) {
+				detalhe.setLogsalteracao(contratoCobrancaLogsAlteracaoBase);
+			}
+			
+			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracaoBase);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {
+				contratoCobrancaService.adicionaNovoDetalhe(detalhe);				
+			}
 		}
-				
+		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
 		// verifica se o contrato for aprovado, manda um tipo de email..
@@ -33786,6 +33796,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			files = listaArquivos();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Inicial");
 		}
 	}
 
@@ -33872,6 +33883,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesInterno = listaArquivosInterno();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Juridico");
 		}
 	}
 
@@ -33889,6 +33901,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesFaltante = listaArquivosFaltante();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Faltantes");
 		}
 	}
 
@@ -33899,7 +33912,6 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
 					event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
@@ -33907,6 +33919,8 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
+			
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Juridico");
 		}
 	}
 
@@ -33925,6 +33939,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesNotaFiscal = listaArquivosNotaFiscal();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Nota Fiscal");
 		}
 	}
 
@@ -33942,6 +33957,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesComite = listaArquivosComite();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Comite");
 		}
 	}
 
@@ -33968,6 +33984,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesPagar = listaArquivosPagar();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Pagar");
 		}
 	}
 
@@ -34015,6 +34032,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesCci = listaArquivosCci();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo CCI");
 		}
 	}
 
@@ -34032,6 +34050,7 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
+			adicionaArquivoNoLogsDetalhesPopPup(event.getFile().getFileName(), "Arquivo Pre Laudo");
 		}
 	}
 
@@ -34049,7 +34068,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFile() {
 		for (FileUploaded f : deletefiles) {
-			deleteFile(f);
+			deleteFile(f, "Arquivo Inicial");
 		}
 
 		deletefiles = new ArrayList<FileUploaded>();
@@ -34075,22 +34094,23 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileInterno() {
 		for (FileUploaded f : deletefilesInterno) {
-			deleteFile(f);
+			deleteFile(f, "Interno");
 		}
 
 		deletefilesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
 	}
 
-	private void deleteFile(FileUploaded f) {
+	private void deleteFile(FileUploaded f, String componente) {
 		FileService fileService = new FileService();
 		fileService.excluirDocumento(this.objetoContratoCobranca.getNumeroContrato(), f.getPathOrigin(), f.getName(),
 				getUsuarioLogado());
+		removeArquivoNoLogsDetalhesPopPup(f.getName(), componente);
 	}
 
 	public void deleteFileFaltante() {
 		for (FileUploaded f : deletefilesFaltante) {
-			deleteFile(f);
+			deleteFile(f, "Faltante");
 		}
 
 		deletefilesFaltante = new ArrayList<FileUploaded>();
@@ -34099,7 +34119,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileJuridico() {
 		for (FileUploaded f : deletefilesJuridico) {
-			deleteFile(f);
+			deleteFile(f, "Juridico");
 		}
 
 		deletefilesJuridico = new ArrayList<FileUploaded>();
@@ -34108,7 +34128,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileNotaFiscal() {
 		for (FileUploaded f : deletefilesNotaFiscal) {
-			deleteFile(f);
+			deleteFile(f, "Nota Fiscal");
 		}
 
 		deletefilesNotaFiscal = new ArrayList<FileUploaded>();
@@ -34117,7 +34137,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileComite() {
 		for (FileUploaded f : deletefilesComite) {
-			deleteFile(f);
+			deleteFile(f, "Comite");
 		}
 
 		deletefilesComite = new ArrayList<FileUploaded>();
@@ -34126,7 +34146,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFilePagar() {
 		for (FileUploaded f : deletefilesPagar) {
-			deleteFile(f);
+			deleteFile(f, "Pagar");
 		}
 
 		deletefilesPagar = new ArrayList<FileUploaded>();
@@ -34135,7 +34155,7 @@ public class ContratoCobrancaMB {
 
 	public void deleteFileCci() {
 		for (FileUploaded f : deletefilesCci) {
-			deleteFile(f);
+			deleteFile(f, "FileCCI");
 		}
 
 		deletefilesCci = new ArrayList<FileUploaded>();
@@ -34144,13 +34164,13 @@ public class ContratoCobrancaMB {
 
 	public void deleteFiles(Collection<FileUploaded> lista) {
 		for (FileUploaded f : lista) {
-			deleteFile(f);
+			deleteFile(f, "Arquivo Inicial");
 		}
 	}
 
 	public void deleteFilesCci(Collection<FileUploaded> lista) {
 		for (FileUploaded f : lista) {
-			deleteFile(f);
+			deleteFile(f, "CCI");
 		}
 	}
 
@@ -34241,15 +34261,49 @@ public class ContratoCobrancaMB {
 	}
 
 	public void adicionaEstado() {
-		documentoAnalisePopup.adicionaEstados(estadoConsultaAdd);
+		
+		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		
+		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Adicionado (" +  estadoConsultaAdd + " )";
+		
+		documentoAnalisePopup.adicionaEstados(estadoConsultaAdd);
 		documentoAnaliseDao.merge(documentoAnalisePopup);
+		
+		contratoCobrancaService.adicionaNovoDetalhe(getUsuarioLogado(), this.getObjetoContratoCobranca(),
+				valorAlteradoEstado, "", "Estado");
+	}
+	
+	public void removerEstado(String estado) {
+		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		
+		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Removido ( " + estado + " )";
+		
+		documentoAnalisePopup.removerEstado(estado);
+		documentoAnaliseDao.merge(documentoAnalisePopup);
+
+			contratoCobrancaService.adicionaNovoDetalhe(loginBean.getUsuarioLogado(), this.getObjetoContratoCobranca(), "",
+					valorAlteradoEstado, "Estado");
+	}
+	
+	public void adicionaArquivoNoLogsDetalhesPopPup(String nomeArquivo, String nomeCampo) {
+
+		String arquivoAdicionado = "Arquivo Adicionado(" + nomeArquivo + ")";
+
+		contratoCobrancaService.adicionaNovoDetalhe(loginBean.getUsuarioLogado(), this.getObjetoContratoCobranca(),
+				arquivoAdicionado, " ", nomeCampo);
 	}
 
+	public void removeArquivoNoLogsDetalhesPopPup(String nomeArquivo, String nomeCampo) {
+
+		String arquivoAdicionado = "Arquivo Removido(" + nomeArquivo + ")";
+
+		contratoCobrancaService.adicionaNovoDetalhe(loginBean.getUsuarioLogado(), this.getObjetoContratoCobranca(),
+				"", arquivoAdicionado, nomeCampo);
+	}
+	
 	public List<DocumentoAnalise> getListaDocumentoAnalise() {
-//		if (CommonsUtil.semValor(listaDocumentoAnalise)) {
-//			listaArquivosAnaliseDocumentos();
-//		}
 		return listaDocumentoAnalise;
 	}
 
@@ -37600,7 +37654,7 @@ public class ContratoCobrancaMB {
 		if(descricao.isPresent()) {
 			return descricao.get();
 		} 
-		return null;
+		return nomePropiedade;
 	}
 	
 	public boolean verificaQuantidadeCampoObservacao(String observacao) {
@@ -37623,54 +37677,57 @@ public class ContratoCobrancaMB {
     }
 	
 	private Boolean validaDiferencasCamposEsteira(FacesContext context) {
-		
+
 		try {
-			
+
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 
 			this.comparativoCamposEsteira = comparativosCamposEsteraDao.findByFilter("validar", true);
-			
-			contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
-			contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoje());
-			contratoCobrancaLogsAlteracao.setUsuario(getUsuarioLogado().getLogin());
-			contratoCobrancaLogsAlteracao.setStatusEsteira(this.objetoContratoCobranca.getStatusEsteira());
-			contratoCobrancaLogsAlteracao.setContratoCobranca(objetoContratoCobranca);
-						
-			ContratoCobranca objetoContratoCobrancaBanco = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
-			
+			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaLogsAlteracao(getUsuarioLogado(),
+					objetoContratoCobranca);
+
+			ContratoCobranca objetoContratoCobrancaBanco = contratoCobrancaDao
+					.findById(this.objetoContratoCobranca.getId());
+
 			contratoCobrancaService.zerarListaDeDuplicidade();
+
+			this.contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+
+			this.detalhes = contratoCobrancaService
+					.comparandoValores(this.objetoContratoCobranca, objetoContratoCobrancaBanco,
+							comparativoCamposEsteira, this.contratoCobrancaLogsAlteracao)
+					.stream().collect(Collectors.toSet());
 			
-			Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes = contratoCobrancaService.comparandoValores(
-					this.objetoContratoCobranca, 
-					objetoContratoCobrancaBanco,
-					comparativoCamposEsteira,
-					this.contratoCobrancaLogsAlteracao).stream().collect(Collectors.toSet());
+			if (!CommonsUtil.semValor(this.detalhes)) 
+				this.contratoCobrancaLogsAlteracao.getDetalhes().addAll(this.detalhes);
 			
-			this.contratoCobrancaLogsAlteracao.setDetalhes(detalhes);
-			
+			if (!CommonsUtil.semValor(contratoCobrancaLogsAlteracaoBase) && !CommonsUtil.semValor(contratoCobrancaLogsAlteracaoBase.getDetalhes()))
+				this.contratoCobrancaLogsAlteracao.getDetalhes()
+						.addAll(contratoCobrancaLogsAlteracaoBase.getDetalhes());
+
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				PrimeFaces current = PrimeFaces.current();
-				//current.ajax().update("comparacoesPopPupId");
 				current.executeScript("PF('comparacoesPopPupIdvar').show();");
 				return false;
 			}
-			
-			return true;
 
-		} 
-		catch (Exception e) {
+			return true;
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return false;
 		}
 	}
 	
-	private boolean verificaPreContrato() {
+	private String editarPreContrato() {
 		
 		Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		FacesContext context = FacesContext.getCurrentInstance(); 
 		
@@ -37707,14 +37764,38 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setVlrParcelaStr(
 					bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 		}
+		
+		updateCheckList();
+		
+		geraParcelasSeContratoAgRegistro();
+		
+		salvarContasProcessos();
+		
+		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+		
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+		if (!CommonsUtil.semValor( contratoCobrancaLogsAlteracao.getDetalhes())) {
+			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 
-		if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(4000000)) == 1) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$4.000.000,00. !", ""));
-			return false;
+			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(),
+					objetoContratoCobranca);
+			
+			
+			this.contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe : this.detalhes) {
+				detalhe.setLogsalteracao(contratoCobrancaLogsAlteracaoBase);
+			}
+			
+			contratoCobrancaLogsAlteracaoDao.merge(contratoCobrancaLogsAlteracaoBase);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {
+				contratoCobrancaService.adicionaNovoDetalhe(detalhe);				
+			}
 		}
 		
-		return true;
+		return verificaContratoSeAprovadoEnviaEmail();
+		
 	}
 	
 	private String verificaContratoSeAprovadoEnviaEmail() {
@@ -37762,4 +37843,5 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
+
 }

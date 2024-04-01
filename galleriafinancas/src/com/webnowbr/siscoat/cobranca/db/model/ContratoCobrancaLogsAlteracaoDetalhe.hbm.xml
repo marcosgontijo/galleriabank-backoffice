@@ -24,5 +24,12 @@
 		<property name="valorAlterado" type="java.lang.String">
 			<column name="valorAlterado" />
 		</property>
+		
+		
+		<many-to-one name="logsalteracao"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao"
+			lazy="false">
+			<column name="logsalteracao" />
+		</many-to-one>
     </class>
 </hibernate-mapping>

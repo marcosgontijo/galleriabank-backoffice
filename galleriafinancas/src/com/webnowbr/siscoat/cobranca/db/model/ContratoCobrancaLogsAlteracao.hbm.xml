@@ -31,12 +31,16 @@
 			<column name="statusEsteira"   />
 		</property>
 		
-		<set name="detalhes" table="contratocobrancalogsalteracaodetalhe" cascade="all"
+        <set name="detalhes" table="contratocobrancalogsalteracaodetalhe" cascade="all"
                  lazy="false" fetch="select">
             <key>
-                <column name="detalhes"/>
+                <column name="logsalteracao" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe" />
-        </set>
+        </set>  
+        
+        <property name="logJustificado" type="boolean">
+			<column name="logJustificado" not-null="true" default="false"/>
+		</property>
     </class>
 </hibernate-mapping>

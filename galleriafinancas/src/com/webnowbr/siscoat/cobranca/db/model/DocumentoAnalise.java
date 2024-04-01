@@ -21,14 +21,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import javax.faces.bean.ManagedProperty;
 import javax.faces.model.SelectItem;
 
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.GravamesReaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
+import com.webnowbr.siscoat.cobranca.service.ContratoCobrancaService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
@@ -41,6 +44,8 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaResponse;
 import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaVeiculos;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponse;
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponseResultFinantialDataTaxReturns;
@@ -65,6 +70,9 @@ public class DocumentoAnalise implements Serializable {
 	 */
 	private static final long serialVersionUID = -4489431101607924990L;
 
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
+	
 	private long id;
 	private String idRemoto;
 
@@ -83,7 +91,7 @@ public class DocumentoAnalise implements Serializable {
 	private String origem;
 	private Date dataCadastro; 
 	private String usuarioCadastro;
-	private DocumentoAnalise analiseOriginal;
+	private DocumentoAnalise analiseOriginal; 
 	private boolean reanalise;
 	
 	private boolean liberadoAnalise;	
@@ -966,10 +974,11 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public void removerEstado(String estado) {
-		if(!CommonsUtil.semValor(estado) && getEstadosConsulta().contains(estado)) {
+		if (!CommonsUtil.semValor(estado) && getEstadosConsulta().contains(estado)) {
 			List<String> aux = getEstadosConsulta();
 			aux.remove(estado);
 			estadosConsultaStr = aux.toString();
+
 		}
 	}
 	
