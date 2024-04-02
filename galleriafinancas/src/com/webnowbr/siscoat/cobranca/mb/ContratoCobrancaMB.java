@@ -21023,11 +21023,11 @@ public class ContratoCobrancaMB {
 		
 		//documento do recebedor
 		if(!CommonsUtil.semValor(previsao.name))
-			documentoRecebedorOrdemPagamentoStark = previsao.name;
+			nomeRecebedorOrdemPagamentoStark = previsao.name;
 		
 		//nome do recebedor
 		if(!CommonsUtil.semValor(previsao.taxId))
-			nomeRecebedorOrdemPagamentoStark = previsao.taxId;
+			documentoRecebedorOrdemPagamentoStark = previsao.taxId;
 		
 		if(!CommonsUtil.semValor(previsao.accountType)) {
 			if(CommonsUtil.mesmoValor(previsao.accountType, "saving")) {
