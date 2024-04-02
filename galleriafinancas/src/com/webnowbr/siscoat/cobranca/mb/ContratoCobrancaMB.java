@@ -870,7 +870,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorBoletoPreContrato;
 	private BigDecimal taxaPreAprovada;
 	private BigInteger prazoMaxPreAprovado;
-	private BigDecimal valorMercadoImovel;
+	
 	private BigDecimal valorVendaForçadaImóvel;
 	private String comentarioJuridico;
 
@@ -880,6 +880,10 @@ public class ContratoCobrancaMB {
 	private List<Responsavel> listResponsavel;
 
 	private boolean financeiroGalleria = false;
+	
+	private BigDecimal valorMercadoImovel;
+	
+	private BigDecimal valoSobraDepsesasCalculado;
 
 	private Boolean addPagadorPreContrato;
 
@@ -21898,7 +21902,7 @@ public class ContratoCobrancaMB {
 				cell1.setPaddingBottom(30f);
 				table.addCell(cell1);
 			} else {
-				cell1 = new PdfPCell(new Phrase("Galleria Correspondente Bancário Eireli", titulo));
+				cell1 = new PdfPCell(new Phrase("Galleria Bank", titulo));
 				cell1.setBorder(0);
 				cell1.setPaddingLeft(8f);
 				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -38254,4 +38258,17 @@ public class ContratoCobrancaMB {
 		this.nomePagadorOrdemPagamentoStark = nomePagadorOrdemPagamentoStark;
 	}
 	
+	public BigDecimal getValoSobraDepsesasCalculado() {
+		BigDecimal valoSobraDepsesasCalculado = BigDecimal.ZERO;
+		
+		if (this.objetoContratoCobranca != null && this.objetoContratoCobranca.getId() > 0) {
+			valoSobraDepsesasCalculado = this.objetoContratoCobranca.getValorCartaSplitGalleria().subtract(this.objetoContratoCobranca.getSomaValorPago());
+		}
+		
+		return valoSobraDepsesasCalculado;
+	}
+
+	public void setValoSobraDepsesasCalculado(BigDecimal valoSobraDepsesasCalculado) {
+		this.valoSobraDepsesasCalculado = valoSobraDepsesasCalculado;
+	}
 }
