@@ -21024,6 +21024,19 @@ public class ContratoCobrancaMB {
 		//nome do recebedor
 		if(!CommonsUtil.semValor(previsao.taxId))
 			nomeRecebedorOrdemPagamentoStark = previsao.taxId;
+		
+		if(!CommonsUtil.semValor(previsao.accountType)) {
+			if(CommonsUtil.mesmoValor(previsao.accountType, "saving")) {
+				tipoContaBancariaOrdemPagamentoStark = "Conta Poupança";
+			} else if(CommonsUtil.mesmoValor(previsao.accountType, "payment")) {
+				tipoContaBancariaOrdemPagamentoStark = "Conta Pagamento";
+			} else if(CommonsUtil.mesmoValor(previsao.accountType, "checking")) {
+				tipoContaBancariaOrdemPagamentoStark = "Conta Corrente";
+			}
+		}
+		
+		if(!CommonsUtil.semValor(previsao.bankName))
+			bancoOrdemPagamentoStark = previsao.bankName;
 	}
 	
 	public ContasPagar buscaDespesaCartaSplit(String despesa, String numeroContrato) {

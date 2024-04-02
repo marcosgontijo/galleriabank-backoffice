@@ -5776,7 +5776,7 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.pixOrdemPagamentoStark}" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}">
 								 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank('Chave Pix')}"
-							 		update="nomeBancarioContaPagarPixStarkBank cpfCnpjBancarioContaPagarPixStarkBank ContaPagarValorPagoPixStarkBank" ></p:ajax>
+							 		update="nomeBancarioContaPagarPixStarkBank cpfCnpjBancarioContaPagarPixStarkBank ContaPagarValorPagoPixStarkBank tipoContaBancariaPix bancoBancarioContaPagarPixStarkBank" ></p:ajax>
 							</p:inputText>
 								
 							<p:outputLabel for="nomeBancarioContaPagarPixStarkBank" value="Nome:" 
@@ -5793,19 +5793,26 @@
 	
 							<p:outputLabel for="tipoContaBancariaPix" value="Tipo da Conta: "
 									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
+									style="font-weight: bold; font-size: 18px;"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários' ||
+									contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}"/>
 							<p:selectOneMenu id="tipoContaBancariaPix"
-									value="#{contratoCobrancaMB.tipoContaBancariaOrdemPagamentoStark}"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}">
+									value="#{contratoCobrancaMB.tipoContaBancariaOrdemPagamentoStark}" 
+									rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'||
+									contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}">
 									<f:selectItem itemValue="" itemLabel="Selecione" />
 									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
 									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+									<f:selectItem itemValue="Conta Pagamento" itemLabel="Conta Pagamento" />
 							</p:selectOneMenu>
 							
 							<p:outputLabel for="bancoBancarioContaPagarPixStarkBank" value="Banco: " 
-								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
+								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'||
+									contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}"/>
 							<p:inputText id="bancoBancarioContaPagarPixStarkBank"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.bancoOrdemPagamentoStark}" required="true" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}" />
+								value="#{contratoCobrancaMB.bancoOrdemPagamentoStark}" required="true" 
+								rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'||
+									contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}" />
 	
 							<p:outputLabel for="agenciaBancarioContaPagarPixStarkBank" value="Agência: " 
 								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
@@ -5818,9 +5825,6 @@
 							<p:inputText id="contaBancarioContaPagarPixStarkBank"
 								style="width:250px;"
 								value="#{contratoCobrancaMB.contaOrdemPagamentoStark}" required="true"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
-								
-							
-								
 							
 							<p:outputLabel for="ispbBancarioContaPagar" value="ISPB (se não tem chave PIX): " 
 								style="width:250px;" styleClass="labelBold" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
