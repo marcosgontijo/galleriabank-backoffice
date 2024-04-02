@@ -523,7 +523,7 @@
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" 
-								value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
+								value="#{contratoCobrancaMB.getSobraDespesa(contratoCobrancaMB.objetoContratoCobranca)}"
 								converter="bigDecimalConverter" />	
 						</h:panelGrid>	
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">
