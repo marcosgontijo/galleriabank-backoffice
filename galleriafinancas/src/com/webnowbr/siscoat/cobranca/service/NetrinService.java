@@ -276,7 +276,12 @@ public class NetrinService {
 			receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(), ReceitaFederalPF.class);
 		} else
 			receitaFederalPF = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
-
+		
+		if(!CommonsUtil.semValor(receitaFederalPF) 
+				&& !CommonsUtil.semValor(receitaFederalPF.getCpfBirthdate()) 
+				&& CommonsUtil.mesmoValor(receitaFederalPF.getCpfBirthdate().getMessage(), "Menor de idade"))
+			return receitaFederalPF;
+		
 		pagadorRecebedor.setNome(receitaFederalPF.getCpfBirthdate().getNome());
 		pagadorRecebedor.setDtNascimento(
 				CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/yyyy"));

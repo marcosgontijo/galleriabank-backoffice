@@ -417,7 +417,9 @@ public class ResponsavelMB {
 	
 	public void loadLovResponsavel() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
+		//this.listResponsaveis = responsavelDao.findAll();
 		this.listResponsaveisGeral = responsavelDao.findAll();
+		this.setListResponsaveis(listResponsaveisGeral);
 	}
 	
 	public void loadResponsavel() {

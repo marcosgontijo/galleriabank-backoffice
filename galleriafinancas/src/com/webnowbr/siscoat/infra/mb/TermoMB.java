@@ -155,6 +155,7 @@ public class TermoMB {
 				TermoDao termoDao = new TermoDao();
 
 				filters.put("termo", "false");
+				filters.put("deletado", "false");
 
 				setRowCount(termoDao.count(filters));
 
@@ -169,8 +170,8 @@ public class TermoMB {
 		return nomeUsuario;
 	}
 
-	public void setNomeUsuario(String nomeUsuario) {
-		this.nomeUsuario = nomeUsuario;
+	public void setNomeUsuario() {
+		this.nomeUsuario = loginBean.getUsuarioLogado().getLogin();
 	}
 
 	public void listaUsuario(Long id) {
@@ -276,7 +277,7 @@ public class TermoMB {
 
 	public String clearFieldsEditar() {
 		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
-
+		TermoDao termoDao = new TermoDao();
 		UserDao userdao = new UserDao();
 
 		this.todosUsuario = userdao.carregarUsuariosLista();
@@ -292,13 +293,13 @@ public class TermoMB {
 		this.listaDeUsuariosPickList = new DualListModel<>(this.listaOrigem, this.listaDestino);
 
 		if (objetoTermo == null) {
+			setNomeUsuario();
 			objetoTermo = new Termo();
-//			if (idPerfilSelecionado == "PUBLICO" && userPerfilPublico == null) {
-//				objetoTermo.setUserPerfil(userPerfilIndividual.get());
-//			}
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
 			objetoTermo.setUserPerfil(userPerfilPublico.get());
 			this.tituloPainel = "Inserir";
+			objetoTermo.setDeletado(false);
+			objetoTermo.setUsuarioCriador(nomeUsuario);
 
 		} else {
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.objetoTermo.getUserPerfil().getId());
@@ -321,6 +322,16 @@ public class TermoMB {
 		return "/Cadastros/Cobranca/TermoInserir.xhtml";
 
 	}
+	public void excluirTermo(Termo objetoTermoExcluir) {
+	    TermoDao termoDao = new TermoDao();
+	    setNomeUsuario();
+	    objetoTermoExcluir.setUsuarioDelete(nomeUsuario);
+	    objetoTermoExcluir.setDataDelete(DateUtil.gerarDataHoje());
+	    objetoTermoExcluir.setDeletado(true);
+	    termoDao.merge(objetoTermoExcluir);    
+	    FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "/Cadastros/Cobranca/TermoConsultar.xhtml?faces-redirect=true");
+	}
+
 
 	private void carregaListaPerfil() {
 		if (perfil == null) {
@@ -888,58 +899,8 @@ public class TermoMB {
 					}
 				}
 			}
-//				
-//				
-//				
-//				
-////	        builder.append(usuario.getName()).append(", ");
-//				if (event.isAdd()) {
-//					this.listaExcluir.remove(usuario); // Se o usuário foi transferido para a lista target, remova-o da
-//														// lista de removidos
-//				} else {
-//					this.listaExcluir.add(usuario); // Se o usuário foi transferido para a lista source, adicione-o à lista
-//													// de removidos
-//				}
-//			}
-//			
-//			
-//			for (Object item : event.getItems()) {
-//				if (item != null) {
-//					User usuario = new User();
-//					usuario = fromString(item.toString());
-//					this.listaExcluir.add(usuario);
-//					this.listaOrigem.add(usuario);
-//				}
-//			}
-//		} else {
-//			for (Object item : event.getItems()) {
-//				if (item != null) {
-//					final User usuario = fromString(item.toString());
-//					Optional<User> userR = this.listaExcluir.stream()
-//							.filter(u -> CommonsUtil.mesmoValor(u.getId(), usuario.getId())).findAny();
-//
-//					if (userR.isPresent())
-//						this.listaExcluir.remove(userR.get());
-//					this.listaDestino.add(usuario);
-//
-//				}
-//			}
-//		}
-//	
-//		
-//		for (Object item : event.getItems()) {
-//			UserVO usuario = (UserVO) item;
-////        builder.append(usuario.getName()).append(", ");
-//			if (event.isAdd()) {
-//				this.listaExcluir.remove(usuario); // Se o usuário foi transferido para a lista target, remova-o da
-//													// lista de removidos
-//			} else {
-//				this.listaExcluir.add(usuario); // Se o usuário foi transferido para a lista source, adicione-o à lista
-//												// de removidos
-//			}
-//		}
 	}
-	
+
 
 	public void onSelect(SelectEvent event) {
 		FacesContext context = FacesContext.getCurrentInstance();
