@@ -10,12 +10,24 @@
 
 	<ui:define name="conteudo">  
 		<h:form style="margin-bottom:10px;">				
-			<p:messages id="mensagens" showDetail="true"/>							
-			<p:panel id="ConsultaUsuário" header="Usuário - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtUsuário" var="usuario" value="#{usuarioMB.lazyModel}" paginator="true" rows="10" lazy="true"
-   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="5,10,15" selection="" emptyMessage="" sortBy="#{usuario.login}">
+			<p:messages id="mensagens" showDetail="true"/>
+			<p:panel id="GerarExcel" header="Usuário - Gerar Excel" style="margin-bottom:10px;">		
+			<p:panelGrid  columns="2" style="border: none !important;">
+			<p:outputLabel value="Tipo de perfil:" />
+			<p:selectOneRadio value="#{usuarioMB.parametro}">
+			<f:selectItem itemLabel="Todos" itemValue="todos"/>
+			<f:selectItem itemLabel="Publico" itemValue="publico"/>
+			<f:selectItem itemLabel="Interno" itemValue="interno"/>
+			<f:selectItem itemLabel="Restrito" itemValue="restrito"/>
+			<f:selectItem itemLabel="Confidencial" itemValue="confidencial"/>
+			<p:ajax event="valueChange" listener="#{usuarioMB.consultaParametroPesquisa()}" update="ConsultaUsuário"/>
+			</p:selectOneRadio>
+			<p:commandButton value="Gerar Excel User" action="#{usuarioMB.carregaUserXLSX()}" ajax="false"/>
+			</p:panelGrid>		  
+			</p:panel>							
+			<p:panel id="ConsultaUsuário" header="Usuário - Consultar" style="margin-bottom:10px;">		
+				    
+   		         <p:dataTable id="dtUsuário" var="usuario" value="#{usuarioMB.usuarioLista}" paginator="true" rows="10" sortBy="#{usuario.login}">
 			        <p:column style="text-align: center;" headerText="Login" filterBy="#{usuario.login}" filterMatchMode="contains" sortBy="#{usuario.login}">
 			            <h:outputText value="#{usuario.login}" />
 			        </p:column>	

@@ -1035,7 +1035,8 @@ public class StarkBankAPI{
 		}
 		return null;
 		
-		/*
+		//retorno boleto
+		/* 
 			PaymentPreview({
 			    "scheduled": "2023-01-29",
 			    "type": "brcode-payment",
@@ -1059,6 +1060,53 @@ public class StarkBankAPI{
 			    },
 			    "id": "00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"
 			})
+		 */
+		// retorno pix qr code
+		/*
+		 * {
+		    "scheduled": "2024-03-28",
+		    "type": "brcode-payment",
+		    "payment": {
+		      "accountType": "payment",
+		      "allowChange": false,
+		      "amount": 800.0,
+		      "bankCode": "10573521",
+		      "cashAmount": 0.0,
+		      "cashierBankCode": "",
+		      "cashierType": "",
+		      "description": "teste",
+		      "discountAmount": 0.0,
+		      "fineAmount": 0.0,
+		      "interestAmount": 0.0,
+		      "keyId": "10743112644",
+		      "name": "Lucas Leal Araujo Murta Rezende",
+		      "nominalAmount": 800.0,
+		      "reconciliationId": "p8b96",
+		      "reductionAmount": 0.0,
+		      "status": "created",
+		      "taxId": "***.431.126-**"
+		    },
+		    "id": "00020126500014br.gov.bcb.pix0111107431126440213presente Jana52040000530398654048.005802BR5924Lucas Leal Araujo Murta 6008Brasilia62090505p8b966304386D"
+		  }
+		 */
+	}
+	
+	public static DictKey dictKey(String idPagamento) {
+		DictKey dictKey = null;
+		loginStarkBank();
+		try {
+			dictKey = DictKey.get(idPagamento);
+			if(!CommonsUtil.semValor(dictKey)) {
+				return dictKey;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+		/*
+			
 		 */
 	}
 	
