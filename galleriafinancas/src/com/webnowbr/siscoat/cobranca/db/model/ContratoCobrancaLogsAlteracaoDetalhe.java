@@ -10,8 +10,7 @@ public class ContratoCobrancaLogsAlteracaoDetalhe {
 	private String valorBanco;
 	private String valorAlterado;
 	private ContratoCobrancaLogsAlteracao logsalteracao;
-	//nao colocar no hbm somente transiente
-	private long ordem;
+	private long ordem; //nao colocar no hbm somente transiente
 	
 	public ContratoCobrancaLogsAlteracaoDetalhe(String nomeCampo, String nomeClasse, String valorBanco,
 			String valorAlterado, ContratoCobrancaLogsAlteracao alteracao,long ordem) {
