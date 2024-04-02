@@ -9,7 +9,10 @@ import java.util.List;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.db.dao.HibernateDao;
+import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.db.dao.*;
+import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
+import com.webnowbr.siscoat.infra.db.model.Termo;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 /**
@@ -88,6 +91,46 @@ public class UserDao extends HibernateDao<User, Long> {
 			}
 		});
 	}
+	@SuppressWarnings("unchecked")
+	public List<User> PesquisaUserPorPerfil (long idUserPerfil) {
+		return (List<User>) executeDBOperation(new DBRunnable() {
+
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				List<User> retorno = new ArrayList<>();
+			
+
+			try {
+					connection = getConnection();
+					StringBuilder query = new StringBuilder();
+					if(idUserPerfil == 0) {
+						query.append("select u.id from infra.users u");
+					}
+					else {
+					query.append("select u.id from infra.users u  where u.iduserperfil = " + idUserPerfil );
+					}
+					ps = connection.prepareStatement(query.toString());
+
+					rs = ps.executeQuery();
+
+					while (rs.next()) {
+						UserDao userDao = new UserDao();
+					retorno.add(userDao.findById(rs.getLong(1)));
+					}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+				
+				return retorno;
+			
+		}
+	});
+	
+}
 
 	private final String QUERY_LISTA_RESP = "select	r.id, r.nome  from 	cobranca.responsavel r"
 			+ " inner join cobranca.responsavel r2 on r2.id = r.donoresponsavel  where 	r2.codigo  = ?";
