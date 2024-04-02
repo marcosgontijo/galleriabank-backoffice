@@ -111,6 +111,7 @@ import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 import com.google.gson.JsonObject;
+import com.google.gson.internal.LinkedTreeMap;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -124,6 +125,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.starkbank.DictKey;
 import com.starkbank.PaymentPreview;
 import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
@@ -20924,6 +20926,18 @@ public class ContratoCobrancaMB {
 
 	public void insereDadosStarkBank(String metodoPagamento) {
 		try {
+			if (CommonsUtil.mesmoValor(metodoPagamento, "Chave Pix"))
+				pegarDadosDictKey(metodoPagamento);
+			else
+				pegarDadosPaymentPreview(metodoPagamento);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void pegarDadosPaymentPreview(String metodoPagamento) throws ParseException {
+		try {
 			String consulta = "";
 			if(CommonsUtil.mesmoValor(metodoPagamento, "boleto")) {
 				if(CommonsUtil.semValor(linhaBoletoOrdemPagamentoStark)) 
@@ -20942,49 +20956,74 @@ public class ContratoCobrancaMB {
 			PaymentPreview previsao = StarkBankAPI.paymentPreview(consulta);
 			if(CommonsUtil.semValor(previsao))
 				return;
-			
-			String payment = GsonUtil.toJson(previsao.payment);
-			JsonObject object = GsonUtil.fromJson(payment, JsonObject.class);
-			
-			
-			if(object.has("amount")) {
-				BigDecimal valor = CommonsUtil.bigDecimalValue(object.get("amount"));
-				valor = valor.divide(BigDecimal.valueOf(100),MathContext.DECIMAL128);
-				valorOrdemPagamentoStark = valor;
+			if(CommonsUtil.semValor(previsao.payment))
+				return;
+			 
+			// Get the all field objects of User class
+			LinkedTreeMap<String, Object> paymentObj = (LinkedTreeMap<String, Object>) previsao.payment;
+ 
+			for (Map.Entry<String, Object> entry : paymentObj.entrySet()) { 
+	            
+			    if(CommonsUtil.mesmoValor(entry.getKey(), "amount")) {
+			    	BigDecimal valor = CommonsUtil.bigDecimalValue(entry.getValue());
+					valor = valor.divide(BigDecimal.valueOf(100),MathContext.DECIMAL128);
+					valorOrdemPagamentoStark = valor;
+			    }
+			    
+			    //documento do recebedor
+				if(CommonsUtil.mesmoValor(entry.getKey(), "taxId"))
+					documentoRecebedorOrdemPagamentoStark = CommonsUtil.stringValue(entry.getValue());
+				
+				//nome do recebedor
+				if(CommonsUtil.mesmoValor(entry.getKey(), "name"))
+					nomeRecebedorOrdemPagamentoStark = CommonsUtil.stringValue(entry.getValue());
+				
+				//documento do pagador
+				if(CommonsUtil.mesmoValor(entry.getKey(), "payerTaxId")){
+					String documentoPagador = CommonsUtil.stringValue(entry.getValue());
+				}
+				
+				//nome do pagador
+				if(CommonsUtil.mesmoValor(entry.getKey(), "payerName")){
+					nomePagadorOrdemPagamentoStark  = CommonsUtil.stringValue(entry.getValue());
+				}
+				
+				if(CommonsUtil.mesmoValor(entry.getKey(), "due")){
+					Date dataVencimento;
+					DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+					dataVencimento = formatter.parse(CommonsUtil.stringValue(entry.getValue()));
+					dataVencimento = DateUtil.adicionarPeriodo(dataVencimento, -3, Calendar.HOUR);
+					dataVencimentoOrdemPagamentoStark = dataVencimento;
+				}
 			}
-			
-			//documento do recebedor
-			if(object.has("taxId"))
-				documentoRecebedorOrdemPagamentoStark = CommonsUtil.stringValue(object.get("taxId")).replace("\"", "");
-			
-			//nome do recebedor
-			if(object.has("name"))
-				nomeRecebedorOrdemPagamentoStark = CommonsUtil.stringValue(object.get("name")).replace("\"", "");
-			
-			//documento do pagador
-			if(object.has("payerTaxId")){
-				String documentoPagador = CommonsUtil.stringValue(object.get("payerTaxId")).replace("\"", "");
-			}
-			
-			//nome do pagador
-			if(object.has("payerName")){
-				nomePagadorOrdemPagamentoStark  = CommonsUtil.stringValue(object.get("payerName")).replace("\"", "");
-			}
-			
-			if(object.has("due")){
-				Date dataVencimento;
-				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX");
-				formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-				dataVencimento = formatter.parse(CommonsUtil.stringValue(object.get("due")).replace("\"", ""));
-				//System.out.println(dataVencimento);
-				dataVencimento = DateUtil.adicionarPeriodo(dataVencimento, -3, Calendar.HOUR);
-				//System.out.println(dataVencimento);
-				dataVencimentoOrdemPagamentoStark = dataVencimento;
-			}
-			
-		} catch (Exception e) {
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void pegarDadosDictKey(String metodoPagamento) throws ParseException {
+		String consulta = "";
+		if(CommonsUtil.semValor(pixOrdemPagamentoStark)) 
+			return;
+		
+		consulta = pixOrdemPagamentoStark;
+		
+		DictKey previsao = StarkBankAPI.dictKey(consulta);
+		if(CommonsUtil.semValor(previsao))
+			return;
+		
+		//documento do recebedor
+		if(!CommonsUtil.semValor(previsao.name))
+			documentoRecebedorOrdemPagamentoStark = previsao.name;
+		
+		//nome do recebedor
+		if(!CommonsUtil.semValor(previsao.taxId))
+			nomeRecebedorOrdemPagamentoStark = previsao.taxId;
 	}
 	
 	public ContasPagar buscaDespesaCartaSplit(String despesa, String numeroContrato) {
