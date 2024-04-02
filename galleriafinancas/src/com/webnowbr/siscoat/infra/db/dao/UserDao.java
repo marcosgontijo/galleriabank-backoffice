@@ -78,8 +78,12 @@ public class UserDao extends HibernateDao<User, Long> {
 			try {
 					connection = getConnection();
 					StringBuilder query = new StringBuilder();
-					query.append( "select u.id from infra.users u  where u.iduserperfil = " + idUserPerfil );
-
+					if(idUserPerfil == 0) {
+						query.append("select u.id from infra.users u");
+					}
+					else {
+					query.append("select u.id from infra.users u  where u.iduserperfil = " + idUserPerfil );
+					}
 					ps = connection.prepareStatement(query.toString());
 
 					rs = ps.executeQuery();
@@ -98,6 +102,7 @@ public class UserDao extends HibernateDao<User, Long> {
 	});
 	
 }
+	
 
 
 

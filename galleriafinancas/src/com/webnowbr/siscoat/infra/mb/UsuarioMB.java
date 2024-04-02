@@ -60,8 +60,7 @@ public class UsuarioMB {
 	private List<String> listPostos;
 	private List<User> usuarioLista;
 	private long idParametro;
-	private String parametro;
-	
+	private String parametro = "todos";	
 
 	private List<String> diasSemana;
 	private String[] selectedDiasSemana;
@@ -70,6 +69,7 @@ public class UsuarioMB {
 	private List<Responsavel> responsaveis;
 	private List<UserPerfil> perfil;
 	Optional<UserPerfil> userPerfilPublico;
+	private List<User> userLista;
 
 	/**
 	 * Construtor.
@@ -98,9 +98,19 @@ public class UsuarioMB {
 		};
 		
 		
+		
 	}
+	
+	public String ClearFieldsUsuario() {
+		consultaParametroPesquisa();
+		return "/Manutencao/UsuarioConsultar.xhtml";
+	}
+	@SuppressWarnings("null")
 	public void consultaParametroPesquisa() {
 		UserDao userDao = new UserDao();
+		if(CommonsUtil.mesmoValor(parametro, "publico")) {
+			idParametro = 1000;
+		}
 		if( CommonsUtil.mesmoValor(parametro , "interno")) {
 			idParametro = 2000;
 		}
@@ -109,6 +119,9 @@ public class UsuarioMB {
 		}
 		if(CommonsUtil.mesmoValor(parametro , "confidencial")) {
 			idParametro = 4000;
+		}
+		if(CommonsUtil.mesmoValor(parametro, "todos")) {
+			idParametro = 0;
 		}
 		usuarioLista = userDao.PesquisaUserPorPerfil(idParametro);
 	}
@@ -692,7 +705,7 @@ public class UsuarioMB {
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 
-			String nomeArquivoDownload = String.format("Galleria Bank - Users Internos %s.xlsx", "");
+			String nomeArquivoDownload = String.format("Galleria Bank - Users " + parametro + "%s.xlsx", "");
 			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 			gerador.close();
@@ -937,5 +950,11 @@ public class UsuarioMB {
 
 	public void setParametro(String parametro) {
 		this.parametro = parametro;
+	}
+	public List<User> getUserLista() {
+		return userLista;
+	}
+	public void setUserLista(List<User> userLista) {
+		this.userLista = userLista;
 	}
 }
