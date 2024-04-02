@@ -194,6 +194,9 @@
 								value="#{imovelEstoqueMB.objetoImovelEstoque.quitado}">
 								<p:ajax event="change" />
 							</p:selectBooleanCheckbox>
+							<p:outputLabel style="font-weight: bold;" value="Valor Total (R$):"/>
+							<p:outputLabel style="font-weight: bold;" value="#{imovelEstoqueMB.objetoContratoCobranca.contaPagarValorTotal}"
+							converter="bigDecimalConverter"/>
 							<p:commandButton value="Ver parcelas" action="#{contratoCobrancaMB.clearQuitarContratoDialog}" update="valorPresenteTotal" oncomplete="PF('ParcelaDialog').show();"></p:commandButton>
 						</h:panelGrid>
 						<f:facet name="footer">

@@ -920,6 +920,8 @@ public class ContratoCobrancaMB {
 	
 	private boolean continuar;
 	
+	private boolean disableBotao = true;
+	
 	public void mudaBotaoCartorio() {
 		this.setCartorioMudou(true);
 	}
@@ -3999,7 +4001,9 @@ public class ContratoCobrancaMB {
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		
-		String campoObservacao = this.contratoCobrancaLogsAlteracao.getObservacao();
+		if (!this.contratoCobrancaLogsAlteracao.getDetalhes().isEmpty() && !this.verificaQuantidadeCampoObservacao(this.contratoCobrancaLogsAlteracao)) {
+			return null;
+		}
 		
 		try {
 
@@ -4259,16 +4263,15 @@ public class ContratoCobrancaMB {
 				detalhe.setLogsalteracao(contratoCobrancaLogsAlteracaoBase);
 			}
 			
+			contratoCobrancaLogsAlteracaoBase.setObservacao(contratoCobrancaLogsAlteracao.getObservacao());
 			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracaoBase);
+			
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			
 			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {
 				contratoCobrancaService.adicionaNovoDetalhe(detalhe);				
 			}
 		}
-		
-		if (!this.contratoCobrancaLogsAlteracao.getDetalhes().isEmpty() && this.verificaQuantidadeCampoObservacao(campoObservacao)) {
-			contratoCobrancaDao.merge(this.objetoContratoCobranca);
-		} else 
-			return null;
 		
 		// verifica se o contrato for aprovado, manda um tipo de email..
 		// senao valida se houve alteração no checklist para envio de email.
@@ -37653,10 +37656,10 @@ public class ContratoCobrancaMB {
 		return nomePropiedade;
 	}
 	
-	public boolean verificaQuantidadeCampoObservacao(String observacao) {
+	public boolean verificaQuantidadeCampoObservacao(ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao) {
 		
 		boolean passouVerificacao = true;
-		observacao = contratoCobrancaLogsAlteracao.getObservacao();
+		String observacao = contratoCobrancaLogsAlteracao.getObservacao();
 		
         if (observacao == null || observacao.trim().isEmpty()) {
         	passouVerificacao = false;
@@ -37672,6 +37675,16 @@ public class ContratoCobrancaMB {
         } 
         return passouVerificacao;
     }
+	
+	
+	public void verificaDisableBotao() {
+		if(verificaQuantidadeCampoObservacao(this.contratoCobrancaLogsAlteracao)) {
+			disableBotao = false;
+		} else {
+			disableBotao = true;
+		}
+		
+	}
 	
 	private Boolean validaDiferencasCamposEsteira(FacesContext context) {
 
@@ -37839,6 +37852,14 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+	}
+
+	public boolean isDisableBotao() {
+		return disableBotao;
+	}
+
+	public void setDisableBotao(boolean disableBotao) {
+		this.disableBotao = disableBotao;
 	}
 
 }

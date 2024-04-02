@@ -25,8 +25,14 @@ public class ContratoCobrancaAlteracaoMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	
+	@ManagedProperty(value = "#{contratoCobrancaMB}")
+	private ContratoCobrancaMB contratoCobrancaMB;
+	
 	ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao;
 	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
+	
+	private Boolean disableBotao = true;
+	private String observacao;
 	
 	public String exibePopPupSeNaoConfirmar() {
 		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
@@ -73,6 +79,14 @@ public class ContratoCobrancaAlteracaoMB {
 		} 
 		return nomePropiedade;
 	}
+	
+	public void verificaDisableBotao() {
+		if (contratoCobrancaMB.verificaQuantidadeCampoObservacao(contratoCobrancaLogsAlteracao)) {
+			disableBotao = false;
+		} else {
+			disableBotao = true;
+		}
+	}
 
 	public LoginBean getLoginBean() {
 		return loginBean;
@@ -80,6 +94,22 @@ public class ContratoCobrancaAlteracaoMB {
 
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
+	}
+
+	public Boolean getDisableBotao() {
+		return disableBotao;
+	}
+
+	public void setDisableBotao(Boolean disableBotao) {
+		this.disableBotao = disableBotao;
+	}
+
+	public ContratoCobrancaMB getContratoCobrancaMB() {
+		return contratoCobrancaMB;
+	}
+
+	public void setContratoCobrancaMB(ContratoCobrancaMB contratoCobrancaMB) {
+		this.contratoCobrancaMB = contratoCobrancaMB;
 	}
 	
 }
