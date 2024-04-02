@@ -4001,10 +4001,6 @@ public class ContratoCobrancaMB {
 		
 		String campoObservacao = this.contratoCobrancaLogsAlteracao.getObservacao();
 		
-		if (!this.contratoCobrancaLogsAlteracao.getDetalhes().isEmpty() && !this.verificaQuantidadeCampoObservacao(campoObservacao)) {
-            //return null; 
-		} 
-		
 		try {
 
 		if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
@@ -4095,10 +4091,7 @@ public class ContratoCobrancaMB {
 		objetoImovelCobranca.popularObjetoCidade();
 		imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
-		// teste para ver se para de sobrescrever pagador
-
 		this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
-		// this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
 
 		if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
 			this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
@@ -4272,7 +4265,10 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		if (!this.contratoCobrancaLogsAlteracao.getDetalhes().isEmpty() && this.verificaQuantidadeCampoObservacao(campoObservacao)) {
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		} else 
+			return null;
 		
 		// verifica se o contrato for aprovado, manda um tipo de email..
 		// senao valida se houve alteração no checklist para envio de email.
@@ -37660,6 +37656,7 @@ public class ContratoCobrancaMB {
 	public boolean verificaQuantidadeCampoObservacao(String observacao) {
 		
 		boolean passouVerificacao = true;
+		observacao = contratoCobrancaLogsAlteracao.getObservacao();
 		
         if (observacao == null || observacao.trim().isEmpty()) {
         	passouVerificacao = false;
