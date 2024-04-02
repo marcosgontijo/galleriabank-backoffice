@@ -27,14 +27,15 @@
 			</p:panel>							
 			<p:panel id="ConsultaUsuário" header="Usuário - Consultar" style="margin-bottom:10px;">		
 				    
-   		         <p:dataTable id="dtUsuário" var="usuario" value="#{usuarioMB.usuarioLista}" paginator="true" rows="10" sortBy="#{usuario.login}">
+   		         <p:dataTable id="dtUsuário" var="usuario" value="#{usuarioMB.usuarioLista}" paginator="true" >
+   		         
 			        <p:column style="text-align: center;" headerText="Login" filterBy="#{usuario.login}" filterMatchMode="contains" sortBy="#{usuario.login}">
 			            <h:outputText value="#{usuario.login}" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{usuario.name}" filterMatchMode="contains" sortBy="#{usuario.name}">
+			        <p:column style="text-align: center;"  headerText="Nome" filterBy="#{usuario.name}" filterMatchMode="contains" sortBy="#{usuario.name}">
 			            <h:outputText value="#{usuario.name}" />
 			        </p:column>	
-			         <p:column style="text-align: center;" headerText="Perfil" filterBy="#{usuario.perfil}" filterMatchMode="contains" sortBy="#{usuario.perfil.perfil}">
+			         <p:column style="text-align: center;" headerText="Perfil" filterBy="#{usuario.userPerfil.perfil}" filterMatchMode="contains" sortBy="#{usuario.userPerfil.perfil}">
 			            <h:outputText value="#{usuario.userPerfil.perfil}" />
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Codigo" filterBy="#{usuario.codigoResponsavel}" filterMatchMode="contains" sortBy="#{usuario.codigoResponsavel}">
