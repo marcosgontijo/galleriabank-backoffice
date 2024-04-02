@@ -21592,9 +21592,21 @@ public class ContratoCobrancaMB {
 		return criado;
 	} 
 	
+	public BigDecimal getSobraDespesa(ContratoCobranca contrato) {
+		BigDecimal valorSobra = BigDecimal.ZERO;
+		
+		valorSobra = contrato.getValorCartaSplitGalleria().subtract(contrato.getSomaValorPago());
+		
+		return valorSobra;
+	}
+	
 	public BigDecimal calculaSobraDespesas(ContratoCobranca contrato) { 
 		BigDecimal saldo = BigDecimal.ZERO;
 		FacesContext context = FacesContext.getCurrentInstance(); 
+		
+		BigDecimal valorSobra = BigDecimal.ZERO;
+		
+		valorSobra = contrato.getValorCartaSplitGalleria().subtract(contrato.getSomaValorPago());
 
 		//Gastamos menos do que cobramos, devolvemos
 		if (contrato.getContaPagarValorTotal().compareTo(BigDecimal.ZERO) == 1) {
@@ -21608,7 +21620,7 @@ public class ContratoCobrancaMB {
 			contaPagar.setDataVencimento(getDataComMais15Dias(DateUtil.gerarDataHoje()));
 			contaPagar.setNumeroDocumento(contrato.getNumeroContrato());
 			contaPagar.setDescricao("Sobra Despesas");
-			contaPagar.setValor(contrato.getContaPagarValorTotal());
+			contaPagar.setValor(valorSobra);
 			contaPagar.setContrato(contrato);
 			contaPagar.setBancoTed(contrato.getBancoBancarioCartaSplit());
 			contaPagar.setAgenciaTed(contrato.getAgenciaBancarioCartaSplit());				
@@ -21625,7 +21637,7 @@ public class ContratoCobrancaMB {
 			
 			StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
 			starkBankBaixa.setDataPagamento(DateUtil.gerarDataHoje());
-			starkBankBaixa.setValor(contrato.getContaPagarValorTotal());
+			starkBankBaixa.setValor(valorSobra);
 			starkBankBaixa.setContasPagar(contaPagar);
 			starkBankBaixa.setStatusPagamento("Enviar Aprovação");
 			starkBankBaixa.setDocumento(contrato.getNumeroContrato());		
