@@ -60,7 +60,7 @@ public class UsuarioMB {
 	private List<String> listPostos;
 	private List<User> usuarioLista;
 	private long idParametro;
-	private String parametro = "todos";	
+	private String parametro = "todos";
 
 	private List<String> diasSemana;
 	private String[] selectedDiasSemana;
@@ -76,8 +76,7 @@ public class UsuarioMB {
 	public UsuarioMB() {
 
 		objetoUsuario = new User();
-		
-		
+
 		lazyModel = new LazyDataModel<User>() {
 
 			/** Serial. */
@@ -95,29 +94,30 @@ public class UsuarioMB {
 				return postoDao.findByFilter(first, pageSize, sortField, sortOrder.toString(), filters);
 			}
 		};
-		
+
 	}
-	
+
 	public String ClearFieldsUsuario() {
 		consultaParametroPesquisa();
 		return "/Manutencao/UsuarioConsultar.xhtml";
 	}
+
 	@SuppressWarnings("null")
 	public void consultaParametroPesquisa() {
 		UserDao userDao = new UserDao();
-		if(CommonsUtil.mesmoValor(parametro, "publico")) {
+		if (CommonsUtil.mesmoValor(parametro, "publico")) {
 			idParametro = 1000;
 		}
-		if( CommonsUtil.mesmoValor(parametro , "interno")) {
+		if (CommonsUtil.mesmoValor(parametro, "interno")) {
 			idParametro = 2000;
 		}
-		if(CommonsUtil.mesmoValor(parametro,"restrito")) {
+		if (CommonsUtil.mesmoValor(parametro, "restrito")) {
 			idParametro = 3000;
 		}
-		if(CommonsUtil.mesmoValor(parametro , "confidencial")) {
+		if (CommonsUtil.mesmoValor(parametro, "confidencial")) {
 			idParametro = 4000;
 		}
-		if(CommonsUtil.mesmoValor(parametro, "todos")) {
+		if (CommonsUtil.mesmoValor(parametro, "todos")) {
 			idParametro = 0;
 		}
 		usuarioLista = userDao.PesquisaUserPorPerfil(idParametro);
@@ -128,7 +128,7 @@ public class UsuarioMB {
 		ResponsavelDao rDao = new ResponsavelDao();
 		this.responsaveis = rDao.findAll();
 	}
-	
+
 	private void carregaListaPerfil() {
 		if (perfil == null) {
 			UserPerfilDao userPerfilDao = new UserPerfilDao();
@@ -140,13 +140,13 @@ public class UsuarioMB {
 
 	public String clearFields() {
 		objetoUsuario = new User();
-		
+
 		if (userSemPerfil == null)
 			carregaListaPerfil();
-		
+
 		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil()))
 			objetoUsuario.setUserPerfil(userSemPerfil.get());
-		
+
 		this.tituloPainel = "Adicionar";
 
 		this.diasSemana = new ArrayList<String>();
@@ -208,7 +208,7 @@ public class UsuarioMB {
 			GroupDao gDao = new GroupDao();
 			List<GroupAdm> gAdm = new ArrayList<GroupAdm>();
 			List<GroupAdm> gAdmAux = new ArrayList<GroupAdm>();
-			
+
 			gAdm = gDao.findByFilter("acronym", "INTERNO");
 			if (!CommonsUtil.semValor(gAdm) && objetoUsuario.isUserInterno()) {
 				gAdmAux.add(gAdm.get(0));
@@ -217,7 +217,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "ROOT");
 			if (objetoUsuario.isAdministrador()) {
 				gAdmAux.add(gAdm.get(0));
@@ -523,7 +523,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_NEVES");
 			if (objetoUsuario.isProfilePajuNeves()) {
 				gAdmAux.add(gAdm.get(0));
@@ -532,7 +532,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_LUVISON");
 			if (objetoUsuario.isProfilePajuLuvison()) {
 				gAdmAux.add(gAdm.get(0));
@@ -550,7 +550,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "CADASTRA_RESPONSAVEL");
 			if (objetoUsuario.isCadastraResponsavel()) {
 				gAdmAux.add(gAdm.get(0));
@@ -559,7 +559,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_COMPLIANCE");
 			if (objetoUsuario.isProfileCompliance()) {
 				gAdmAux.add(gAdm.get(0));
@@ -568,7 +568,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_CONTROLLER");
 			if (objetoUsuario.isProfileController()) {
 				gAdmAux.add(gAdm.get(0));
@@ -577,7 +577,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_CONSULTA_KOBANA");
 			if (objetoUsuario.isProfileConsultaKobana()) {
 				gAdmAux.add(gAdm.get(0));
@@ -586,7 +586,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "CONSULTA_INDIVIDUAL");
 			if (objetoUsuario.isConsultaIndividual()) {
 				gAdmAux.add(gAdm.get(0));
@@ -595,7 +595,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PLANEJAMENTO");
 			if (objetoUsuario.isUserPlanejamento()) {
 				gAdmAux.add(gAdm.get(0));
@@ -604,7 +604,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_CARTORIO");
 			if (objetoUsuario.isProfileCartorio()) {
 				gAdmAux.add(gAdm.get(0));
@@ -613,7 +613,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_JURIDICO_COBRANCA");
 			if (objetoUsuario.isProfileJuridicoCobranca()) {
 				gAdmAux.add(gAdm.get(0));
@@ -679,7 +679,7 @@ public class UsuarioMB {
 
 			return "";
 		}
-		
+
 		popularListaResponsavel();
 
 		return "UsuarioConsultar.xhtml";
@@ -735,7 +735,7 @@ public class UsuarioMB {
 
 		}
 	}
-	
+
 	public String excluir() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		UserDao postoDao = new UserDao();
@@ -808,7 +808,8 @@ public class UsuarioMB {
 	public void atualizaListagem() {
 		UserDao userDao = new UserDao();
 		userDao.carregarListaResponsavel(objetoUsuario);
-		//selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
+		// selectedResponsaveis = (Responsavel[])
+		// objetoUsuario.getListResponsavel().toArray();
 	}
 
 	/**
@@ -957,12 +958,15 @@ public class UsuarioMB {
 	public long getIdParametro() {
 		return idParametro;
 	}
+
 	public void setIdParametro(long idParametro) {
 		this.idParametro = idParametro;
 	}
+
 	public List<User> getUsuarioLista() {
 		return usuarioLista;
 	}
+
 	public void setUsuarioLista(List<User> usuarioLista) {
 		this.usuarioLista = usuarioLista;
 	}
