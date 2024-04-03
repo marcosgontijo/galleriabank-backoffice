@@ -31,7 +31,7 @@
                      paginator="true" paginatorPosition="both"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                     rowsPerPageTemplate="5,10,{ShowAll|'All'}" >
+                     rowsPerPageTemplate="5,10,{ShowAll|'All'}" sortBy="#{usuario.login}" >
    		         
 			        <p:column style="text-align: center;" headerText="Login" filterBy="#{usuario.login}" filterMatchMode="contains" sortBy="#{usuario.login}">
 			            <h:outputText value="#{usuario.login}" />
