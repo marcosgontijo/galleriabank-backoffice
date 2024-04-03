@@ -5,13 +5,14 @@
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
 	
-	<p:dialog  
+	<p:dialog 
 		id="comparacoesPopPupId" widgetVar="comparacoesPopPupIdvar"
 		resizable="false"  width="1000" height="700" closable="true"
 		 showEffect="explode" hideEffect="fold">
 			 <f:facet name="header">
 				<h:outputLabel escape = "false"
 					value= "Comparações dos campos que foram alterados."/> 
+			 <p:messages/>
 			 </f:facet>
 			 <div>
 				<h2 style="display: block; text-align: center">
@@ -19,7 +20,6 @@
     				<h:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"></h:outputLabel> 
 				</h2>
 			</div>
-		 <p:messages />
 			<div class="card">
 				<p:dataTable id="tableId" var="item" 
 				value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.detalhesOrdenado}">
@@ -30,7 +30,7 @@
 					<p:column headerText="Antes da alteração">
 						<h:outputText value="#{item.valorBanco}" />
 					</p:column>
-
+l
 					<p:column headerText="Depois">
 						<h:outputText value="#{item.valorAlterado}" />
 					</p:column>
@@ -39,12 +39,13 @@
 			<div>
 				<h4 style="display:block; text-align:center">Descreva no campo abaixo o motivo das alterações feitas.</h4>
 			</div>
--			<div style="display:block; float:center;" align="center">
+			<div style="float:center;" align="center">
 				<p:inputTextarea id="inputTextareaId" 
 					value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.observacao}" 
 					rows="5" cols="30" maxlength="200"
 					style="padding: 5px; width: 80%;height: 100%; display:block; text-align:center">
-					<p:ajax process="@this" partialSubmit="true"/>
+					<p:ajax process="@this" partialSubmit="true" event="blur" update="salvarAlteracaoId" 
+							listener="#{contratoCobrancaMB.verificaDisableBotao}"/>
 				</p:inputTextarea>
 			</div>
 				
@@ -57,7 +58,9 @@
 				</h4>
 			</div>
 			<div align="center">
-				<p:commandButton 
+				<p:commandButton
+					id="salvarAlteracaoId"
+					disabled="#{contratoCobrancaMB.disableBotao}"
 					value="Salvar Alterações"
 					icon="pi pi-copy"
 					action="#{contratoCobrancaMB.finalizaCheckListStatus}"
@@ -65,7 +68,6 @@
 					margin: auto;
 					padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
 					-moz-border-radius: 5px; border-radius: 5px;">
-					<p:ajax process="@this" partialSubmit="true" />
 				</p:commandButton>
 			</div>
 	</p:dialog>
