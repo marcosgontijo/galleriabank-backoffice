@@ -22040,7 +22040,7 @@ public class ContratoCobrancaMB {
 					table.addCell(cell1);
 				}
 			} else {
-				cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
+				cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomeRecebedor(), titulo));
 				cell1.setBorder(0);
 				cell1.setPaddingLeft(8f);
 				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -22165,6 +22165,18 @@ public class ContratoCobrancaMB {
 			table.addCell(cell1);
 			
 			if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Boleto")) {	
+				cell1 = new PdfPCell(new Phrase("Sacado do Boleto: " + baixaStarkBank.getNomePagador(), titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				cell1.setColspan(2);
+				table.addCell(cell1);
+				
 				cell1 = new PdfPCell(new Phrase("Linha Digitável: " + baixaStarkBank.getLinhaBoleto(), titulo));
 				cell1.setBorder(0);
 				cell1.setPaddingLeft(8f);
@@ -24167,12 +24179,14 @@ public class ContratoCobrancaMB {
 					// } else {
 					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();
 					// }
+					/*
 					if (boletosKokanaSelecionados.getParcela().getVlrBoletoKobana() != null && 
 							boletosKokanaSelecionados.getParcela().getVlrBoletoKobana().compareTo(BigDecimal.ZERO) > 0) {
 						this.vlrRecebido = boletosKokanaSelecionados.getParcela().getVlrBoletoKobana();
 					} else {
+					*/
 						this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
-					}
+					//}
 
 					baixarParcelaParcial();
 				}
