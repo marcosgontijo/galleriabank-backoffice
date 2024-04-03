@@ -143,7 +143,9 @@ public class UsuarioMB {
 		
 		if (userSemPerfil == null)
 			carregaListaPerfil();
-		objetoUsuario.setUserPerfil(userSemPerfil.get());
+		
+		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil()))
+			objetoUsuario.setUserPerfil(userSemPerfil.get());
 		
 		this.tituloPainel = "Adicionar";
 
