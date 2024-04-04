@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -23,8 +25,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -38,11 +40,6 @@ import com.webnowbr.siscoat.infra.db.model.GroupAdm;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.db.model.UserPerfil;
 import com.webnowbr.siscoat.security.TwoFactorAuth;
-
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
-import java.util.Optional;
 
 /** ManagedBean. */
 @ManagedBean(name = "usuarioMB")
@@ -102,7 +99,6 @@ public class UsuarioMB {
 		return "/Manutencao/UsuarioConsultar.xhtml";
 	}
 
-	@SuppressWarnings("null")
 	public void consultaParametroPesquisa() {
 		UserDao userDao = new UserDao();
 		if (CommonsUtil.mesmoValor(parametro, "publico")) {
@@ -200,6 +196,7 @@ public class UsuarioMB {
 		return "UsuarioInserir.xhtml";
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	public String inserir() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		UserDao postoDao = new UserDao();
