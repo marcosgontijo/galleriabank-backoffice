@@ -771,13 +771,12 @@ public class ImovelCobranca implements Serializable {
 
 	public int getCategoria() {
 		if (CommonsUtil.mesmoValor(this.getTipo(), "Apartamento")) {
+			this.setSubCategoria(1);
 			return 1;
 		}
-		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa")) {
+		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa") || this.getTipo().toLowerCase().contains("condomínio")) {
+			this.setSubCategoria(2);
 			return 2;
-		}
-		if (this.getTipo().toLowerCase().contains("condomínio")) {
-			return 3;
 		}
 		return 0;
 	}
