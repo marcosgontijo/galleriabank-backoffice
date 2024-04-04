@@ -23314,84 +23314,18 @@ public class ContratoCobrancaMB {
 
 	public String estornarBaixaParcela() {
 		FacesContext context = FacesContext.getCurrentInstance();
-
-		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dtHoje = Calendar.getInstance(zone, locale);
-
-		/*
-		 * // verifica se a parcela ja teve uma baixa if
-		 * (this.selectedContratoCobrancaDetalhes.isParcelaPaga()) { // se sim, verifica
-		 * se o valor digitado é diferente do valor da parcela (isso significa correção
-		 * de operação) if
-		 * (this.selectedContratoCobrancaDetalhes.getVlrParcelaAtualizada() !=
-		 * this.selectedContratoCobrancaDetalhes.getVlrRepasse()) { // se sim, corrigi o
-		 * valor pago e seta a parcela como não baixada
-		 * this.selectedContratoCobrancaDetalhes.setVlrSaldoParcela(this.
-		 * selectedContratoCobrancaDetalhes.getVlrRepasse().subtract(this.
-		 * selectedContratoCobrancaDetalhes.getListContratoCobrancaFavorecidos().get(0).
-		 * getVlrRecebido()));
-		 * this.selectedContratoCobrancaDetalhes.setParcelaPaga(false); } } else { // se
-		 * parcela não baixada // verifica se o valor a ser baixado é o Total da parcela
-		 * ou o total do saldo da parcela //TODO baixa parcial //if
-		 * (this.selectedContratoCobrancaDetalhes.getVlrParcelaAtualizada().equals(this.
-		 * selectedContratoCobrancaDetalhes.getVlrParcela()) //||
-		 * this.selectedContratoCobrancaDetalhes.getVlrParcelaAtualizada().equals(this.
-		 * selectedContratoCobrancaDetalhes.getVlrSaldoParcela())) { if
-		 * (this.selectedContratoCobrancaDetalhes.getListContratoCobrancaFavorecidos().
-		 * get(0).getVlrRecebido().equals(this.selectedContratoCobrancaDetalhes.
-		 * getVlrParcela())) { // se sim, seta a parcela como baixada e zera os saldos
-		 * this.selectedContratoCobrancaDetalhes.setParcelaPaga(true);
-		 * this.selectedContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
-		 * this.selectedContratoCobrancaDetalhes.setVlrParcelaAtualizada(this.
-		 * selectedContratoCobrancaDetalhes.getVlrParcela()); } else { // se não,
-		 * calcula o saldo que ficará na parcela e deixa ela em aberto
-		 * this.selectedContratoCobrancaDetalhes.setVlrSaldoParcela(this.
-		 * selectedContratoCobrancaDetalhes.getVlrParcela().subtract(this.
-		 * selectedContratoCobrancaDetalhes.getListContratoCobrancaFavorecidos().get(0).
-		 * getVlrRecebido())); } }
-		 * 
-		 * //this.selectedContratoCobrancaDetalhes.setListContratoCobrancaFavorecidos(
-		 * this.listContratoCobrancaFavorecidos);
-		 */
+		
 		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
-
-			for (ContratoCobrancaDetalhes c : this.selectedListContratoCobrancaDetalhes) {
-				c.setParcelaPaga(false);
-				c.setVlrSaldoParcela(c.getVlrParcela());
-				c.setVlrParcelaAtualizada(c.getVlrParcelaAtualizada());
-				c.setDataPagamento(null);
-
-				if (c.getDataVencimentoAtual().before(dtHoje.getTime()) && !c.isParcelaPaga()) {
-					c.setParcelaVencida(true);
+			for (ContratoCobrancaDetalhes parcela : this.selectedListContratoCobrancaDetalhes) {
+				bpContratoCobrancaDetalhes = parcela;
+				for(int j = 0; parcela.getListContratoCobrancaDetalhesParcial().size() > 0; j=j) {
+					ContratoCobrancaDetalhesParcial detalhes = parcela.getListContratoCobrancaDetalhesParcial().get(j);
+					estornoBaixaParcial(detalhes);
 				}
-
-				if (c.getDataVencimentoAtual().equals(dtHoje.getTime()) && !c.isParcelaPaga()) {
-					c.setParcelaVencendo(true);
-				}
-
-				contratoCobrancaDetalhesDao.merge(c);
 			}
-
 			this.selectedListContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
-
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Contrato Cobrança: Parcela(s) estornada(s) com sucesso!", ""));
-
-			// limpa campos
-			/*
-			 * this.relIsRelAtraso = false; this.relIsCompleto = true; Calendar dataInicio =
-			 * Calendar.getInstance(zone, locale); this.relDataContratoInicio =
-			 * dataInicio.getTime(); this.relDataContratoFim = dataInicio.getTime();
-			 * this.relObjetoContratoCobranca = new
-			 * ArrayList<RelatorioFinanceiroCobranca>();
-			 * this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
-			 * 
-			 * clearPagador(); clearRecebedor(); clearRecebedor2(); clearResponsavel();
-			 * 
-			 * this.contratoGerado = false;
-			 */
 
 			return "/Atendimento/Cobranca/ContratoCobrancaBaixar.xhtml";
 		} else {
