@@ -486,7 +486,7 @@
 					<p:panel header="Dispesas" style="margin-bottom:10px;">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
 								<p:commandButton icon="ui-icon-plus"
 									action="#{contratoCobrancaMB.clearConta()}"
 									oncomplete="PF('despesaDialog').show();"
@@ -661,10 +661,12 @@
 											<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
 												<p:commandButton value="Excluir Ordem de Pagamento" ajax="false" icon="ui-icon-trash" 
 													action="#{contratoCobrancaMB.excluirOrdemPagamentoStarkBank(pagamento.contasPagar, pagamento)}" 
-													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"/>
-												<p:commandButton value="Enviar Ordem para Aprovação" ajax="false" icon="ui-icon-trash" 
+													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"
+													disabled="#{pagamento.statusPagamento eq 'Aprovado'}"/>
+												<p:commandButton value="Enviar Ordem para Aprovação" ajax="false" icon="ui-icon-arrowthick-1-s" 
 													action="#{contratoCobrancaMB.enviarOrdemPagamentoStarkBank(pagamento)}" 
-													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"/>
+													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"
+													disabled="#{pagamento.statusPagamento eq 'Aprovado'}"/>
 											</shiro:hasAnyRoles>     
 											<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar" rendered="#{pagamento.statusPagamento eq 'Aprovado'}">						       	 	
 									       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(pagamento)}" />
