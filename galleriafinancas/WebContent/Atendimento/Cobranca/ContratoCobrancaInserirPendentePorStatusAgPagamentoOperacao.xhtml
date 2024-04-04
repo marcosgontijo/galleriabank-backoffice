@@ -766,12 +766,6 @@
 									<p:inputText id="pixCartaSplit"
 										style="width:250px;font-weight: bold; font-size: 18px !important;"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplit}" />
-										
-									<p:outputLabel for="ispbCartaSplit" value="ISPB (se não tem código PIX): "  
-										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-									<p:inputText id="ispbCartaSplit"
-										style="width:250px;font-weight: bold; font-size: 18px !important;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplit}" />
 								</shiro:hasAnyRoles>
 								
 								<shiro:lacksRole name="ROOT">
@@ -810,12 +804,13 @@
 										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 									<p:outputLabel id="pixCartaSplitRead" value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplit}"
 										style="width:250px;font-weight: bold; font-size: 18px !important;" />
-										
-									<p:outputLabel for="ispbCartaSplitRead" value="ISPB (se não tem código PIX): "  
-										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-									<p:outputLabel id="ispbCartaSplitRead" value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplit}"
-										style="width:250px;font-weight: bold; font-size: 18px !important;" />
 								</shiro:lacksRole>
+								
+								<p:outputLabel for="ispbCartaSplit" value="ISPB (se não tem código PIX): "  
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplit}" />	
 
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplit}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
@@ -872,12 +867,6 @@
 									<p:inputText id="pixCartaSplitGalleria"
 										style="width:250px;font-weight: bold; font-size: 18px !important;"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplitGalleria}" />
-										
-									<p:outputLabel for="ispbCartaSplitGalleria" value="ISPB (se não tem código PIX): " 
-										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-									<p:inputText id="ispbCartaSplitGalleria"
-										style="width:250px;font-weight: bold; font-size: 18px !important;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplitGalleria}" />
 								</shiro:hasAnyRoles>
 								
 								<shiro:lacksRole name="ROOT">
@@ -916,12 +905,13 @@
 										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 									<p:outputLabel id="pixCartaSplitGalleriaRead" value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplitGalleria}"
 										style="width:250px;font-weight: bold; font-size: 18px !important;" />
-										
-									<p:outputLabel for="ispbCartaSplitGalleriaRead" value="ISPB (se não tem código PIX): " 
-										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-									<p:outputLabel id="ispbCartaSplitGalleriaRead" value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplitGalleria}"
-										style="width:250px;font-weight: bold; font-size: 18px !important;" />
 								</shiro:lacksRole>
+								
+								<p:outputLabel for="ispbCartaSplitGalleria" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplitGalleria}" />
 									
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitGalleria}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
@@ -978,12 +968,6 @@
 									<p:inputText id="pixCustoEmissao"
 										style="width:250px;font-weight: bold; font-size: 18px !important;"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pixCustoEmissao}" />
-										
-									<p:outputLabel for="ispbCustoEmissao" value="ISPB (se não tem código PIX): " 
-										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-									<p:inputText id="ispbCustoEmissao"
-										style="width:250px;font-weight: bold; font-size: 18px !important;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCustoEmissao}" />
 								</shiro:hasAnyRoles>
 								
 								<shiro:lacksRole name="ROOT">
@@ -1022,12 +1006,13 @@
 										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 									<p:outputLabel id="pixCustoEmissaoRead" value="#{contratoCobrancaMB.objetoContratoCobranca.pixCustoEmissao}"
 										style="width:250px;font-weight: bold; font-size: 18px !important;" />
-										
-									<p:outputLabel for="ispbCustoEmissaoRead" value="ISPB (se não tem código PIX): " 
-										style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-									<p:outputLabel id="ispbCustoEmissaoRead" value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCustoEmissao}"
-										style="width:250px;font-weight: bold; font-size: 18px !important;" />
 								</shiro:lacksRole>
+								
+								<p:outputLabel for="ispbCustoEmissao" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCustoEmissao}" />
 								
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitCustoEmissao}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"

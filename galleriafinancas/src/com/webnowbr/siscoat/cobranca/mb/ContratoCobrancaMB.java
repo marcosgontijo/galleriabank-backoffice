@@ -22101,7 +22101,8 @@ public class ContratoCobrancaMB {
 					cell1.setColspan(2);
 					cell1.setPaddingBottom(20f);	
 					table.addCell(cell1);
-				} else {					
+				} 
+				/*else {					
 					cell1 = new PdfPCell(new Phrase("Banco: " + baixaStarkBank.getContasPagar().getBancoTed(), titulo));
 					cell1.setBorder(0);
 					cell1.setPaddingLeft(8f);
@@ -22123,7 +22124,7 @@ public class ContratoCobrancaMB {
 					cell1.setPaddingTop(10f);
 					cell1.setPaddingBottom(20f);
 					table.addCell(cell1);
-				}
+				}*/
 			}
 			
 			cell1 = new PdfPCell(new Phrase("Transferência - " + baixaStarkBank.getFormaPagamento(), tituloGreen));
@@ -22152,7 +22153,7 @@ public class ContratoCobrancaMB {
 			cell1.setColspan(2);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("Data do Pagamento: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
+			cell1 = new PdfPCell(new Phrase("Data do Pagamento: " + sdfDataRel.format(baixaStarkBank.getDataPagamento()), titulo));
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
