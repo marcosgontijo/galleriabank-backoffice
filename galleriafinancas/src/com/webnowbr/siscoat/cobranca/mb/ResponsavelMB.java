@@ -280,9 +280,11 @@ public class ResponsavelMB {
 
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Responsavel: Registro " + msgRetorno
 					+ " com sucesso! (Responsavel: " + objetoResponsavel.getNome() + ")", ""));
-
+			
+			removerUsuariosDoGuardaChuva(userDao, responsavelDao);
+			adicionarGuardaChuvaComercial(userDao, responsavelDao);
+			
 			objetoResponsavel = new Responsavel();
-
 		} catch (DAOException e) {
 
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Responsavel: " + e, ""));
@@ -296,6 +298,8 @@ public class ResponsavelMB {
 
 		return "ResponsavelConsultar.xhtml";
 	}
+
+	
 
 	public String excluir() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -449,6 +453,26 @@ public class ResponsavelMB {
 		objetoResponsavel.salvarDadosBancarios();
 		
 		this.tipoPesquisa = "";
+	}
+	
+	private void adicionarGuardaChuvaComercial(UserDao userDao, ResponsavelDao responsavelDao) {
+		User userComercial = null;
+		userComercial = responsavelDao.getUsersComercialDono(objetoResponsavel);
+		if(!CommonsUtil.semValor(userComercial)) {
+			if(!userComercial.getListResponsavel().contains(objetoResponsavel)) {
+				userComercial.getListResponsavel().add(objetoResponsavel);
+				userDao.merge(userComercial);
+			}
+		}
+	}
+
+	private void removerUsuariosDoGuardaChuva(UserDao userDao, ResponsavelDao responsavelDao) {
+		List<User> listaUsuarios = new ArrayList<User>();
+		listaUsuarios = responsavelDao.getUsersComPermissao(objetoResponsavel);
+		for(User userDono : listaUsuarios) {
+			userDono.getListResponsavel().remove(objetoResponsavel);
+			userDao.merge(userDono);
+		}
 	}
 		
 	public void selectedTipoPessoa() {

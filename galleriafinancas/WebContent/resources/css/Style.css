@@ -69,7 +69,7 @@
 		
 		
 		.ui-datatable .ui-datatable-data .linhaRoxa td{
-		    background-color:  #C576F6;  
+		    background-color:  #C576F6 !important;  
 		}
 		
 		.ui-datatable .ui-datatable-data .parcelaAtraso td{
@@ -105,11 +105,11 @@
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaDourada td {
-		    background-color: #bf9b30 !important;
+		    background-color: #bf9b30;
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaAqua td {
-		    background-color: #7FFFD4 !important;
+		    background-color: #7FFFD4;
 		}
 		
 		.campoRequerido {

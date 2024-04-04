@@ -4072,7 +4072,7 @@ public class ContratoCobrancaMB {
 //			System.out.println(this.listImoveis);
 			
 			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
-			if(this.objetoContratoCobranca.isPedidoPreLaudo()) {
+			if(this.objetoContratoCobranca.isPedidoPreLaudo() && !this.objetoImovelCobranca.isPreLaudoSolicitado()) {
 				this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
 				this.objetoContratoCobranca.setPedidoPreLaudoData(new Date());
 				this.objetoContratoCobranca.setPedidoPreLaudoUsuario(loginBean.getUsername());
@@ -4248,11 +4248,20 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		if(this.objetoContratoCobranca.isPedidoPreLaudo() && CommonsUtil.semValor(listSolicitacaoPreLaudoImoveis)) {
+		if(this.objetoContratoCobranca.isPedidoPreLaudo() && CommonsUtil.semValor(listSolicitacaoPreLaudoImoveis) 
+				&& !this.objetoImovelCobranca.isPreLaudoSolicitado()) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: Nenhum imóvel selecionado para pré-laudo!", ""));
 			return false;
-		}		
+		}
+		
+		if(this.objetoContratoCobranca.isOperacaoPaga() &&
+				!this.objetoContratoCobranca.isPendenciaPagamento() &&
+				CommonsUtil.semValor(this.objetoContratoCobranca.getSolicitarNota())) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: Não foi selecionado solicitação de NF", ""));
+			return false;
+		}
 		return true;
 	}
 
@@ -10681,7 +10690,7 @@ public class ContratoCobrancaMB {
 		this.restricaoImovel = new ArrayList<>();
 		this.preAprovadoPendencia = new ArrayList<>();
 		
-
+		getListaImoveisAdd();
 		listaRestricoesPessoas();
 		listaRestricoesImovel();
 
@@ -10707,6 +10716,7 @@ public class ContratoCobrancaMB {
 		this.restricaoImovel = new ArrayList<>();
 		this.preAprovadoPendencia = new ArrayList<>();
 
+		getListaImoveisAdd();
 		listaRestricoesPessoas();
 		listaRestricoesImovel();
 
@@ -10762,6 +10772,8 @@ public class ContratoCobrancaMB {
 		this.tituloTelaConsultaPreStatus = "Geração de PAJU";
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
+		
+		getListaImoveisAdd();
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusGeracaoPAJU.xhtml";
 	}
