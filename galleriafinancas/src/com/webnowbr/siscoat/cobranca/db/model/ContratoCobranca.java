@@ -928,6 +928,10 @@ public class ContratoCobranca implements Serializable {
 	public Cartorio ultimoCartorio;
 	
 	private boolean todosPreLaudoEntregues;
+	
+	private String inicioComentarioJuridicoUsuario;
+	private Date inicioComentarioJuridicoData;
+	private Boolean inicioComentarioJuridico;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -7975,5 +7979,29 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTravaCamposEsteira(boolean travaCamposEsteira) {
 		this.travaCamposEsteira = travaCamposEsteira;
+	}
+
+	public String getInicioComentarioJuridicoUsuario() {
+		return inicioComentarioJuridicoUsuario;
+	}
+
+	public void setInicioComentarioJuridicoUsuario(String inicioComentarioJuridicoUsuario) {
+		this.inicioComentarioJuridicoUsuario = inicioComentarioJuridicoUsuario;
+	}
+
+	public Date getInicioComentarioJuridicoData() {
+		return inicioComentarioJuridicoData;
+	}
+
+	public void setInicioComentarioJuridicoData(Date inicioComentarioJuridicoData) {
+		this.inicioComentarioJuridicoData = inicioComentarioJuridicoData;
+	}
+
+	public Boolean getInicioComentarioJuridico() {
+		return inicioComentarioJuridico;
+	}
+
+	public void setInicioComentarioJuridico(Boolean inicioComentarioJuridico) {
+		this.inicioComentarioJuridico = inicioComentarioJuridico;
 	}
 	}

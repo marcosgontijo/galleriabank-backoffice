@@ -2456,5 +2456,17 @@
 			<column name="valorCreditoImovelPrincipal" />
 		</property>
 		
+		<property name="inicioComentarioJuridicoUsuario" type="java.lang.String">
+			<column name="inicioComentarioJuridicoUsuario" />
+		</property>
+		
+		<property name="inicioComentarioJuridicoData" type="java.util.Date">
+			<column name="inicioComentarioJuridicoData" />
+		</property>
+		
+		<property name="inicioComentarioJuridico" type="java.lang.String">
+			<column name="inicioComentarioJuridico" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

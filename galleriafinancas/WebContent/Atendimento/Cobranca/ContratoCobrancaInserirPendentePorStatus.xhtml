@@ -49,13 +49,15 @@
 				
 			}
 			</h:outputStylesheet>
-
+			
 			<p:panel id="PanelLocador"
 				header="Contrato - #{contratoCobrancaMB.tituloPainel}"
 				style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages />
-
+				
+				<h:panelGrid columns="2" style="width:100%">
+				
 				<h:panelGrid columns="2">
 					<p:outputLabel for="numeroContrato" value="Número do Contrato: "
 						styleClass="labelBold"
@@ -74,6 +76,23 @@
 						<f:convertDateTime locale="pt_BR" />
 						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 					</h:outputText>
+				</h:panelGrid>
+
+				<h:panelGroup>
+						<!-- Check-List 1 -->
+						<div style="float:center;" align="right">
+						<p:commandButton value="Atualizar Check-List" ajax="true"
+							icon="ui-icon-check"
+							action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+							style="TEXT-DECORATION: bold; width: 250px; height: 110px;"
+							styleClass="p-justify-end"
+							rendered="#{contratoCobrancaMB.updateMode}"
+							update="comparacoesPopPupId ">
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
+						</p:commandButton>
+						</div>
+				</h:panelGroup>
 				</h:panelGrid>
 
 				<shiro:hasAnyRoles name="ROOT">
@@ -726,20 +745,7 @@
 
 								</h:panelGroup>
 
-								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;"> <!-- Check-List 1 -->
-									<p:commandButton value="Atualizar Check-List" ajax="true"
-										icon="ui-icon-check"
-										action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
-										style="TEXT-DECORATION: bold; width: 250px; height: 110px;"
-										rendered="#{contratoCobrancaMB.updateMode}"
-										update="comparacoesPopPupId ">
-										<f:setPropertyActionListener
-											target="#{contratoCobrancaMB.preContratoCustom}"
-											value="false" />
-									</p:commandButton>
-									
-								</h:panelGrid>
-								
+<!-- 								NINO -->
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
 									<ui:fragment>
 										<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
@@ -4491,7 +4497,6 @@
 					</h:panelGrid>
 				</p:panel>
 			</p:panel>
-
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos"
 				style="margin-bottom:10px;"
 				rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
