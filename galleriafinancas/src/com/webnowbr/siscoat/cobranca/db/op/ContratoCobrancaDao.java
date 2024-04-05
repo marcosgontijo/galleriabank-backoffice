@@ -7600,7 +7600,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (tipoConsulta.equals("Pré-Laudo Compass")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and pendenciaLaudoPaju = false "
-								+ " and pedidoPreLaudo = true and avaliacaoLaudo = 'Compass' and laudoRecebido = false and todosPreLaudoEntregues = false "; // and todosPreLaudoEntregues = false
+								+ " and pedidoPreLaudo = true and laudoRecebido = false and todosPreLaudoEntregues = false "; // and todosPreLaudoEntregues = false
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU")) {
