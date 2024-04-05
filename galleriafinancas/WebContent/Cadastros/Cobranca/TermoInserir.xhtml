@@ -38,8 +38,8 @@
 					<p:outputLabel for="diasAceite" value="Dias para aceitar"
 						styleClass="labelBold" />
 					<p:inputNumber id="diasAceite"
-						value="#{termoMB.objetoTermo.diasAceite}" decimalPlaces="0"
-						required="true" />
+						value="#{termoMB.objetoTermo.diasAceite}" 
+						required="true" minValue="0"  maxValue="999" maxlength="3" oninput="this.value = this.value.replace(/[^\d]/g, '')" />
 
 					<p:outputLabel for="DataInicio" value="Data Inicio"
 						styleClass="labelBold" />
