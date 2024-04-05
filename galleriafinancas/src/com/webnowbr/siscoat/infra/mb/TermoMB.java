@@ -107,7 +107,7 @@ public class TermoMB {
 	private List<User> selectedUsers;
 
 	private List<TermoUsuario> termosUsuario;
-	private List<TermoPopup> usuarios;
+	private List<TermoPopup> usuarios = new ArrayList<>();
 	private List<User> todosUsuario;
 	List<UserVO> usuariosVinculados = new ArrayList<>();
 	List<UserVO> listaOrigem = new ArrayList<>();

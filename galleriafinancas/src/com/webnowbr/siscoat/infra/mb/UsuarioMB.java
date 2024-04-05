@@ -99,6 +99,7 @@ public class UsuarioMB {
 		return "/Manutencao/UsuarioConsultar.xhtml";
 	}
 
+
 	public void consultaParametroPesquisa() {
 		UserDao userDao = new UserDao();
 		if (CommonsUtil.mesmoValor(parametro, "publico")) {
