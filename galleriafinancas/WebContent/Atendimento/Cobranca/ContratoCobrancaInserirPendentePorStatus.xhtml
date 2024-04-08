@@ -335,18 +335,15 @@
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 										<h:panelGrid columns="2"
-											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
+											style="background-color: #e4e4e4; width:350px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">
 											<p:outputLabel styleClass="labelBold">Comentário Jurídico</p:outputLabel>
-											<p:spacer></p:spacer>
+											
 											<p:selectBooleanButton id="comentarioJuridicoEsteira"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 												offIcon="ui-icon-close" style="width:=60px" />
-											<p:commandButton id="acoesJuridico" value="Enviar para..."
-												style="width:=60px" onclick="PF('acoesJuridico').show();" />
-
 
 											<p:outputLabel styleClass="labelBold">Analise apenas com consultas  ?</p:outputLabel>
 											<p:selectBooleanButton
@@ -356,17 +353,32 @@
 												offIcon="ui-icon-close" style="width:=60px">
 												<p:ajax event="change" update=":form:Status" />
 											</p:selectBooleanButton>
-
-
+											
 											<p:outputLabel styleClass="labelBold">Analise com paju vencido  ?</p:outputLabel>
+											
 											<p:selectBooleanButton id="comentarioJuricoComPajuVencido"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuricoComPajuVencido}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 												offIcon="ui-icon-close" style="width:=60px">
 												<p:ajax event="change" update=":form:Status" />
 											</p:selectBooleanButton>
-										</h:panelGrid>
+											
+											<p:commandButton id="acoesJuridico" value="Enviar para..."
+												style="width:=60px" onclick="PF('acoesJuridico').show();" />
 
+											<div>
+												<p:commandButton value="Contratos do Pagador"
+													onclick="PF('listaContratosPagador').show();"
+													rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0}"/>
+											</div>
+											<div>
+												<p:commandButton value="Contratos do Imovel"
+													onclick="PF('listaContratosImovel').show();"
+													rendered="#{contratoCobrancaMB.contratosImovelAnalisado.size() > 0}" />
+											</div>
+
+										</h:panelGrid>
+										
 									</ui:fragment>
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
@@ -375,7 +387,6 @@
 										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
 											rendered="#{!contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 											<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
-											<p:spacer></p:spacer>
 											<p:selectBooleanButton id="PreAprovadoComite"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -706,30 +717,13 @@
 										</h:panelGroup>	</h:panelGrid>
 										</ui:fragment>
 
-
-									<ui:fragment
-										rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0
-								 						or contratoCobrancaMB.contratosImovelAnalisado.size() > 0}">
-										<h:panelGrid columns="2"
-											style="background-color: #e4e4e4;width: 250px;height: 110px;-webkit-border-radius: 5px;
-										-moz-border-radius: 5px;border-radius: 5px; padding: 10px;">
-											<p:commandButton value="Contratos do Pagador"
-												onclick="PF('listaContratosPagador').show();"
-												rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0}" />
-											<p:commandButton value="Contratos do Imovel"
-												onclick="PF('listaContratosImovel').show();"
-												rendered="#{contratoCobrancaMB.contratosImovelAnalisado.size() > 0}" />
-										</h:panelGrid>
-									</ui:fragment>
-
 									<ui:fragment
 										rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  
 										|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 2 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
 										|| contratoCobrancaMB.indexStepsStatusContrato == 8 || contratoCobrancaMB.indexStepsStatusContrato == 14)}">
 										<h:panelGrid columns="2"
-											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
+											style="background-color:#cfcfcf; width:250px; height:110px; -webkit-border-radius:5px;
+										-moz-border-radius:5px; border-radius:5px; padding:10px;">
 											<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>
 											<p:spacer></p:spacer>
 											<p:selectOneRadio id="cadastroAprovadoAgAnalise"
@@ -743,23 +737,34 @@
 										</h:panelGrid>
 									</ui:fragment>
 
-								</h:panelGroup>
+									<shiro:hasAnyRoles
+										name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
+										<ui:fragment>
+											<p:selectBooleanButton
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
+												rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }"
+												onLabel="Pré-Laudo Compass Solicitado"
+												offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check"
+												offIcon="ui-icon-close" style="width:=80px">
+												<p:ajax event="valueChange" update=":form:Status"></p:ajax>
+											</p:selectBooleanButton>
 
-<!-- 								NINO -->
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
-									<ui:fragment>
-										<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
-											onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
-											<p:ajax event="valueChange" update=":form:Status"></p:ajax>
-										</p:selectBooleanButton>
-									
-										<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
-											value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
-											label="Imóvel do pré-laudo" style="width:280px; margin-top: 12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-											<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
-										</p:selectManyMenu>
-									</ui:fragment>
-								</shiro:hasAnyRoles>	
+											<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
+												value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
+												label="Imóvel do pré-laudo"
+												style="width:280px; margin-top: 12px;"
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+												<f:selectItems
+													value="#{contratoCobrancaMB.listTodosImoveisContrato}"
+													var="imovelCobranca" itemValue="#{imovelCobranca.id}"
+													itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
+											</p:selectManyMenu>
+										</ui:fragment>
+									</shiro:hasAnyRoles>
+									<p:commandButton id="acoesJuridicossss" value="Iniciar Comentário Juridico"
+												style=" height:40px; margin-top:10px;" />
+									<!-- PEGAR USUARIO E ATERAR NA COLUNA DE INICIOU A ANALISE COMO TRUE E SALVAR USER -->
+								</h:panelGroup>
 
 								<ui:fragment
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 11}">
