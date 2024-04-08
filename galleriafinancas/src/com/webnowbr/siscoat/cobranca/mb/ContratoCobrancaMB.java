@@ -37832,7 +37832,6 @@ public class ContratoCobrancaMB {
 	
 	private void geraParcelasSeContratoAgRegistro() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-
 		// gerando parcelas quando contrato esta em ag registro
 		if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
 				&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
@@ -37863,4 +37862,19 @@ public class ContratoCobrancaMB {
 		this.disableBotao = disableBotao;
 	}
 
+	public void analistaIniciouComentarioJuridico() {
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		//pegar usuario que clicar no botao do comentario juridico + nº Contrato
+		//setar data da analise juridica na tabela *iniciocomentariojuridicodata*
+		//flegar como TRUE *inicioComentarioJuridico*
+		//setar no inputtext do painel dos contatros
+		this.objetoContratoCobranca.setInicioComentarioJuridicoUsuario(this.loginBean.getUsuarioLogado().getLogin());
+		this.objetoContratoCobranca.setInicioComentarioJuridicoData(DateUtil.gerarDataHoje());
+		this.objetoContratoCobranca.setIniciouComentarioJuridico(true);
+		
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+	}
+	
 }

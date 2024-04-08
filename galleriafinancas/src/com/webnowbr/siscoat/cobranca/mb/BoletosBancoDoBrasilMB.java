@@ -30,6 +30,5 @@ public class BoletosBancoDoBrasilMB {
 	        objetoContratoCobranca.getPagador().getEstado(), 
 	        objetoContratoCobranca.getDataPagamentoFim(), objetoContratoCobranca.getVlrParcela(),"10");
 		
-		geracaoBoletoMB.geraPDFBoletos("teste_hermes");
 	}
 }

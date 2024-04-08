@@ -7200,11 +7200,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, " +
 			" im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, " +
-			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues " +
-			"from cobranca.contratocobranca c " +		
+			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues, " +
+			" c.iniciocomentariojuridicousuario," +
+			" c.iniciocomentariojuridicodata " 	 +
+			"from cobranca.contratocobranca c "  +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
-			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
-			"inner join cobranca.imovelcobranca im on c.imovel = im.id " +
+			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador "  +
+			"inner join cobranca.imovelcobranca im on c.imovel = im.id "     +
 			"left join cobranca.responsavel gerente on gerente.id = res.donoResponsavel ";
 	
 	private static final String QUERY_CONTRATOS_CRM_COMITE = "select * " +
@@ -7367,7 +7369,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and pajurFavoravel = true and analiseComercial = true"
 								+ " and comentarioJuridicoEsteira = false "
-								+ " and esteriaComentarioLuvison = false ";
+								+ " and esteriaComentarioLuvison = false " ;
 					} 
 					
 					if (tipoConsulta.equals("Comentario Luvison")) {
@@ -7621,6 +7623,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAnalisePendenciadaUsuario(rs.getString("analisePendenciadaUsuario"));
 						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
 						contratoCobranca.setTodosPreLaudoEntregues(rs.getBoolean("todosPreLaudoEntregues"));
+						contratoCobranca.setInicioComentarioJuridicoUsuario(rs.getString("iniciocomentariojuridicousuario"));
+						contratoCobranca.setInicioComentarioJuridicoData(rs.getDate("iniciocomentariojuridicodata"));
 					
 						ImovelCobranca imovel = new ImovelCobranca();
 						ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();

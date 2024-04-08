@@ -761,9 +761,15 @@
 											</p:selectManyMenu>
 										</ui:fragment>
 									</shiro:hasAnyRoles>
-									<p:commandButton id="acoesJuridicossss" value="Iniciar Comentário Juridico"
-												style=" height:40px; margin-top:10px;" />
-									<!-- PEGAR USUARIO E ATERAR NA COLUNA DE INICIOU A ANALISE COMO TRUE E SALVAR USER -->
+									
+									<h:panelGrid columns="2">
+										<p:commandButton id="inicioComentarioJuridicoId"
+											value="Iniciar Comentário Juridico"
+											action="#{contratoCobrancaMB.analistaIniciouComentarioJuridico()}"
+											style=" height:40px; margin-top:10px;" />
+										
+										<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.inicioComentarioJuridicoUsuario}">Advogado: </p:outputLabel>	
+									</h:panelGrid>
 								</h:panelGroup>
 
 								<ui:fragment
