@@ -693,6 +693,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
 	private BigDecimal valorPreLaudo;
+	private BigDecimal valorPreLaudo2;
 
 	private String avaliacaoEngenharia;
 	private String avaliacaoEquipeLaudo;
@@ -8020,5 +8021,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContemSegredoJustica(boolean contemSegredoJustica) {
 		this.contemSegredoJustica = contemSegredoJustica;
+	}
+
+	public BigDecimal getValorPreLaudo2() {
+		return valorPreLaudo2;
+	}
+
+	public void setValorPreLaudo2(BigDecimal valorPreLaudo2) {
+		this.valorPreLaudo2 = valorPreLaudo2;
 	}
 }

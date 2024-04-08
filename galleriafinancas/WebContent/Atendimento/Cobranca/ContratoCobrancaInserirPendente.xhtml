@@ -2286,19 +2286,29 @@
 									<h:panelGrid columns="2">
 										<h:panelGrid columns="2">
 			
-											<p:outputLabel for="valorPreLaudo" value="Valor Pré Laudo: "
+											<p:outputLabel for="valorPreLaudo" value="Valor Pré Laudo 1: "
 												styleClass="labelBold" />
 											<p:inputText id="valorPreLaudo"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
 												onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this, 13, event, 2);"
-												converter="bigDecimalConverter"
+												converter="bigDecimalConverter" 
 												style="FONT-SIZE: 10pt;width:300px;"
 												disabled="#{contratoCobrancaMB.deleteMode}" />
-			
-											<p:outputLabel for="valorMercadoImovel"
-												value="Valor de mercado do imóvel: " styleClass="labelBold" />
-											<p:inputText id="valorMercadoImovel"
+											<p:outputLabel for="valorPreLaudo2" value="Valor Pré Laudo 2: "
+												styleClass="labelBold" />
+											<p:inputText id="valorPreLaudo2"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo2}"
+												onkeypress="return isNumberKey(event);"
+												onkeydown="FormataValor(this, 13, event, 2);"
+												converter="bigDecimalConverter"
+												style="FONT-SIZE: 10pt;width:300px;" 
+												disabled="#{contratoCobrancaMB.deleteMode}">
+											</p:inputText>
+
+								<p:outputLabel for="valorMercadoImovel"
+									value="Valor de mercado do imóvel: " styleClass="labelBold" />
+								<p:inputText id="valorMercadoImovel"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
 												onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this, 13, event, 2);"

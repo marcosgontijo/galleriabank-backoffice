@@ -1654,7 +1654,10 @@
 		</property>	
 		<property name="valorPreLaudo" type="big_decimal">
 			<column name="valorPreLaudo" />
-		</property>		
+		</property>	
+		<property name="valorPreLaudo2" type="big_decimal">
+			<column name="valorPreLaudo2" />
+		</property>			
 		<property name="analiseComercialData" type="java.util.Date">
 			<column name="analiseComercialData" />
 		</property>		
