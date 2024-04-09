@@ -15,6 +15,9 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetal
 import com.webnowbr.siscoat.cobranca.db.op.ComparativoCamposEsteiraDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaLogsAlteracaoDao;
 import com.webnowbr.siscoat.cobranca.service.ContratoCobrancaService;
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.infra.db.model.Parametros;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
 
@@ -32,25 +35,33 @@ public class ContratoCobrancaAlteracaoMB {
 	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
 	
 	private Boolean disableBotao = true;
-	private String observacao;
 	
 	public String exibePopPupSeNaoConfirmar() {
+		ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
 		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 		PrimeFaces current = PrimeFaces.current();
 
 		this.contratoCobrancaLogsAlteracao = contratoCobrancaService
 				.exibePopPupSeNaoConfirmar(this.loginBean.getUsuarioLogado().getLogin());
-		
-		if (contratoCobrancaLogsAlteracao != null) {
-			ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
-			
-			this.comparativoCamposEsteira = comparativosCamposEsteraDao.findByFilter("validar", true);
-			current.executeScript("PF('comparacoesPopPupIdIndexvar').show();");
-		}
 
+		if (contratoCobrancaLogsAlteracao != null) {
+			if (contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivo()) {
+
+				ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
+
+				this.comparativoCamposEsteira = comparativosCamposEsteraDao.findByFilter("validar", true);
+				current.executeScript("PF('comparacoesPopPupIdIndexvar').show();");
+
+			} else {
+				contratoCobrancaLogsAlteracao.setLogJustificado(true);
+				contratoCobrancaLogsAlteracao.setObservacao("POPPUP DE VALIDAÇÃO DESABILITADO!");
+				contratoCobrancaLogsAlteracaoDao.merge(contratoCobrancaLogsAlteracao);
+				contratoCobrancaLogsAlteracao = null;
+			}
+		}
 		return null;
 	}
-
+	
 	public ContratoCobrancaLogsAlteracao getContratoCobrancaLogsAlteracao() {
 		return contratoCobrancaLogsAlteracao;
 	}

@@ -37643,7 +37643,9 @@ public class ContratoCobrancaMB {
 	}
 	
 	private Boolean validaDiferencasCamposEsteira(FacesContext context) {
-
+		
+		ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+		
 		try {
 
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -37673,9 +37675,13 @@ public class ContratoCobrancaMB {
 						.addAll(contratoCobrancaLogsAlteracaoBase.getDetalhes());
 
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
-				PrimeFaces current = PrimeFaces.current();
-				current.executeScript("PF('comparacoesPopPupIdvar').show();");
-				return false;
+				if(contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivo()) {
+					PrimeFaces current = PrimeFaces.current();
+					current.executeScript("PF('comparacoesPopPupIdvar').show();");
+					return false;
+				} else 
+					contratoCobrancaLogsAlteracao.setObservacao("POPPUP DE VALIDAÇÃO DESABILITADO!");
+					contratoCobrancaLogsAlteracaoDao.merge(contratoCobrancaLogsAlteracao);
 			}
 
 			return true;
