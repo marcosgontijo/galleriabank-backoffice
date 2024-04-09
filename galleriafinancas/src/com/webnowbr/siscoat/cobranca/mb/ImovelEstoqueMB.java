@@ -129,6 +129,7 @@ public class ImovelEstoqueMB {
 		     if(objetoImovelEstoque.getId() <= 0) {
 		    	 objetoImovelEstoque.setQuitado(false);
 		    	 objetoImovelEstoque.setStatusAtual("Estoque");
+		    	 objetoImovelEstoque.setDataConsolidado(DateUtil.getDataHoje());
 					imovelEstoqueDao.create(objetoImovelEstoque);
 
 				}
