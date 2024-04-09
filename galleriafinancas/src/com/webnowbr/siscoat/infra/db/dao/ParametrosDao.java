@@ -14,8 +14,6 @@ import com.webnowbr.siscoat.infra.db.model.Parametros;
  */
 public class ParametrosDao extends HibernateDao<Parametros, Long> {
 	
-	
-	
 	private static final String QUERY_PARAMS_BIGDECIMAL = " select valorbigdecimal from infra.parametros p "
 			+ "where p.nome = ? ";
 

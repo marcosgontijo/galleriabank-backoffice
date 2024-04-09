@@ -28,6 +28,8 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.infra.db.model.Parametros;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 
@@ -214,4 +216,14 @@ public class ContratoCobrancaService {
 		return contratoCobrancaLogsAlteracao;
 	}
 	
+	public boolean escondePopPupDeValidacoesSeEstaAtivo() {
+		ParametrosDao pDao = new ParametrosDao();
+		List<Parametros> popPupValidacaoEsteira = pDao.findByFilter("nome", "POPPUP_VALIDACOES_ESTEIRA");
+
+		if (!CommonsUtil.semValor(popPupValidacaoEsteira) && popPupValidacaoEsteira.get(0).isValorBoolean()) {
+			return false;
+		} else
+			return true;
+
+	}
 }
