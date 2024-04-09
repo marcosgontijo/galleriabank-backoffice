@@ -177,9 +177,13 @@
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 						</p:outputLabel>
 			        </p:column>
-
+					
 					<p:column style="text-align:center;" headerText="Advogado(a)">
-						<p:outputLabel value="#{contratos.inicioComentarioJuridicoUsuario}"></p:outputLabel>
+							<p:outputLabel value="#{contratos.inicioComentarioJuridicoUsuario}"></p:outputLabel>
+							<br></br>
+							<p:outputLabel value="#{contratos.inicioComentarioJuridicoData}" >			            	
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+							</p:outputLabel>
 					</p:column>
 
 					<p:column style="text-align: center;width: 100px"

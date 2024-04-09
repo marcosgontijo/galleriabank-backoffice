@@ -7624,7 +7624,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
 						contratoCobranca.setTodosPreLaudoEntregues(rs.getBoolean("todosPreLaudoEntregues"));
 						contratoCobranca.setInicioComentarioJuridicoUsuario(rs.getString("iniciocomentariojuridicousuario"));
-						contratoCobranca.setInicioComentarioJuridicoData(rs.getDate("iniciocomentariojuridicodata"));
+						contratoCobranca.setInicioComentarioJuridicoData(rs.getTimestamp("iniciocomentariojuridicodata"));
 					
 						ImovelCobranca imovel = new ImovelCobranca();
 						ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
