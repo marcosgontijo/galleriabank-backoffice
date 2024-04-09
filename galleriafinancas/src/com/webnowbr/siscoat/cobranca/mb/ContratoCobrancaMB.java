@@ -4338,6 +4338,7 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 		
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
@@ -4580,26 +4581,17 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs4 = new Responsavel();
 					Responsavel rValidaDocs5 = new Responsavel();
 
-					// teste
-					// takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					// "chegada_paju",
-					// this.objetoContratoCobranca.getPagador().getNome(),
-					// this.objetoContratoCobranca.getNumeroContrato(), "", "");
-
-					// Iris
 					rValidaDocs3 = rDao.findById((long) 828);
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs3, "contrato_recebido_paju",
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// Tatiane
 					rValidaDocs4 = rDao.findById((long) 643);
 
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs4, "contrato_recebido_paju",
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// Leticia
 					rValidaDocs5 = rDao.findById((long) 1127);
 
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs5, "contrato_recebido_paju",
@@ -4666,25 +4658,16 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs4 = new Responsavel();
 					Responsavel rValidaDocs5 = new Responsavel();
 
-					// teste
-					// takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					// "chegada_laudo",
-					// this.objetoContratoCobranca.getPagador().getNome(),
-					// this.objetoContratoCobranca.getNumeroContrato(), "", "");
-
-					// Iris
 					rValidaDocs3 = rDao.findById((long) 828);
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs3, "contrato_recebido_laudo",
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// Tatiane
 					rValidaDocs4 = rDao.findById((long) 643);
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs4, "contrato_recebido_laudo",
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// Leticia
 					rValidaDocs5 = rDao.findById((long) 1127);
 
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs5, "contrato_recebido_laudo",
@@ -4780,31 +4763,12 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs3 = new Responsavel();
 					Responsavel rValidaDocs4 = new Responsavel();
 
-					// Valdir ()
-					// rValidaDocs1 = rDao.findById((long) 619);
-					// takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
-					// "ag_validacao_documentos",
-					// this.objetoContratoCobranca.getPagador().getNome(),
-					// this.objetoContratoCobranca.getNumeroContrato(),
-					// "", "");
-
-					// Thiago (Removido a pedido da Tati)
-					// rValidaDocs2 = rDao.findById((long) 620);
-
-					// takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
-					// "ag_validacao_documentos",
-					// this.objetoContratoCobranca.getPagador().getNome(),
-					// this.objetoContratoCobranca.getNumeroContrato(),
-					// "", "");
-
-					// Tati
 					rValidaDocs3 = rDao.findById((long) 643);
 
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs3, "ag_validacao_documentos",
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// Mariana
 					rValidaDocs4 = rDao.findById((long) 1126);
 
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs4, "ag_validacao_documentos",
@@ -4945,14 +4909,6 @@ public class ContratoCobrancaMB {
 					takeBlipMB.sendWhatsAppMessage(rCcb2, "aprovado_comite_ag_ccb",
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
-
-					// Beatriz
-					// rCcb4 = rDao.findById((long) 000000);
-					// takeBlipMB.sendWhatsAppMessage(rCcb4,
-					// "aprovado_comite_ag_ccb",
-					// this.objetoContratoCobranca.getPagador().getNome(),
-					// this.objetoContratoCobranca.getNumeroContrato(),
-					// "", "");
 
 					// Luana
 					rCcb5 = rDao.findById((long) 625);
@@ -37831,7 +37787,6 @@ public class ContratoCobrancaMB {
 	
 	private void geraParcelasSeContratoAgRegistro() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-
 		// gerando parcelas quando contrato esta em ag registro
 		if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
 				&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
@@ -37862,4 +37817,27 @@ public class ContratoCobrancaMB {
 		this.disableBotao = disableBotao;
 	}
 
+	public void advogadoIniciouComentarioJuridico() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean advogadoIniciouAnalise = this.objetoContratoCobranca.isIniciouComentarioJuridico();
+
+		if (!advogadoIniciouAnalise) {
+
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			this.objetoContratoCobranca.setInicioComentarioJuridicoUsuario(this.loginBean.getUsuarioLogado().getLogin());
+			this.objetoContratoCobranca.setInicioComentarioJuridicoData(DateUtil.gerarDataHoje());
+			this.objetoContratoCobranca.setIniciouComentarioJuridico(true);
+			
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			
+			context.addMessage(null,new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Comentário Jurídico iniciado por: " + this.objetoContratoCobranca.getInicioComentarioJuridicoUsuario(),""));
+		} else {
+			context.addMessage(null,new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato já foi iniciado o comentário jurídico por : "
+							+ this.objetoContratoCobranca.getInicioComentarioJuridicoUsuario(),""));
+		}
+
+	}
+	
 }
