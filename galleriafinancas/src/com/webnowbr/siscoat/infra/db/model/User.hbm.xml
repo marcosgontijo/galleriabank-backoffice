@@ -248,6 +248,11 @@
 		<property name="profileJuridicoCobranca" type="boolean">
 			<column name="profileJuridicoCobranca" not-null="true" default="false" />
 		</property>
+		
+		<property name="profileCompliance" type="boolean">
+			<column name="profileCompliance" not-null="true" default="false" />
+		</property>
+		
 
     </class>
 </hibernate-mapping>
