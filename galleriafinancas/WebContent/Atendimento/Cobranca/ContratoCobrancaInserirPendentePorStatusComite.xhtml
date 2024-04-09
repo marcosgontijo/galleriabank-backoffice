@@ -1663,6 +1663,83 @@
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}">
+						<h:panelGrid columns="5" id="panelGridPreAprovado"
+							rendered="#{contratoCobrancaMB.isEngineProcessados() == true}">
+							<p:outputLabel value="Tem Protesto" styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoContratoCobranca.protestoTaxa}"
+								disabled="true" id="protestoCBox">
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px" />
+							<p:outputLabel value="Inicio Relacionamento Bacen &gt; 2018"
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.relacionamentoBacenRecenteTaxa}">
+							</p:selectBooleanCheckbox>
+
+							<p:outputLabel value="Tem Cheque Devolvido"
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoTaxa}">
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px" />
+							<p:outputLabel value="Tem Divida Vencida" styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dividaVencidaTaxa}">
+							</p:selectBooleanCheckbox>
+
+							<p:outputLabel value="Tem Pefin/Refin" styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.pefinTaxa}"
+								id="pefinCBox">
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px" />
+							<p:outputLabel value="Tem Prejuízo Bacen " styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.prejuizoBacenTaxa}">
+							</p:selectBooleanCheckbox>
+
+							<p:outputLabel value="Risco Total &lt; 20.000,00"
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal20kTaxa}">
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px" />
+							<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo450Taxa}">
+							</p:selectBooleanCheckbox>
+
+							<p:outputLabel value="Risco Total &lt; 50.000,00"
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal50kTaxa}">
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px" />
+							<p:outputLabel value="Score &lt; 700" styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo700Taxa}">
+							</p:selectBooleanCheckbox>
+
+							<p:outputLabel value="Garantia é Terreno ou Barracão?"
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.terrenoOuBarracaoTaxa}">
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px" />
+							<p:outputLabel value="Inicio Bacen Inexistente"
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoContratoCobranca.inicioRelacionamentoInexistenteTaxa}"
+								disabled="true">
+							</p:selectBooleanCheckbox>
+
+							<p:outputLabel value="Nada Consta" styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}"
+								disabled="true">
+							</p:selectBooleanCheckbox>
+						</h:panelGrid>
 						<h:panelGrid columns="2">
 							<h:panelGroup>
 								<h:panelGrid columns="2">
