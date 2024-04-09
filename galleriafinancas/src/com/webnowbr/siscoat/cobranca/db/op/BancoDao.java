@@ -3,20 +3,13 @@ package com.webnowbr.siscoat.cobranca.db.op;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.webnowbr.siscoat.cobranca.db.model.Banco;
-import com.webnowbr.siscoat.cobranca.db.model.Cartorio;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.Docket;
-import com.webnowbr.siscoat.cobranca.service.BancoCentral;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
-import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -39,7 +32,7 @@ public class BancoDao extends HibernateDao <Banco,Long> {
 		}
 
 		banco = pesquisaBanco(cnpjBase);
-		if (banco.getCodigoBanco() == null) {
+		if (banco.getCodigoBanco() == 0) {
 			banco = pesquisaBanco(codigoBanco);
 		}
 

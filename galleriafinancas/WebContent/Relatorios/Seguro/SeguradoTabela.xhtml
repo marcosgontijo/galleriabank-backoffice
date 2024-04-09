@@ -50,7 +50,7 @@
 			</p:panel>
 			
 			<p:panel id="ConsultaTabelaSeguroDFI" rendered="#{seguroTabelaMB.seguroDFI}"
-				header="Tabela de segurados DFI" style="margin-bottom:10px;">
+				header="Tabela de segurados DFI" style="margin-bottom:10px;" toggleable="true" toggleableHeader="true">
 				<f:facet name="header"> Tabela de segurados DFI
 					<p:outputLabel value="" />  
 					<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{seguroTabelaMB.readXLSXFileDFI}" ajax="false"/>
@@ -163,7 +163,7 @@
 			</p:panel>
 			
 			<p:panel id="ConsultaTabelaSeguroMIP" rendered="#{seguroTabelaMB.seguroMIP}"
-				header="Tabela de segurados MIP" style="margin-bottom:10px;">
+				header="Tabela de segurados MIP" style="margin-bottom:10px;" toggleable="true" toggleableHeader="true">
 				<f:facet name="header"> Tabela de segurados MIP
 					<p:outputLabel value="" />  
 					<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{seguroTabelaMB.readXLSXFileMIP}" ajax="false"/>

@@ -22950,9 +22950,13 @@ public class ContratoCobrancaMB {
 
 	public void editarConta(ContasPagar conta) {
 		this.addContasPagar = true;
-		contasPagarSelecionada = new ContasPagar(conta);
-		contasPagarSelecionada.setContaPagarOriginal(conta);
-		//this.contasPagarSelecionada = conta;
+		if(conta.getDescricao().contains("Processo")) {
+			contasPagarSelecionada = conta;
+		} else {
+			contasPagarSelecionada = new ContasPagar(conta);
+			contasPagarSelecionada.setContaPagarOriginal(conta);
+			//despesaSelecionada = conta;
+		}
 	}
 
 	public void removerSegurado(Segurado segurado) {

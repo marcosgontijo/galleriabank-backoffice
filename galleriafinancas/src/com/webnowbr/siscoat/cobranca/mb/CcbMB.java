@@ -509,9 +509,14 @@ public class CcbMB {
 	}
 	
 	public void editDespesa(ContasPagar conta) {
-		despesaSelecionada = new ContasPagar(conta);
-		despesaSelecionada.setContaPagarOriginal(conta);
-		//despesaSelecionada = conta;
+		if(conta.getDescricao().contains("Processo")) {
+			despesaSelecionada = conta;
+		} else {
+			despesaSelecionada = new ContasPagar(conta);
+			despesaSelecionada.setContaPagarOriginal(conta);
+			//despesaSelecionada = conta;
+		}
+		
 	}
 	
 	public void addProcesso() {
