@@ -1694,8 +1694,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}"
 								ajax="true" style="font-weight: bold;">
-								<f:selectItem itemValue="925,00" itemLabel="50% - R$925,00" />
-								<f:selectItem itemValue="1.850,00" itemLabel="100% - R$1.850,00" />
+								<f:selectItem itemValue="1.250,00" itemLabel="50% - R$1.250,00" />
+								<f:selectItem itemValue="2.500,00" itemLabel="100% - R$2.500,00" />
 							</p:selectOneMenu>
 
 							<p:outputLabel value="Exibir Fatura: " styleClass="labelBold" />
@@ -5692,7 +5692,6 @@
 							 <p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank('boleto')}"
 							 	update="nomeRecebedorContaPagarBoletoStarkBank cpfcnpjStark ContaPagarDataVencimentoBoletoStarkBank
 							 	 nomePagadorContaPagarBoletoStarkBank ContaPagarValorPagoBoletoStarkBank " ></p:ajax>
-							 
 							</p:inputText>
 							
 							<p:outputLabel for="nomeRecebedorContaPagarBoletoStarkBank" value="Nome Recebedor:" 
@@ -5739,9 +5738,16 @@
 					<h:panelGroup id="starkBankGridImposto" >
 						<h:panelGrid columns="2">
 							<p:outputLabel for="linhaDigitavelImposto" styleClass="labelBold" value="Linha Digitável (sem pontos e espaço): " />
-							<p:inputText id="linhaDigitavelImposto" value="#{contratoCobrancaMB.linhaBoletoOrdemPagamentoStark}" style="width:100px;" required="true"/>	
+							<p:inputText id="linhaDigitavelImposto" value="#{contratoCobrancaMB.linhaBoletoOrdemPagamentoStark}" style="width:250px;" required="true">
+								<p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank('imposto')}"
+								update="ContaPagarValorPagoBoletoStarkBankImposto nomeRecebedorContaPagarImpostoStarkBank descricaoImposto" ></p:ajax>
+							</p:inputText>	
+							<p:outputLabel for="nomeRecebedorContaPagarImpostoStarkBank" value="Nome Recebedor:"  style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="nomeRecebedorContaPagarImpostoStarkBank" style="width:250px;"
+								value="#{contratoCobrancaMB.nomeRecebedorOrdemPagamentoStark}" required="true" />
+							
 							<p:outputLabel for="descricaoImposto" styleClass="labelBold" value="Descrição: " />
-							<p:inputText id="descricaoImposto" value="#{contratoCobrancaMB.descricaoOrdemPagamentoStark}" style="width:100px;" required="true"/>						
+							<p:inputText id="descricaoImposto" value="#{contratoCobrancaMB.descricaoOrdemPagamentoStark}" style="width:250px;" required="true"/>						
 							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBankImposto" value="Valor a Pagar: "
 								styleClass="labelBold" />
 							<p:inputText id="ContaPagarValorPagoBoletoStarkBankImposto"
