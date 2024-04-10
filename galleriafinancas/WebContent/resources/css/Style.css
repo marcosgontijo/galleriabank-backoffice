@@ -69,7 +69,7 @@
 		
 		
 		.ui-datatable .ui-datatable-data .linhaRoxa td{
-		    background-color:  #C576F6 !important;  
+		    background-color:  #C576F6;  
 		}
 		
 		.ui-datatable .ui-datatable-data .parcelaAtraso td{
@@ -89,7 +89,7 @@
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaRosa td{
-		    background-color: #ff80ff;
+		    background-color: #ff80ff !important;
 		}
 				
 		.ui-datatable .ui-datatable-data .linhaAzul td{
