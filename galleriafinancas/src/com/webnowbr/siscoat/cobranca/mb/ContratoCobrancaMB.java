@@ -20955,7 +20955,8 @@ public class ContratoCobrancaMB {
 	private void pegarDadosPaymentPreview(String metodoPagamento) throws ParseException {
 		try {
 			String consulta = "";
-			if(CommonsUtil.mesmoValor(metodoPagamento, "boleto")) {
+			if(CommonsUtil.mesmoValor(metodoPagamento, "boleto")
+				|| CommonsUtil.mesmoValor(metodoPagamento, "imposto")) {
 				if(CommonsUtil.semValor(linhaBoletoOrdemPagamentoStark)) 
 					return;
 				
@@ -21012,6 +21013,13 @@ public class ContratoCobrancaMB {
 					dataVencimento = DateUtil.adicionarPeriodo(dataVencimento, -3, Calendar.HOUR);
 					dataVencimentoOrdemPagamentoStark = dataVencimento;
 				}
+				
+				//nome do pagador
+				if(CommonsUtil.mesmoValor(entry.getKey(), "description")){
+					descricaoOrdemPagamentoStark  = CommonsUtil.stringValue(entry.getValue());
+				}
+				
+				
 			}
 		} catch (SecurityException e) {
 			e.printStackTrace();
