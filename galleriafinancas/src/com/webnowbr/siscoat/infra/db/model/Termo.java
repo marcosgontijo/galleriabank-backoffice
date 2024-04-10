@@ -27,14 +27,22 @@ public class Termo {
 
 	private UserPerfil userPerfil;
 
-	private  TermoUsuario termoUsuario;
+	private transient TermoUsuario termoUsuario;
+	
+	private String usuarioCriador;
+	
+	private String usuarioDelete;
+	
+	private Date dataDelete;
+
+	private Boolean deletado;
+
 
 	public boolean isAceiteExpirado() {
 		if (CommonsUtil.semValor(termoUsuario))
 			return false;
 		else if (!CommonsUtil.semValor(termoUsuario.getDataAceite()))
 			return false;
-		else if (com.webnowbr.siscoat.common.DateUtil.getDifferenceDays(termoUsuario.getDataCiencia(), DateUtil.getDataHoje() ) < CommonsUtil.intValue( this.diasAceite))
 		else if (com.webnowbr.siscoat.common.DateUtil.getDifferenceDays(termoUsuario.getDataCiencia(), DateUtil.getDataHoje() ) < CommonsUtil.intValue( this.diasAceite))
 			return false;
 		else
@@ -128,37 +136,6 @@ public class Termo {
 
 	public void setTermoUsuario(TermoUsuario termoUsuario) {
 		this.termoUsuario = termoUsuario;
-	}
-
-	public String getUsuarioCriador() {
-		return usuarioCriador;
-	}
-
-	public void setUsuarioCriador(String usuarioCriador) {
-		this.usuarioCriador = usuarioCriador;
-	}
-
-	public String getUsuarioDelete() {
-		return usuarioDelete;
-	}
-
-	public void setUsuarioDelete(String usuarioDelete) {
-		this.usuarioDelete = usuarioDelete;
-	}
-	public Date getDataDelete() {
-		return dataDelete;
-	}
-
-	public void setDataDelete(Date dataDelete) {
-		this.dataDelete = dataDelete;
-	}
-
-	public Boolean getDeletado() {
-		return deletado;
-	}
-
-	public void setDeletado(Boolean deletado) {
-		this.deletado = deletado;
 	}
 
 	public String getUsuarioCriador() {

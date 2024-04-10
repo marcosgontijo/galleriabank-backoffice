@@ -151,7 +151,6 @@ public class ImovelEstoqueMB {
 			preencherCamposComDadosContrato(); // Chama o método para preencher os campos com os dados do contrato
 		}
 		
-		
 
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
 	}
@@ -395,7 +394,7 @@ public class ImovelEstoqueMB {
 
 		// fecha a escrita de dados nessa planilha
 		wb.close();
-		
+
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 

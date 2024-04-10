@@ -3,9 +3,6 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -27,21 +24,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import javax.faces.bean.ManagedProperty;
+import javax.faces.context.ExternalContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponse;
 
-import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.GravamesReaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
-import com.webnowbr.siscoat.cobranca.service.ContratoCobrancaService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
@@ -54,13 +47,9 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaResponse;
 import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaVeiculos;
-import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
 
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponse;
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponseResultFinantialDataTaxReturns;
-import br.com.galleriabank.bigdata.cliente.model.grupoEmpresarial.GrupoEmpresarialEconomicGroups;
-import br.com.galleriabank.bigdata.cliente.model.grupoEmpresarial.GrupoEmpresarialResponseResult;
 import br.com.galleriabank.bigdata.cliente.model.grupoEmpresarial.GrupoEmpresarialEconomicGroups;
 import br.com.galleriabank.bigdata.cliente.model.grupoEmpresarial.GrupoEmpresarialResponseResult;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
@@ -84,9 +73,6 @@ public class DocumentoAnalise implements Serializable {
 	 */
 	private static final long serialVersionUID = -4489431101607924990L;
 
-	@ManagedProperty(value = "#{loginBean}")
-	protected LoginBean loginBean;
-	
 	private long id;
 	private String idRemoto;
 
@@ -105,7 +91,7 @@ public class DocumentoAnalise implements Serializable {
 	private String origem;
 	private Date dataCadastro; 
 	private String usuarioCadastro;
-	private DocumentoAnalise analiseOriginal; 
+	private DocumentoAnalise analiseOriginal;
 	private boolean reanalise;
 	
 	private boolean liberadoAnalise;	
@@ -128,9 +114,6 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoPpe;
 	private String retornoLaudoRobo;
 	private String retornoRelacionamento;
-	private String retornoFinancas;
-	private String retornoFrotaVeiculos;
-	private String retornoGrupoEmpresarial;
 	private String retornoFinancas;
 	private String retornoFrotaVeiculos;
 	private String retornoGrupoEmpresarial;
@@ -229,37 +212,7 @@ public class DocumentoAnalise implements Serializable {
 						ressalvaProcessosNome = processoResponse.getNome();
 					}
 				}
-			if (!CommonsUtil.semValor(processo)) {
-				if (processo.getCriminal() == null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Nada consta"));
-				} else {
-					String processosQuantidade = CommonsUtil
-							.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
-					Double processosValor = processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum();
-					vProcesso.add(new DocumentoAnaliseResumo("Criminal:",
-							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 
-					if (Integer.parseInt(processosQuantidade) > 0) {
-						contemAcoesProcesso = true;
-						ressalvaProcessosNome = processoResponse.getNome();
-					}
-				}
-
-				if (processo.getTrabalhista() == null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Nada consta"));
-				} else {
-					String processosQuantidade = CommonsUtil
-							.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
-					Double processosValor = processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum();
-
-					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:",
-							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-					ressalvaTrabalhistaNome = processoResponse.getNome();
-
-					if (Integer.parseInt(processosQuantidade) > 0) {
-						contemAcoesProcesso = true;
-					}
-				}
 				if (processo.getTrabalhista() == null) {
 					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Nada consta"));
 				} else {
@@ -290,20 +243,6 @@ public class DocumentoAnalise implements Serializable {
 						contemAcoesProcesso = true;
 					}
 				}
-				if (processo.getTituloExtraJudicial() == null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Nada consta"));
-				} else {
-					String processosQuantidade = CommonsUtil.stringValue(
-							processo.getTituloExtraJudicial().stream().mapToInt(p -> p.getQuatidade()).sum());
-					Double processosValor = processo.getTituloExtraJudicial().stream().mapToDouble(p -> p.getValor())
-							.sum();
-					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:",
-							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-
-					if (Integer.parseInt(processosQuantidade) > 0) {
-						contemAcoesProcesso = true;
-					}
-				}
 
 				if (processo.getTituloExecucaoFiscal() == null) {
 					vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Nada consta"));
@@ -319,33 +258,7 @@ public class DocumentoAnalise implements Serializable {
 						contemAcoesProcesso = true;
 					}
 				}
-				if (processo.getTituloExecucaoFiscal() == null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Nada consta"));
-				} else {
-					String processosQuantidade = CommonsUtil.stringValue(
-							processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
-					Double processosValor = processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor())
-							.sum();
-					vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:",
-							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 
-					if (Integer.parseInt(processosQuantidade) > 0) {
-						contemAcoesProcesso = true;
-					}
-				}
-
-				if (processo.getOutros() == null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Nada consta"));
-				} else {
-					String processosQuantidade = CommonsUtil
-							.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
-					Double processosValor = processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum();
-					vProcesso.add(new DocumentoAnaliseResumo("Outros:",
-							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-
-					if (Integer.parseInt(processosQuantidade) > 0) {
-						contemAcoesProcesso = true;
-					}
 				if (processo.getOutros() == null) {
 					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Nada consta"));
 				} else {
@@ -575,12 +488,6 @@ public class DocumentoAnalise implements Serializable {
 					result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",
 							(mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
 				}
-				if(CommonsUtil.semValor(mensagem)) {
-					result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "Nada consta"));
-				} else {
-					result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",
-							(mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
-				}
 			}
 		}
 	}
@@ -758,10 +665,6 @@ public class DocumentoAnalise implements Serializable {
 			veiculos.add(new DocumentoAnaliseResumo("sistema indisponivel", "0"));
 			return veiculos;
 		}
-		if(retorno.contains("sistema indisponivel")) {
-			veiculos.add(new DocumentoAnaliseResumo("sistema indisponivel", "0"));
-			return veiculos;
-		}
 		CredlocalizaResponse dado = GsonUtil.fromJson(retorno, CredlocalizaResponse.class);
 		
 		if(CommonsUtil.semValor(dado))
@@ -783,29 +686,6 @@ public class DocumentoAnalise implements Serializable {
 			}
 		}
 		return veiculos;
-	}
-	
-	public List<DocumentoAnaliseResumo> getResumoGrupoEmpresarial() {
-		List<DocumentoAnaliseResumo> grupoEmpresas = new ArrayList<>();
-		String retorno = getRetornoGrupoEmpresarial();
-		GrupoEmpresarialResponseResult dado = GsonUtil.fromJson(retorno, GrupoEmpresarialResponseResult.class);
-		
-		if(CommonsUtil.semValor(dado))
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
-		else if(CommonsUtil.semValor(dado.getResult()))
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
-		else if(CommonsUtil.semValor(dado.getResult().get(0).getEconomicGroups()))
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
-		else if(CommonsUtil.semValor(dado.getResult().get(0).getEconomicGroups().get(0)))
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
-		else {
-			GrupoEmpresarialEconomicGroups grupoDetalhes = dado.getResult().get(0).getEconomicGroups().get(0);
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Idade Empresa + nova", CommonsUtil.stringValue(grupoDetalhes.getMinCompanyAge())));
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Idade Empresa + velha", CommonsUtil.stringValue(grupoDetalhes.getMaxCompanyAge())));
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Receita Total", grupoDetalhes.getTotalIncomeRange()));
-			grupoEmpresas.add(new DocumentoAnaliseResumo("Total de funcionarios", grupoDetalhes.getTotalEmployeesRange()));
-		}
-		return grupoEmpresas;
 	}
 	
 	public List<DocumentoAnaliseResumo> getResumoGrupoEmpresarial() {
@@ -925,10 +805,6 @@ public class DocumentoAnalise implements Serializable {
 	
 	public boolean isPodeChamarFinancas() {
 		return CommonsUtil.mesmoValor("PF", tipoPessoa) && CommonsUtil.semValor(getRetornoFinancas());
-	}
-	
-	public boolean isPodeChamarGrupoEmpresarial() {
-		return CommonsUtil.mesmoValor("PF", tipoPessoa) && CommonsUtil.semValor(getRetornoGrupoEmpresarial());
 	}
 	
 	public boolean isPodeChamarGrupoEmpresarial() {
@@ -1148,11 +1024,10 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public void removerEstado(String estado) {
-		if (!CommonsUtil.semValor(estado) && getEstadosConsulta().contains(estado)) {
+		if(!CommonsUtil.semValor(estado) && getEstadosConsulta().contains(estado)) {
 			List<String> aux = getEstadosConsulta();
 			aux.remove(estado);
 			estadosConsultaStr = aux.toString();
-
 		}
 	}
 	
@@ -1292,22 +1167,6 @@ public class DocumentoAnalise implements Serializable {
 		
 			byte[] pdfBytes2 = java.util.Base64.getDecoder().decode(documentoBase64);
 			listaArquivos.put(nomeArquivo, pdfBytes2);
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(netrin.getPdf());
-			BufferedInputStream input = null;
-			String fileExtension;
-			try {
-				PdfReader pdf = new PdfReader(pdfBytes);
-				fileExtension = "pdf"; 
-			} catch (Exception e) {
-				fileExtension = "html"; 
-			}		
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-		
-			String nomeArquivo = nomedoc + " " + primeiroNome.replace(",", "_") + 
-				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + "." + fileExtension;
-		
-			byte[] pdfBytes2 = java.util.Base64.getDecoder().decode(documentoBase64);
-			listaArquivos.put(nomeArquivo, pdfBytes2);
 		}
 		return listaArquivos;
 	}
@@ -1323,12 +1182,10 @@ public class DocumentoAnalise implements Serializable {
 			motivos.add(new SelectItem("Empresa Vinculada ao Comprador","Empresa Vinculada ao Comprador"));
 			motivos.add(new SelectItem("Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual","Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual"));
 		} //else if(CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
-		} //else if(CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
 			motivos.add(new SelectItem("Anuente","Anuente"));
 			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Atual","Sócio Vinculado ao Proprietario Atual"));
 			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Anterior","Sócio Vinculado ao Proprietario Anterior"));
 			motivos.add(new SelectItem("Sócio Vinculado ao Comprador","Sócio Vinculado ao Comprador"));
-		//}
 		//}
 		motivos.add(new SelectItem("Matricula para consulta","Matricula para consulta"));
 		return motivos;
@@ -1893,15 +1750,6 @@ public class DocumentoAnalise implements Serializable {
 	public void setReanalise(boolean reanalise) {
 		this.reanalise = reanalise;
 	}
-
-	public String getRetornoGrupoEmpresarial() {
-		return retornoGrupoEmpresarial;
-	}
-
-	public void setRetornoGrupoEmpresarial(String retornoGrupoEmpresarial) {
-		this.retornoGrupoEmpresarial = retornoGrupoEmpresarial;
-	}
-	
 
 	public String getRetornoGrupoEmpresarial() {
 		return retornoGrupoEmpresarial;
