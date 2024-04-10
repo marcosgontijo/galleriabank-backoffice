@@ -180,7 +180,7 @@
 						</p:outputLabel>
 			        </p:column>
 					
-					<p:column style="text-align:center;" headerText="Advogado(a)">
+					<p:column style="text-align:center;" headerText="Advogado(a)" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
 							<p:outputLabel value="#{contratos.inicioComentarioJuridicoUsuario}"></p:outputLabel>
 							<br></br>
 							<p:outputLabel value="#{contratos.inicioComentarioJuridicoData}" >			            	
