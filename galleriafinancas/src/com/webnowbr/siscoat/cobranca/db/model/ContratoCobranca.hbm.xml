@@ -2465,6 +2465,19 @@
 		<property name="contemSegredoJustica" type="boolean">
 			<column name="contemSegredoJustica" not-null="true" default="false"/>
 		</property>	
-
+	
+		
+		<property name="inicioComentarioJuridicoUsuario" type="java.lang.String">
+			<column name="inicioComentarioJuridicoUsuario" />
+		</property>
+		
+		<property name="inicioComentarioJuridicoData" type="java.util.Date">
+			<column name="inicioComentarioJuridicoData" />
+		</property>
+		
+		<property name="iniciouComentarioJuridico" type="boolean">
+			<column name="iniciouComentarioJuridico" not-null="true" default="false" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

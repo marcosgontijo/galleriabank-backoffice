@@ -73,6 +73,8 @@
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}"  emptyMessage=""
    		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq false ) ? 'linhaDourada' : ''}
    		         	 #{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq true) ? 'linhaAqua' : ''}
+   		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq false ) ? 'linhaDourada' : ''}
+   		         	 #{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq true) ? 'linhaAqua' : ''}
    		         	 #{(contratos.emAgComite eq true) ? 'linhaBranca' : '' }
    		         	 #{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
@@ -152,6 +154,13 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
 			        
+			        <p:column style="text-align: center;" headerText="Cidade"
+						filterBy="#{contratos.nomeCidadeImovel}"
+						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pedir PAJU'}">
+						<h:outputText value="#{contratos.nomeCidadeImovel}" />
+					</p:column>
+			        
 			        <p:column style="text-align: center;" 
 			        	headerText="Valor Aprovado no Comitê (R$)"
 			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
@@ -183,8 +192,19 @@
 			           <p:outputLabel value="#{contratos.analiseComercialData}" >			            	
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 						</p:outputLabel>
-			        </p:column>
+			        </p:column>	
+			        
+			        
 
+					
+					<p:column style="text-align:center;" headerText="Advogado(a)" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
+							<p:outputLabel value="#{contratos.inicioComentarioJuridicoUsuario}"></p:outputLabel>
+							<br></br>
+							<p:outputLabel value="#{contratos.inicioComentarioJuridicoData}" >			            	
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+							</p:outputLabel>
+					</p:column>
+					
 					<p:column style="text-align: center;width: 100px"
 						headerText="Aprovado Comite Por:" 
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">

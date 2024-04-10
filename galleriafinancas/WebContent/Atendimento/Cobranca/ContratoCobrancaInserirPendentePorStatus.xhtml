@@ -76,6 +76,23 @@
 					</h:outputText>
 				</h:panelGrid>
 
+				<h:panelGroup>
+						<!-- Check-List 1 -->
+						<div style="float:center;" align="right">
+						<p:commandButton value="Atualizar Check-List" ajax="true"
+							icon="ui-icon-check"
+							action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+							style="TEXT-DECORATION: bold; width: 250px; height: 110px;"
+							styleClass="p-justify-end"
+							rendered="#{contratoCobrancaMB.updateMode}"
+							update="comparacoesPopPupId ">
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
+						</p:commandButton>
+						</div>
+				</h:panelGroup>
+				</h:panelGrid>
+
 				<shiro:hasAnyRoles name="ROOT">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="contratoRestritoAdm"
@@ -316,11 +333,11 @@
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 										<h:panelGrid columns="2"
-											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
+											style="background-color: #e4e4e4; width:350px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">
 											<p:outputLabel styleClass="labelBold">Comentário Jurídico</p:outputLabel>
-											<p:spacer></p:spacer>
+											
 											<p:selectBooleanButton id="comentarioJuridicoEsteira"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -337,17 +354,32 @@
 												offIcon="ui-icon-close" style="width:=60px">
 												<p:ajax event="change" update=":form:Status" />
 											</p:selectBooleanButton>
-
-
+											
 											<p:outputLabel styleClass="labelBold">Analise com paju vencido  ?</p:outputLabel>
+											
 											<p:selectBooleanButton id="comentarioJuricoComPajuVencido"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuricoComPajuVencido}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 												offIcon="ui-icon-close" style="width:=60px">
 												<p:ajax event="change" update=":form:Status" />
 											</p:selectBooleanButton>
-										</h:panelGrid>
+											
+											<p:commandButton id="acoesJuridico" value="Enviar para..."
+												style="width:=60px" onclick="PF('acoesJuridico').show();" />
 
+											<div>
+												<p:commandButton value="Contratos do Pagador"
+													onclick="PF('listaContratosPagador').show();"
+													rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0}"/>
+											</div>
+											<div>
+												<p:commandButton value="Contratos do Imovel"
+													onclick="PF('listaContratosImovel').show();"
+													rendered="#{contratoCobrancaMB.contratosImovelAnalisado.size() > 0}" />
+											</div>
+
+										</h:panelGrid>
+										
 									</ui:fragment>
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
@@ -2094,7 +2126,7 @@
 				</h:panelGroup>
 
 				<h:panelGroup id="CheckListInformacoesAdicionais">
-					<p:panel header="Check-List - Informações Adicionais"
+					<p:panel header="Check-List - Informações Adicionais "
 						style="margin-bottom:20px;"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 						<p:spacer height="10"></p:spacer>

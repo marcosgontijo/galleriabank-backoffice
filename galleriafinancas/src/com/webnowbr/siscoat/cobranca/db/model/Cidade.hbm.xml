@@ -30,6 +30,9 @@
 		<property name="pintarLinha" type="boolean" > 
 			<column name="pintarLinha"  not-null="true" default="false"/>
 		</property>
+		<property name="cidadesVetadas" type="boolean" > 
+			<column name="cidadesVetadas"  not-null="true" default="false"/>
+		</property>
  
     </class>
 </hibernate-mapping>
