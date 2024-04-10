@@ -20,8 +20,8 @@
 			<column name="idUsuario" not-null="true" />
 		</property>
 
-		<property name="dataCienca" type="java.util.Date">
-			<column name="dataCienca" />
+		<property name="dataCiencia" type="java.util.Date">
+			<column name="dataCiencia" />
 		</property>
 
 		<property name="dataAdiado" type="java.util.Date">

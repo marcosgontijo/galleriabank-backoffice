@@ -37,7 +37,18 @@
 			class="com.webnowbr.siscoat.infra.db.model.UserPerfil" lazy="false">
 			<column name="idUserPerfil" />
 		</many-to-one>
-
+		<property name="usuarioCriador" type="java.lang.String">
+			<column name="usuariocriador" />
+		</property>
+		<property name="usuarioDelete" type="java.lang.String">
+			<column name="usuariodelete" />
+		</property>
+		<property name="dataDelete" type="java.util.Date">
+			<column name="dataDelete" />
+		</property>
+		<property name="deletado" type="boolean">
+			<column name="deletado" />
+		</property>
 
 	</class>
 </hibernate-mapping>

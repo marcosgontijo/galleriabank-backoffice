@@ -3,10 +3,15 @@ package com.webnowbr.siscoat.infra.mb;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -22,12 +27,22 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
@@ -38,11 +53,6 @@ import com.webnowbr.siscoat.infra.db.model.GroupAdm;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.db.model.UserPerfil;
 import com.webnowbr.siscoat.security.TwoFactorAuth;
-
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
-import java.util.Optional;
 
 /** ManagedBean. */
 @ManagedBean(name = "usuarioMB")
@@ -77,8 +87,7 @@ public class UsuarioMB {
 	public UsuarioMB() {
 
 		objetoUsuario = new User();
-		
-		
+
 		lazyModel = new LazyDataModel<User>() {
 
 			/** Serial. */
@@ -132,23 +141,25 @@ public class UsuarioMB {
 		ResponsavelDao rDao = new ResponsavelDao();
 		this.responsaveis = rDao.findAll();
 	}
-	
+
 	private void carregaListaPerfil() {
 		if (perfil == null) {
 			UserPerfilDao userPerfilDao = new UserPerfilDao();
 			perfil = userPerfilDao.findAll().stream().sorted(Comparator.comparing(UserPerfil::getId))
 					.collect(Collectors.toList());
-			userPerfilPublico = perfil.stream().filter(p -> p.getId() == 1000l).findFirst();
+			userSemPerfil = perfil.stream().filter(p -> p.getId() == -1000).findFirst();
 		}
 	}
 
 	public String clearFields() {
 		objetoUsuario = new User();
-		
-		if (userPerfilPublico == null)
+
+		if (userSemPerfil == null)
 			carregaListaPerfil();
-		objetoUsuario.setUserPerfil(userPerfilPublico.get());
-		
+
+		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil()))
+			objetoUsuario.setUserPerfil(userSemPerfil.get());
+
 		this.tituloPainel = "Adicionar";
 
 		this.diasSemana = new ArrayList<String>();
@@ -202,6 +213,7 @@ public class UsuarioMB {
 		return "UsuarioInserir.xhtml";
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	public String inserir() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		UserDao postoDao = new UserDao();
@@ -210,6 +222,16 @@ public class UsuarioMB {
 			GroupDao gDao = new GroupDao();
 			List<GroupAdm> gAdm = new ArrayList<GroupAdm>();
 			List<GroupAdm> gAdmAux = new ArrayList<GroupAdm>();
+
+			gAdm = gDao.findByFilter("acronym", "INTERNO");
+			if (!CommonsUtil.semValor(gAdm) && objetoUsuario.isUserInterno()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null && objetoUsuario.getGroupList().contains(gAdm)) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+
 			gAdm = gDao.findByFilter("acronym", "ROOT");
 			if (objetoUsuario.isAdministrador()) {
 				gAdmAux.add(gAdm.get(0));
@@ -515,7 +537,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_NEVES");
 			if (objetoUsuario.isProfilePajuNeves()) {
 				gAdmAux.add(gAdm.get(0));
@@ -524,7 +546,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_LUVISON");
 			if (objetoUsuario.isProfilePajuLuvison()) {
 				gAdmAux.add(gAdm.get(0));
@@ -542,7 +564,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "CADASTRA_RESPONSAVEL");
 			if (objetoUsuario.isCadastraResponsavel()) {
 				gAdmAux.add(gAdm.get(0));
@@ -551,7 +573,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_COMPLIANCE");
 			if (objetoUsuario.isProfileCompliance()) {
 				gAdmAux.add(gAdm.get(0));
@@ -560,7 +582,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_CONTROLLER");
 			if (objetoUsuario.isProfileController()) {
 				gAdmAux.add(gAdm.get(0));
@@ -569,7 +591,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_CONSULTA_KOBANA");
 			if (objetoUsuario.isProfileConsultaKobana()) {
 				gAdmAux.add(gAdm.get(0));
@@ -578,7 +600,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "CONSULTA_INDIVIDUAL");
 			if (objetoUsuario.isConsultaIndividual()) {
 				gAdmAux.add(gAdm.get(0));
@@ -587,7 +609,7 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PLANEJAMENTO");
 			if (objetoUsuario.isUserPlanejamento()) {
 				gAdmAux.add(gAdm.get(0));
@@ -596,9 +618,24 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
-			
 
+			gAdm = gDao.findByFilter("acronym", "PROFILE_CARTORIO");
+			if (objetoUsuario.isProfileCartorio()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+
+			gAdm = gDao.findByFilter("acronym", "PROFILE_JURIDICO_COBRANCA");
+			if (objetoUsuario.isProfileJuridicoCobranca()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
 
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);
@@ -656,7 +693,7 @@ public class UsuarioMB {
 
 			return "";
 		}
-		
+
 		popularListaResponsavel();
 
 		return "UsuarioConsultar.xhtml";
@@ -785,7 +822,8 @@ public class UsuarioMB {
 	public void atualizaListagem() {
 		UserDao userDao = new UserDao();
 		userDao.carregarListaResponsavel(objetoUsuario);
-		//selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
+		// selectedResponsaveis = (Responsavel[])
+		// objetoUsuario.getListResponsavel().toArray();
 	}
 
 	/**
@@ -814,9 +852,9 @@ public class UsuarioMB {
 	 */
 	public void setObjetoUsuario(User objetoUsuario) {
 		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil())) {
-			if (userPerfilPublico == null)
+			if (userSemPerfil == null)
 				carregaListaPerfil();
-			objetoUsuario.setUserPerfil(userPerfilPublico.get());
+			objetoUsuario.setUserPerfil(userSemPerfil.get());
 		}
 		this.objetoUsuario = objetoUsuario;
 	}

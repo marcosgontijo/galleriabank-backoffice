@@ -668,6 +668,9 @@
 		<property name="restricao" type="boolean">
 			<column name="restricao" not-null="true" default="false" />
 		</property>
+		<property name="origem" type="java.lang.String">
+			<column name="origem" />
+		</property>
 		
     </class>
 </hibernate-mapping>

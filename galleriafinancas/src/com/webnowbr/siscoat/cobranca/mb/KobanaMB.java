@@ -334,7 +334,7 @@ public class KobanaMB {
 				if (!objetoBoleto.isNull("document_number")) {
 					boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
 					
-					if (boleto.getDocumentNumber().equals("57516")) {
+					if (boleto.getDocumentNumber().equals("52340")) {
 						System.out.println("teste");
 					}
 				}
@@ -848,6 +848,10 @@ public class KobanaMB {
 		if (contrato.getEmpresa().equals("CRI 5")) {
 			jsonBoleto.put("bank_billet_account_id", 10218);
 		}
+		
+		if (contrato.getEmpresa().equals("CRI 6")) {
+			jsonBoleto.put("bank_billet_account_id", 10441);
+		}
 
 	    /*
 	    Número do Contrato
@@ -1038,6 +1042,10 @@ public class KobanaMB {
 			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
 		}
 		
+		if (contrato.getEmpresa().equals("CRI 6")) {
+			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
+		
 		JSONObject jsonCustomData = new JSONObject();
 		
 		if (parcela != null) {
@@ -1097,7 +1105,7 @@ public class KobanaMB {
 		
 		if (!contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.") && !contrato.getEmpresa().equals("FIDC GALLERIA")
 				&& !contrato.getEmpresa().equals("CRI 1") && !contrato.getEmpresa().equals("CRI 2") && !contrato.getEmpresa().equals("CRI 3")
-				 && !contrato.getEmpresa().equals("CRI 4") && !contrato.getEmpresa().equals("CRI 5")) {
+				 && !contrato.getEmpresa().equals("CRI 4") && !contrato.getEmpresa().equals("CRI 5") && !contrato.getEmpresa().equals("CRI 6")) {
 			retorno = true;
 			
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -1280,6 +1288,10 @@ public class KobanaMB {
 		if (contrato.getEmpresa().equals("CRI 5")) {
 			jsonBoleto.put("bank_billet_account_id", 10218);
 		}
+		
+		if (contrato.getEmpresa().equals("CRI 6")) {
+			jsonBoleto.put("bank_billet_account_id", 10441);
+		}
 	    /*
 	    Número do Contrato
 	     */
@@ -1432,6 +1444,10 @@ public class KobanaMB {
 		}
 		
 		if (contrato.getEmpresa().equals("CRI 5")) {
+			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 6")) {
 			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
 		}
 		//jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="/Menus/Menu.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaContratos" header="Pagar Boleto Stark Bank"
+				style="margin-bottom:10px;">	
+				<p:focus />
+				<p:messages />	
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="boleto" value="Linha Digitável:  "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="boleto"
+						value="#{starkBankAPI.linhaDigitavel}" label="boleto"
+						style="width:150px;" />
+					<p:outputLabel for="desc" value="Descrição:  "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="desc"
+						value="#{starkBankAPI.descricao}" label="boleto"
+						style="width:150px;" />				
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+				<p:commandButton value="Pagar Boleto"
+						ajax="false"
+						action="#{starkBankAPI.chamaBoletoStarkTela}"
+						update=":form:PanelJSON :form:ConsultaContratosResultados"
+						icon="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

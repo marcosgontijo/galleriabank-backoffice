@@ -63,15 +63,23 @@
 								value="false" />
 						</p:commandButton>
 						<p:spacer width="10" height="10" />
-						<p:commandButton action="#{termoMB.clearFieldsEditar}"
+
+
+						<p:commandButton icon="ui-icon-trash"
+							action="#{termoMB.excluirTermo(termoConsulta)}" update="@all">
+							<p:confirm header="Excluir Termo"
+								message="Deseja excluir o Termo selecionado?" />
+						</p:commandButton>
+						<!-- 						<p:commandButton action="#{termoMB.clearFieldsEditar}"
 							ajax="false" icon="ui-icon-trash" title="Excluir">
 							<f:setPropertyActionListener target="#{termoMB.objetoTermo}"
 								value="#{termoConsulta}" />
 							<f:setPropertyActionListener target="#{termoMB.updateMode}"
 								value="false" />
 							<f:setPropertyActionListener target="#{termoMB.deleteMode}"
-								value="true" />
-						</p:commandButton>
+								value="true" />						
+						</p:commandButton>  -->
+
 						<p:spacer width="10" height="10" />
 						<p:commandButton value="ver Assinantes"
 							onclick="PF('AssinantesDialog').show()"

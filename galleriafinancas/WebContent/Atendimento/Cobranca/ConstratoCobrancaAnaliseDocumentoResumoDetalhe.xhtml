@@ -64,21 +64,39 @@
 							
 						</p:panel>-->
 
-			<p:panel>
-				<f:facet name="header">
-					<h:outputText value="SCR" />
-					<p:dataTable id="resumoScr" var="scr"
-						rendered="#{paramDocumentoAnalise != null}"
-						value="#{paramDocumentoAnalise.getResumoScr()}">
-						<p:column>
-							<h:outputText value="#{scr.descricao}" />
-						</p:column>l
-								<p:column>
-							<h:outputText value="#{scr.valor}" />
-						</p:column>
-					</p:dataTable>
-				</f:facet>
-			</p:panel>
+			<h:panelGrid columns="1">
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="SCR" />
+						<p:dataTable id="resumoScr" var="scr"
+							rendered="#{paramDocumentoAnalise != null}"
+							value="#{paramDocumentoAnalise.getResumoScr()}">
+							<p:column>
+								<h:outputText value="#{scr.descricao}" />
+							</p:column>
+							<p:column style="width:75px;">
+								<h:outputText value="#{scr.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+				
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="Processo" />
+						<p:dataTable id="resumoProcesso" var="Processo"
+							rendered="#{paramDocumentoAnalise != null}"
+							value="#{paramDocumentoAnalise.getResumoProcesso()}">
+							<p:column>
+								<h:outputText value="#{Processo.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{Processo.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+			</h:panelGrid>
 
 			<p:panel style="justify-content:start;">
 				<f:facet name="header">
@@ -105,29 +123,29 @@
 						<p:column>
 							<h:outputText value="#{financas.descricao}" />
 						</p:column>
-						<p:column>
+						<p:column style="width:75px;">
 							<h:outputText value="#{financas.valor}" />
 						</p:column>
 					</p:dataTable>
 				</f:facet>
 			</p:panel>
-
-
+			
 			<p:panel>
 				<f:facet name="header">
-					<h:outputText value="Processo" />
-					<p:dataTable id="resumoProcesso" var="Processo"
+					<h:outputText value="Grupo Empresarial" />
+					<p:dataTable id="resumoGrupoEmpresas" var="grupoEmpresa"
 						rendered="#{paramDocumentoAnalise != null}"
-						value="#{paramDocumentoAnalise.getResumoProcesso()}">
+						value="#{paramDocumentoAnalise.getResumoGrupoEmpresarial()}">
 						<p:column>
-							<h:outputText value="#{Processo.descricao}" />
+							<h:outputText value="#{grupoEmpresa.descricao}" />
 						</p:column>
 						<p:column>
-							<h:outputText value="#{Processo.valor}" />
+							<h:outputText value="#{grupoEmpresa.valor}" />
 						</p:column>
 					</p:dataTable>
 				</f:facet>
 			</p:panel>
+
 			
 			<shiro:hasAnyRoles name="ROOT">
 				<p:panel id="panelVeiculos" >

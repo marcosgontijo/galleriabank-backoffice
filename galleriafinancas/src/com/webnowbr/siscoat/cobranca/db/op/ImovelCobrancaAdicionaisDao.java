@@ -35,8 +35,7 @@ public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdi
 			+ " FROM cobranca.imovelcobrancaadicionais ia "
 			+ " INNER JOIN cobranca.contratocobranca cc ON cc.id = ia.contratocobranca "
 			+ " WHERE cc.id = ? "
-			+ " AND ia.prelaudocompass = true "
-			+ " AND cc.avaliacaolaudo = 'Compass' ";
+			+ " AND ia.prelaudocompass = true ";
 	
 	@SuppressWarnings("unchecked")
 	public List<ImovelCobranca> getListImoveisAdd( Long idContratoCobranca ) {

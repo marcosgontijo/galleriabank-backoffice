@@ -1037,6 +1037,8 @@ public final class DateUtil {
 	}
 	
 	public static long getDifferenceDays(Date d1, Date d2) {
+		if(CommonsUtil.semValor(d1) || CommonsUtil.semValor(d2))
+			return 0;
 		long diff = d2.getTime() - d1.getTime();
 		diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 		return diff;

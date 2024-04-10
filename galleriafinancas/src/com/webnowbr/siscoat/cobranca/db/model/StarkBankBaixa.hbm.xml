@@ -13,8 +13,11 @@
         </property> 
         <property name="valor" type="big_decimal">
             <column name="valor" />
-       	</property>    
-                <property name="idTransacao" type="java.lang.String">
+       	</property>  
+       	<property name="valorPagamento" type="big_decimal"> 
+            <column name="valorPagamento" />
+       	</property>   
+        <property name="idTransacao" type="java.lang.String">
             <column name="idTransacao"/>
         </property>
         <property name="documento" type="java.lang.String">
@@ -25,7 +28,10 @@
         </property>
         <property name="formaPagamento" type="java.lang.String">
             <column name="formaPagamento"/>
-        </property>	 
+        </property>	
+        <property name="metodoPix" type="java.lang.String">
+            <column name="metodoPix"/>
+        </property>	  
          <property name="comentario" type="text">
             <column name="comentario"/>
         </property>	
@@ -39,6 +45,58 @@
 			class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar"
 			lazy="false">
 			<column name="contasPagar" />
-		</many-to-one>            
+		</many-to-one>  
+		<property name="ispb" type="java.lang.String">
+			<column name="ispb" />
+		</property>	
+		<many-to-one name="responsavel"
+			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
+			lazy="false">
+			<column name="responsavel" />
+		</many-to-one>   	
+		
+		<property name="pix" type="java.lang.String">
+			<column name="pix" />
+		</property>		
+		
+		<property name="nomeRecebedor" type="java.lang.String">
+			<column name="nomeRecebedor" />
+		</property>	
+		
+		<property name="banco" type="java.lang.String">
+			<column name="banco" />
+		</property>	
+		
+		<property name="conta" type="java.lang.String">
+			<column name="conta" />
+		</property>	
+		
+		<property name="agencia" type="java.lang.String">
+			<column name="agencia" />
+		</property>	
+
+		<property name="descricaoStarkBank" type="java.lang.String">
+			<column name="descricaoStarkBank" />
+		</property>	
+		<many-to-one name="comprovantePagamentoStarkBank"
+			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto"
+			lazy="false">
+			<column name="comprovantePagamentoStarkBank" />
+		</many-to-one>
+		<many-to-one name="comprovantePagamentoPixStarkBank"
+			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankPix"
+			lazy="false">
+			<column name="comprovantePagamentoPixStarkBank" />
+		</many-to-one>
+		<property name="tipoContaBancaria" type="java.lang.String">
+			<column name="tipoContaBancaria" />
+		</property>	  
+		<property name="contaIndividual" type="boolean">
+			<column name="contaIndividual" not-null="true" default="false"/>
+		</property>	        
+		
+		<property name="dataVencimento" type="java.util.Date">
+            <column name="dataVencimento"/>
+        </property>
     </class>
 </hibernate-mapping>

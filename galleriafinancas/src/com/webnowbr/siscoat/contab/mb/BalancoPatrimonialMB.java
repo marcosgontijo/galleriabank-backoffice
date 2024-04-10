@@ -169,6 +169,7 @@ public class BalancoPatrimonialMB {
 				balancoPatrimonial.setTaxaCri3(this.objetoBalanco.getTaxaCri3());
 				balancoPatrimonial.setTaxaCri4(this.objetoBalanco.getTaxaCri4());
 				balancoPatrimonial.setTaxaCri5(this.objetoBalanco.getTaxaCri5());
+				balancoPatrimonial.setTaxaCri6(this.objetoBalanco.getTaxaCri6());
 				balancos.add(balancoPatrimonial);
 				inicio = fim;
 				fim = inicio + qtdPorTask;

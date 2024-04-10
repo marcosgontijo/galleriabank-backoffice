@@ -12,7 +12,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.mb.RelatorioEstoque;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
-
 /**
  * DAO access layer for the Tecnico entity
  * @author hv.junior
@@ -53,12 +52,47 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 		});
 	}
     @SuppressWarnings("unchecked")
+		
+	private String QUERY_ID_ESTOQUE = "select id from cobranca.imovelestoque";
+	
+    @SuppressWarnings("unchecked")
+	public List<ImovelEstoque> relatorioImovelEstoque() {
+		return (List<ImovelEstoque>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ImovelEstoque> objects = new ArrayList<ImovelEstoque>();
+				
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_ID_ESTOQUE);
+					
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						objects.add(findById(rs.getLong(1)));	
+					}
+							
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});
+	}
+    @SuppressWarnings("unchecked")
 	public List<ContratoCobranca> consultaImovelEstoque(String parametro) {
   		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
   			@Override
   			public Object run() throws Exception {
   				
   				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+  				String QUERY_ID_ESTOQUE = "select  c.id from cobranca.contratocobranca c inner join cobranca.imovelestoque i on i.contratocobranca = c.id "
   				String QUERY_ID_ESTOQUE = "select  c.id from cobranca.contratocobranca c inner join cobranca.imovelestoque i on i.contratocobranca = c.id "
   						+ parametro;
   				Connection connection = null;
@@ -102,13 +136,41 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 			@Override
 			public Object run() throws Exception {
 				Collection<RelatorioEstoque> objects = new ArrayList<RelatorioEstoque>();
+				Collection<RelatorioEstoque> objects = new ArrayList<RelatorioEstoque>();
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_RELATORIO_ESTOQUE);
+					ps = connection.prepareStatement(QUERY_RELATORIO_ESTOQUE);
 					rs = ps.executeQuery();
+					RelatorioEstoque relatorio = null;
+					while (rs.next()) {
+						relatorio = new RelatorioEstoque();
+						relatorio.setNumeroContratoRelatorio(rs.getString("numerocontrato"));
+						relatorio.setVariacaoCustoRelatorio(rs.getBigDecimal("variacaocusto"));
+						relatorio.setLtvLeilaoRelatorio(rs.getBigDecimal("ltvleilao"));
+						relatorio.setValorEmprestimoRelatorio(rs.getBigDecimal("valoremprestimo"));
+						relatorio.setVendaForcadaRelatorio(rs.getBigDecimal("vendaforcada"));
+						relatorio.setValorMercadoRelatorio(rs.getBigDecimal("valormercado"));
+						relatorio.setNomePagadorRelatorio(rs.getString("nome"));
+						relatorio.setNumeroMatriculaRelatorio(rs.getString("numeromatricula"));
+						relatorio.setEnderecoCompletoRelatorio(rs.getString("Imovel"));
+						relatorio.setDataConsolidadoRelatorio(rs.getDate("dataconsolidado"));
+						relatorio.setDataLeilao1Relatorio(rs.getDate("dataleilao1"));
+						relatorio.setDataLeilao2Relatorio(rs.getDate("dataleilao2"));
+						relatorio.setDataLeilao3Relatorio(rs.getDate("LeilaoEstoque"));
+						relatorio.setLeiloeiroRelatorio(rs.getString("leiloeiro"));
+						relatorio.setStatusLeilaoRelatorio(rs.getString("statusleilao"));
+						relatorio.setStatusAtualRelatorio(rs.getString("statusatual"));
+						relatorio.setValorLeilao2Relatorio(rs.getBigDecimal("valorleilao2"));
+						relatorio.setValorVendaRelatorio(rs.getBigDecimal("valorvenda"));
+						relatorio.setDataVendaRelatorio(rs.getDate("datavenda"));
+						relatorio.setTipoVendaRelatorio(rs.getString("tipovenda"));
+												
+						objects.add(relatorio);
+					}
 					RelatorioEstoque relatorio = null;
 					while (rs.next()) {
 						relatorio = new RelatorioEstoque();
@@ -140,11 +202,52 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 					closeResources(connection, ps, rs);
 				}
 				return objects;
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
 
 			}
 		});
 	}
+			}
+		});
+	}
 
+    private String QUERY_ESTOQUE_BALANCO = "select id \r\n"
+    		+ "from cobranca.imovelestoque i \r\n"
+    		+ "where quitado is true";
+    
+    @SuppressWarnings("unchecked")
+	public List<ImovelEstoque> balancoEstoque() {
+		return (List<ImovelEstoque>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ImovelEstoque> objects = new ArrayList<ImovelEstoque>();
+				
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_ESTOQUE_BALANCO);
+					
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						objects.add(findById(rs.getLong(1)));	
+					}
+							
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});
+	}
     private String QUERY_ESTOQUE_BALANCO = "select id \r\n"
     		+ "from cobranca.imovelestoque i \r\n"
     		+ "where quitado is true";

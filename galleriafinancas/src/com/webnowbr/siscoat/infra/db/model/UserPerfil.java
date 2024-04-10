@@ -25,6 +25,11 @@ public final class UserPerfil implements Serializable {
      */
     public UserPerfil() {
     }
+    
+    public UserPerfil(long id, String perfil) {
+    	this.id = id;
+    	this.perfil = perfil;
+    }
 
 
 	public long getId() {

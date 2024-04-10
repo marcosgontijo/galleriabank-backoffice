@@ -33,7 +33,7 @@ public class CcbParticipantes implements Serializable{
 
 	
 	public CcbParticipantes() {
-		this.pessoa = new PagadorRecebedor();
+		this.pessoa = new PagadorRecebedor("CcbParticipantes");
 		this.nacionalidade = "brasileiro";
 		this.socios	= new ArrayList<CcbParticipantes>();
 		this.fiduciante = false;

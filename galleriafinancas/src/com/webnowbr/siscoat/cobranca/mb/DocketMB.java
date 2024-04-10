@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
@@ -66,12 +67,65 @@ public class DocketMB {
 				adiconarDocumentospagador(docAnalise);
 				etapa = "pedir paju";
 				adiconarDocumentospagador(docAnalise);
+				etapa = "ReAnalise";
+				adiconarDocumentospagador(docAnalise);
 			} else {
 				continue;
 			}
 		}
 		
 		return "/Atendimento/Cobranca/Docket.xhtml";
+	}
+	
+	public void calcularValoresCertidoes(List<DocumentoAnalise> listDocAnalise, ContratoCobranca contrato) {
+		contratoCobranca = contrato;
+		listPagador = new ArrayList<DocumentoAnalise>();
+		BigDecimal valorTotalCertidao = BigDecimal.ZERO;
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getPagador())) {
+				continue;
+			}
+			
+			if(docAnalise.isLiberadoAnalise()){
+				listPagador.add(docAnalise);
+				etapa = "ReAnalise";
+				
+				//adiconarDocumentospagador(docAnalise);
+				List<DocumentosDocket> docketDocumentos = new ArrayList<DocumentosDocket>();
+				DocumentosDocketDao docketDocsDao = new DocumentosDocketDao();
+				if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
+					docketDocumentos = docketDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapa);
+				} else {
+					docketDocumentos = docketDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapa);
+				}
+				List<DocketConsulta> listAux = new ArrayList<DocketConsulta>();
+				for (DocumentosDocket doc : docketDocumentos) {
+					DocketConsulta docketConsulta = null;
+					for (String uf : docAnalise.getEstadosConsulta()) {
+						if (doc.getEstados().contains(uf)) {
+							docketConsulta = new DocketConsulta(doc);
+							docketConsulta.setUf(uf);
+							listAux.add(docketConsulta);
+						}
+					}
+				}
+				for (DocketConsulta docketConsulta : listAux) {
+					docketConsulta.verificaValor();
+					valorTotalCertidao = valorTotalCertidao.add(docketConsulta.getValorCertidao());
+				}
+			} else {
+				continue;
+			}
+		}
+		BigDecimal valorCartorio = BigDecimal.ZERO;
+		if(!CommonsUtil.semValor(contrato.getValorCartorio()))
+			valorCartorio = contrato.getValorCartorio();
+		if(!CommonsUtil.semValor(contrato.getValorCertidao()))
+			valorCartorio = valorCartorio.subtract(contrato.getValorCertidao());
+		
+		valorCartorio = valorCartorio.add(valorTotalCertidao);
+		contrato.setValorCertidao(valorTotalCertidao);
+		contrato.setValorCartorio(valorCartorio);
 	}
 	
 	public void adiconarDocumentospagador(DocumentoAnalise docAnalise) {
@@ -112,7 +166,8 @@ public class DocketMB {
 			docketConsulta.setEstadoId(docketEstado.getIdDocket());
 			docketConsulta.setCidade(docketEstado.getCapital().getNome());
 			docketConsulta.setCidadeId(docketEstado.getCapital().getIdDocket());
-
+			docketConsulta.verificaValor();
+			
 			List<DocketConsulta> consultasExistentesRetorno = docketConsultaDao.getConsultasExistentes(docketConsulta);
 			if (consultasExistentesRetorno.size() <= 0) {
 				docAnalise.getDocketConsultas().add(docketConsulta);
@@ -207,6 +262,10 @@ public class DocketMB {
 					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
 					continue;
 				}*/
+				if(CommonsUtil.mesmoValor(docketConsulta.getDocketDocumentos().getEtapa(), "ReAnalise") &&
+						(!docAnalise.getContratoCobranca().isEmReanalise() || !docAnalise.getContratoCobranca().isReanalisePronta())) {
+					continue;
+				}
 				
 				if(!CommonsUtil.semValor(docketConsulta.getIdDocket())) 
 				continue;

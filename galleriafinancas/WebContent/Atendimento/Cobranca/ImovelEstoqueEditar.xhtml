@@ -319,14 +319,6 @@
 							converter="bigDecimalConverter">
 						</h:outputText>
 					</p:column>
-					<p:column style="text-align: center;width: 100px;"
-						rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
-						headerText="Kobana">
-						<ui:fragment rendered="#{parcelas.urlBoletoKonana ne null}">
-							<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank"
-								styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
-						</ui:fragment>
-					</p:column>
 
 
 

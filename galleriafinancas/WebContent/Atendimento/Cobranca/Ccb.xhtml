@@ -36,7 +36,7 @@
 					
 				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
 					icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />	
-				<h:panelGrid columns="2">	
+				<h:panelGrid columns="3">	
 					<h:panelGrid columns="2">							
 						<p:outputLabel for="tipoDownload"
 							value="Tipo Do Documento: " styleClass="labelBold" />
@@ -46,7 +46,7 @@
 							completeMethod="#{ccbMB.getListaTipoDownload()}"
 							scrollHeight="250"  >
 																		
-							<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" 
+							<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor aditamentoPanel estadosTermoPaju" 
 								event="itemSelect" />
 						</p:autoComplete>	
 							
@@ -76,6 +76,16 @@
 								update="contrato contratoDialogdlg" />
 						</h:panelGroup>
 					</h:panelGrid>
+					<h:panelGroup id="estadosTermoPaju">
+						<h:panelGrid columns="2" rendered="#{ccbMB.tipoDownload == 'Termo Paju Estados'}">
+							<p:outputLabel value="Estado Termo Paju: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:autoComplete value="#{ccbMB.ufPaju}" dropdown="true"
+								completeMethod="#{ccbMB.estadosTermoPaju()}"
+								scrollHeight="250">
+							</p:autoComplete>
+						</h:panelGrid>
+					</h:panelGroup>
 					<h:panelGrid columns="2">
 						<p:outputLabel value="Emitente Principal: "
 							styleClass="labelBold"
@@ -688,7 +698,8 @@
 
 				<h:panelGroup id="despesasPanel">
 					<p:panel header="Despesas" rendered="#{ccbMB.tipoDownload == 'AnexoII' or
-					ccbMB.tipoDownload == 'Aditamento Carta de Desconto'}">
+					ccbMB.tipoDownload == 'Aditamento Carta de Desconto' or
+					ccbMB.tipoDownload == 'Aditamento Data Parcela'}">
 						<h:panelGrid columns="1">
 							
 							<p:dataTable var="despesas" id="ListaDespesas"
@@ -719,7 +730,7 @@
 
 									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeDespesa(despesas)}"
-										update="form:despesasPanel" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:column>
 							</p:dataTable>
 							
@@ -737,6 +748,110 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
+
+				<h:panelGroup id="aditamentoPanel">
+					<p:panel id="Aditamento" header="Aditamento" style="margin-bottom:10px;"
+						rendered="#{ccbMB.tipoDownload == 'Aditamento Data Parcela'}">
+						<p:panel header="Parcelas">
+							<h:panelGrid columns="4">
+								<p:outputLabel for="prazoAditamento"
+									value="Prazo:  " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<h:panelGroup>
+									<p:inputText id="prazoAditamento"
+										value="#{ccbMB.objetoCcb.prazo}" label="Contrato"
+										disabled="false">
+									</p:inputText>
+									<p:outputLabel value=" meses" label="Contrato"/>
+								</h:panelGroup>
+								
+								<p:outputLabel for="prazoAnterior"
+									value="Prazo Anterior:  " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<h:panelGroup>
+									<p:inputText id="prazoAnterior"
+										value="#{ccbMB.objetoCcb.prazoAnterior}" label="Contrato"
+										disabled="false">
+									</p:inputText>
+									<p:outputLabel value=" meses" label="Contrato"/>
+								</h:panelGroup>
+								 
+								<p:outputLabel for="carenciaAditamento"
+									value="Carência:  " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="carenciaAditamento"
+									value="#{ccbMB.objetoCcb.carencia}" label="Contrato"
+									disabled="false">
+								</p:inputText>
+								
+								<p:outputLabel for="carenciaAnterior"
+									value="Carência Anterior:  " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="carenciaAnterior"
+									value="#{ccbMB.objetoCcb.carenciaAnterior}" label="Contrato"
+									disabled="false">
+								</p:inputText>
+								
+								<p:outputLabel for="dataDeEmissaoAditamento" value="Data De Emissão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="dataDeEmissaoAditamento" showOn="button"
+									value="#{ccbMB.objetoCcb.dataDeEmissao}" label="Data De Emissao"
+									size="100" pattern="dd/MM/yyyy" locale="pt"
+									styleClass="dateTimeField" >
+									<p:ajax event="dateSelect" 
+										update="dataDeEmissao" />
+								</p:calendar>
+									
+								<p:outputLabel for="dataDeEmissaoAnterior" value="Data De Emissão Anterior: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="dataDeEmissaoAnterior" showOn="button"
+									value="#{ccbMB.objetoCcb.dataDeEmissaoAnterior}" label="Data De Emissao Anterior"
+									size="100" pattern="dd/MM/yyyy" locale="pt"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="vencimentoUltimaParcelaPagamentoAditamento"
+									value="Vencimento Da Última Parcela:  " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="vencimentoUltimaParcelaPagamentoAditamento"
+									showOn="button"
+									value="#{ccbMB.objetoCcb.vencimentoUltimaParcelaPagamento}"
+									label="Vencimento Da Última Parcela" size="100"
+									pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false">
+									<p:ajax event="change" process="@form"
+										action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
+								</p:calendar>
+								
+								<p:outputLabel for="vencimentoUltimaParcelaPagamentoAnterior"
+									value="Vencimento Da Última Parcela Anterior:  " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="vencimentoUltimaParcelaPagamentoAnterior"
+									showOn="button"
+									value="#{ccbMB.objetoCcb.vencimentoUltimaParcelaPagamentoAnterior}"
+									label="Vencimento Da Última Parcela" size="100"
+									pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false">
+								</p:calendar>
+									
+								<p:outputLabel for="numeroContratoAditamento" value="Número do Contrato: "
+									styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="numeroContratoAditamento" value="#{ccbMB.objetoCcb.numeroCcb}"
+									label="Contrato" style="width:150px;" />
+									
+								<p:outputLabel for="numeroContratoAnterior" value="Número do Contrato Anterior: "
+									styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="numeroContratoAnterior" value="#{ccbMB.objetoCcb.numeroCcbAnterior}"
+									label="Contrato" style="width:150px;" />
+										
+								<p:commandButton ajax="true"
+									action="#{ccbMB.calcularSimulador}"
+									icon="ui-icon ui-icon-circle-zoomin"
+									value="Calcular Parcelas" update="msgs Aditamento" />
+							</h:panelGrid>
+						</p:panel>
+					</p:panel>
+				</h:panelGroup>
+
 
 				<p:panel id="Dados" header="Dados" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
@@ -771,7 +886,7 @@
 									styleClass="labelBold" />
 								<p:selectOneMenu id="sistemaAmortizacao"
 									value="#{ccbMB.objetoCcb.sistemaAmortizacao}" required="true"
-									style="width: 80px;"  disabled="false" >
+									style="width: 80px;" disabled="false" >
 									<f:selectItem itemValue="Price" itemLabel="Price" />
 									<f:selectItem itemValue="SAC" itemLabel="SAC" />						
 								</p:selectOneMenu>
@@ -833,7 +948,7 @@
 								<p:commandButton ajax="true"
 									action="#{ccbMB.calcularSimulador}"
 									icon="ui-icon ui-icon-circle-zoomin"
-									value="Calcular Parcelas" update="msgs Dados" />
+									value="Calcular Parcelas" update="msgs Dados dadosOcultos" />
 							</h:panelGrid>
 						</p:panel>	
 						<p:panel header="Emissão / Banco" id="PanelBanco">
@@ -945,10 +1060,18 @@
 								<p:inputText id="logradouroNumeroImovel" value="#{ccbMB.objetoCcb.logradouroNumeroImovel}"
 									label="Contrato" />									
 														
-								<p:outputLabel for="precoVendaCompra" value="preco Venda Compra:  "
+								<p:outputLabel for="precoVendaCompra" value="Preço Venda Compra:  "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="precoVendaCompra" value="#{ccbMB.objetoCcb.precoVendaCompra}"
+									label="Contrato" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel for="porcentagemVendaCompra" value="Porcentagem Venda Compra:  "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="porcentagemVendaCompra" value="#{ccbMB.objetoCcb.porcentagemVendaCompra}"
 									label="Contrato" onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter" />
@@ -1786,7 +1909,8 @@
 						<p:commandButton value="Inserir Despesa" 
 							icon="ui-icon-check"
 							action="#{ccbMB.addDespesa}" 
-							update="form:despesasPanel form:valorDespesas">
+							oncomplete="PF('despesaDialog').hide();"
+							update=":form:despesasPanel :form:valorDespesas">
 						</p:commandButton>				
 					</h:panelGroup>
 				</div>

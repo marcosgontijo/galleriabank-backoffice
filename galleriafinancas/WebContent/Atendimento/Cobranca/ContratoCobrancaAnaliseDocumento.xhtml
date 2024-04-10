@@ -19,8 +19,82 @@
 			}
 	</h:outputStylesheet>
 	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+	
+	<p:panel header="Envio de documento do pré-laudo" style="margin-bottom:10px"   id="ArquivoPreLaudo" 
+			rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" 
+						fileUploadListener="#{contratoCobrancaMB.handleFilePreLaudoUpload}" mode="advanced" dragDropSupport="true"
+                          update="ArquivosPreLaudoSalvos msgArquivo" />	
+                          
+                          <p:panel id="ArquivosPreLaudoSalvos"
+					header="Arquivo(s) Pré Laudo Salvo(s) no Contrato"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="1">
+						<p:dataTable id="dtFilesPreLaudo" var="filesPreLaudo"
+							value="#{contratoCobrancaMB.filesPreLaudo}"
+							rowKey="#{filesPreLaudo.name}"
+							selection="#{contratoCobrancaMB.deletefilesPreLaudo}"
+							emptyMessage="" sortBy="#{filesPreLaudo.name}">
+							<p:column selectionMode="multiple"
+								style="width:16px;text-align:center" />
+							<f:facet name="header">
+								<p:commandButton value="Download Selecionado(s)" ajax="false"
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFilesPreLaudo()}">
+								</p:commandButton>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+									icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.deleteFilePreLaudo}" />
+								<p:commandButton value="Download Selecionado(s)" ajax="false"
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFilesPreLaudo()}">
+								</p:commandButton>
+							</f:facet>
+							<p:column style="text-align: center;"
+								headerText="Nome do Arquivo" filterBy="#{filesPreLaudo.name}"
+								filterMatchMode="contains" sortBy="#{filesPreLaudo.name}">
+								<h:outputText value="#{filesPreLaudo.name}" />
+								<p:spacer height="10" />
+								<p:commandButton value="Abrir" ajax="false"
+									action="#{contratoCobrancaMB.viewFile(filesPreLaudo)}"
+									immediate="true" icon="ui-icon-search"
+									onclick="target='_blank'" onblur="target='_self'">
+								</p:commandButton>
+							</p:column>
+
+							<p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false"
+									icon="ui-icon-arrowthick-1-s">
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.selectedFile}"
+										value="#{filesPreLaudo}" />
+									<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<p:commandButton value="Download Selecionado(s)" ajax="false"
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+								</p:commandButton>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+									icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.deleteFileJuridico}" />
+							</f:facet>
+							<p:ajax event="rowSelectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="rowUnselectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="toggleSelect" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panel>
+				
+					</p:panel>
+					
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO, PROFILE_PAJU_NEVES, PROFILE_PAJU_LUVISON">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE, PROFILE_PAJU_NEVES, PROFILE_PAJU_LUVISON">
 		<p:panel id="ImovelAnalisado" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Análise' }">
 			<f:facet name="header">
 				<h:outputText value="Cidade imovel" />				
@@ -52,7 +126,7 @@
 			</f:facet>
 
 			<shiro:hasAnyRoles
-				name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+				name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 
 				<h:panelGrid columns="1">
 					<p:fileUpload label="Selecionar Arquivo"
@@ -70,7 +144,7 @@
 				header="Arquivo(s) Salvo(s) na analise" style="margin-bottom:10px;">
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
-					<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						
+					<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">						
 						<p:commandButton value="Documentos Analise REA"
 							action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos()}"
 							oncomplete="PF('documentosReaDlg').show();"
@@ -93,14 +167,11 @@
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 						rowKey="#{fileAnalise.id}"
-						paginator="true"
-						rows="10"  selection="#{contratoCobrancaMB.listaSelectAnalise}" 
-						emptyMessage=""
-						rowStyleClass="#{(fileAnalise.observacao ne null
-							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
+						 selection="#{contratoCobrancaMB.listaSelectAnalise}" 
+						emptyMessage="" >
 							
 						<f:facet name="header">		
-						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						 
+						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">						 
 							<p:commandButton value="Excluir Selecionado(s)" ajax="true"  icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton> 
@@ -113,7 +184,7 @@
 						<p:column selectionMode="multiple"
 							style="width:16px;text-align:center" />
 						<shiro:hasAnyRoles
-							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 							<p:column style="text-align: center; width:5rem;">
 								<p:commandButton value="ver Resumo"
 									oncomplete="PF('resumoConsutlasDialog').show()"
@@ -191,7 +262,7 @@
 							<h:outputText value="#{fileAnalise.observacao}" />
 						</p:column>
 						<shiro:hasAnyRoles
-							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 						<p:column style="text-align: center; width:95px;padding: 0; border:0; " headerText="Estados"  >
 							<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado" 
 							 type="definition">
@@ -303,7 +374,7 @@
 							</p:commandButton>
 
 						</p:column>
-						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 							<p:column>
 								<p:commandButton icon=" ui-icon-pencil"
 									onclick="PF('editarPessoaAnaliseDlg').show()" ajax="true" update="adicionarPessoaAnaliseEditarForm">
@@ -328,7 +399,7 @@
 
 			</p:panel>
 			<shiro:hasAnyRoles
-							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 				<p:panel id="pnlCeridoesAnalise" header="Certidões"
 					rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emReanalise}"
 					style="margin-bottom:10px;">

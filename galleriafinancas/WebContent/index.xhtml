@@ -21,6 +21,7 @@
 	<h:outputStylesheet library="webjars"
 		name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
 		<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+		<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
 
@@ -73,9 +74,17 @@
                     			<p:commandButton value="Ver Termos Assinados" action="#{termoMB.consultaTermosAssinados}" update="TermoForm" onclick="PF('DialogTermosAssinados').show();"></p:commandButton>					    
                     		</p:panelGrid>
                     		</p:overlayPanel>
+					    	<h:outputText id="opcoesLabel"  value="#{loginBean.username}" styleClass="usuarioLogin" />
+					    	<p:overlayPanel id="opcoesMenu" for="opcoesLabel" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
+                    	dismissable="false" showCloseIcon="true">
+                    		<p:panelGrid columns="1">
+                    			<p:commandButton value="Ver Termos Assinados" action="#{termoMB.consultaTermosAssinados}" update="TermoForm" onclick="PF('DialogTermosAssinados').show();"></p:commandButton>					    
+                    		</p:panelGrid>
+                    		</p:overlayPanel>
 					    	<br></br>
 					    	<br></br>
 					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss"/>
+					    	</div>				    	
 					    	</div>				    	
 					    </div>
 					  </div>

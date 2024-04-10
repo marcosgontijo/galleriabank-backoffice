@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,20 +20,18 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
@@ -41,6 +41,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
+import org.primefaces.event.UnselectEvent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
@@ -51,10 +55,8 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.Document;
@@ -86,6 +88,7 @@ import com.webnowbr.siscoat.infra.db.model.TermoUsuario;
 import com.webnowbr.siscoat.infra.db.model.TermoUsuarioVO;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.db.model.UserPerfil;
+import com.webnowbr.siscoat.infra.db.model.UserVO;
 import com.webnowbr.siscoat.security.LoginBean;
 
 /** ManagedBean. */
@@ -98,8 +101,10 @@ public class TermoMB {
 
 	/** Controle dos dados da Paginação. */
 	private LazyDataModel<Termo> lazyModel;
-
+	private TermoUsuario termoUsuario;
 	private Termo objetoTermo;
+	private String base64imagem;
+	private TermoUsuario objetoTermoUsuario;
 	private String base64imagem;
 	private TermoUsuario objetoTermoUsuario;
 	private boolean updateMode = false;
@@ -110,13 +115,53 @@ public class TermoMB {
 	private String arquivoAnteriorSalvo = null;
 	private StreamedContent pdfContent;
 	private Termo termoUsuarioPopup;
+	private String nomeUsuario;
 	List<Termo> termos = new ArrayList<>();
 	int itermo = -1;
 
 	private UploadedFile file;
+	private String idPerfilSelecionado;
 
 	private List<UserPerfil> perfil;
 	Optional<UserPerfil> userPerfilPublico;
+	Optional<UserPerfil> userPerfilIndividual;
+	private List<User> users;
+	private List<User> selectedUsers;
+
+	private List<TermoUsuario> termosUsuario;
+	private List<TermoPopup> usuarios = new ArrayList<>();
+	private List<User> todosUsuario;
+	List<UserVO> usuariosVinculados = new ArrayList<>();
+	List<UserVO> listaOrigem = new ArrayList<>();
+	List<UserVO> listaDestino = new ArrayList<>();
+	List<UserVO> listaExcluir = new ArrayList<>();
+	List<String> listaNomes = new ArrayList<>();
+
+	private TermoUsuarioVO usuarioVO;
+	User usuarioNew = null;
+	Date dataAceite = null;
+
+	private DualListModel<UserVO> listaDeUsuariosPickList;
+
+	public DualListModel<UserVO> getListaDeUsuariosPickList() {
+		return listaDeUsuariosPickList;
+	}
+
+	public void setListaDeUsuariosPickList(DualListModel<UserVO> listaDeUsuariosPickList) {
+		this.listaDeUsuariosPickList = listaDeUsuariosPickList;
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public List<User> getSelectedUsers() {
+		return selectedUsers;
+	}
+
+	public void setSelectedUsers(List<User> selectedUsers) {
+		this.selectedUsers = selectedUsers;
+	}
 
 	public TermoMB() {
 
@@ -132,8 +177,10 @@ public class TermoMB {
 				TermoDao termoDao = new TermoDao();
 
 				filters.put("termo", "false");
+				filters.put("deletado", "false");
 
 				setRowCount(termoDao.count(filters));
+
 				return termoDao.findByFilter(first, pageSize, sortField, sortOrder.toString(), filters);
 			}
 		};
@@ -170,6 +217,10 @@ public class TermoMB {
 	private String nomePDF;
 	private StreamedContent filePDF;
 
+	@SuppressWarnings("deprecation")
+	public StreamedContent geraPDF(Long id) {
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
+		UserDao userDao = new UserDao();
 	@SuppressWarnings("deprecation")
 	public StreamedContent geraPDF(Long id) {
 		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
@@ -249,20 +300,62 @@ public class TermoMB {
 	}
 
 	public String clearFieldsEditar() {
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
+		TermoDao termoDao = new TermoDao();
+		UserDao userdao = new UserDao();
+
+		this.todosUsuario = userdao.carregarUsuariosLista();
+
+		listaOrigem = new ArrayList<>();
+		listaDestino = new ArrayList<>();
+		listaExcluir = new ArrayList<>();
+		listaOrigem.addAll(todosUsuario.stream()
+				.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList()));
+		carregaListaPerfil();
+	
+
+		this.listaDeUsuariosPickList = new DualListModel<>(this.listaOrigem, this.listaDestino);
 
 		if (objetoTermo == null) {
+			setNomeUsuario();
 			objetoTermo = new Termo();
-			if (userPerfilPublico == null)
-				carregaListaPerfil();
+			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
 			objetoTermo.setUserPerfil(userPerfilPublico.get());
 			this.tituloPainel = "Inserir";
-		} else
-			this.tituloPainel = "Editar";
+			objetoTermo.setDeletado(false);
+			objetoTermo.setUsuarioCriador(nomeUsuario);
 
-		carregaListaPerfil();
+		} else {
+			this.idPerfilSelecionado = CommonsUtil.stringValue(this.objetoTermo.getUserPerfil().getId());
+			this.tituloPainel = "Editar";
+			usuariosVinculados = termoUsuarioDao.findUsersByTermoId(objetoTermo.getId()).stream()
+					.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList());
+//			 listaOrigem.removeAll(usuariosVinculados);
+//			 listaOrigem = listaOrigem.stream().filter(p -> !usuariosVinculados.stream().map(m -> m.getId()).collect(Collectors.toList()).contains(p.getId())).collect(Collectors.toList());
+			List<Long> f = usuariosVinculados.stream().map(m -> m.getId()).collect(Collectors.toList());
+			List<UserVO> listaOrigemvinc = listaOrigem.stream().filter(p -> f.contains(p.getId()))
+					.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList());
+
+			listaOrigem.removeAll(listaOrigemvinc);
+
+			listaDestino = usuariosVinculados;
+			DualListModel<UserVO> novaListaDeUsuariosPickList = new DualListModel<>(listaOrigem, listaDestino);
+			this.listaDeUsuariosPickList = novaListaDeUsuariosPickList;
+		}
+
 		return "/Cadastros/Cobranca/TermoInserir.xhtml";
 
 	}
+	public void excluirTermo(Termo objetoTermoExcluir) {
+	    TermoDao termoDao = new TermoDao();
+	    setNomeUsuario();
+	    objetoTermoExcluir.setUsuarioDelete(nomeUsuario);
+	    objetoTermoExcluir.setDataDelete(DateUtil.gerarDataHoje());
+	    objetoTermoExcluir.setDeletado(true);
+	    termoDao.merge(objetoTermoExcluir);    
+	    FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "/Cadastros/Cobranca/TermoConsultar.xhtml?faces-redirect=true");
+	}
+
 
 	private void carregaListaPerfil() {
 		if (perfil == null) {
@@ -347,47 +440,6 @@ public class TermoMB {
 		return null;
 	}
 
-	public String salvar() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		TermoDao termoDao = new TermoDao();
-		String msgRetorno = null;
-
-		try {
-			if (!validaFileUpload())
-				return "";
-
-			if (CommonsUtil.semValor(objetoTermo.getId())) {
-				termoDao.create(objetoTermo);
-				msgRetorno = "inserido";
-			} else {
-				termoDao.merge(objetoTermo);
-				msgRetorno = "atualizado";
-			}
-
-			if (!CommonsUtil.semValor(pathArquivoAnteriorSalvo)) {
-				new File(pathArquivoAnteriorSalvo).delete();
-			}
-
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Termo: Registro " + msgRetorno + " com sucesso! (Usuário: " + objetoTermo.getIdentificacao() + ")",
-					""));
-
-		} catch (DAOException e) {
-
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Termo: " + objetoTermo.getIdentificacao(), e.getMessage()));
-
-			return "";
-		} catch (DBConnectionException e) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Termo: " + objetoTermo.getIdentificacao(), e.getMessage()));
-
-			return "";
-		}
-
-		return "TermoConsultar.xhtml";
-	}
-
 	public List<Termo> termosNaoAssinadosUsuario(User usuario) {
 		TermoDao termoDao = new TermoDao();
 		return termoDao.termosNaoAssinadosUsuario(usuario);
@@ -404,14 +456,14 @@ public class TermoMB {
 					.filter(t -> CommonsUtil.mesmoValor(t.getIdTermo(), termo.getId())).findAny().orElse(null);
 //				TermoUsuario termoUsuario = termoUsuarioDao.termosUsuario(termo, loginBean.getUsuarioLogado());				
 			if (!CommonsUtil.semValor(termoUsuario)) {
-				if (CommonsUtil.semValor(termoUsuario.getDataCienca())) {
-					termoUsuario.setDataCienca(DateUtil.getDataHoraAgora());
+				if (CommonsUtil.semValor(termoUsuario.getDataCiencia())) {
+					termoUsuario.setDataCiencia(DateUtil.getDataHoraAgora());
 //							termoUsuarioDao.merge(termoUsuario);
 				}
 			} else {
 				if (termo.getId() > 0) {
 					termoUsuario = new TermoUsuario();
-					termoUsuario.setDataCienca(DateUtil.getDataHoraAgora());
+					termoUsuario.setDataCiencia(DateUtil.getDataHoraAgora());
 					termoUsuario.setIdTermo(termo.getId());
 					termoUsuario.setIdUsuario(loginBean.getUsuarioLogado().getId());
 					loginBean.getUsuarioLogado().getListTermos().add(termoUsuario);
@@ -426,13 +478,71 @@ public class TermoMB {
 		if (!CommonsUtil.semValor(termos)) {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 		}
-		// }
 
 		if (!CommonsUtil.semValor(termos)) {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 		}
 
 		return null;
+	}
+
+	public String salvar() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		TermoDao termoDao = new TermoDao();
+		String msgRetorno = null;
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
+
+		try {
+			if (CommonsUtil.semValor(objetoTermo.getArquivo())) {
+				if (!validaFileUpload())
+					return "";
+			}
+			if (CommonsUtil.semValor(objetoTermo.getId())) {
+				termoDao.create(objetoTermo);
+				msgRetorno = "inserido";
+			} else {
+				termoDao.merge(objetoTermo);
+				msgRetorno = "atualizado";
+			}
+
+			if (!CommonsUtil.semValor(pathArquivoAnteriorSalvo)) {
+				new File(pathArquivoAnteriorSalvo).delete();
+			}
+
+			if (objetoTermo.getUserPerfil().getId() == 5000) {
+				for (UserVO user : this.listaDestino) {
+					if (CommonsUtil.semValor(termoUsuarioDao.findTermoUsuario(objetoTermo.getId(), user.getId()))) {
+						TermoUsuario termoUsuario = new TermoUsuario();
+						termoUsuario.setIdTermo(objetoTermo.getId());
+						termoUsuario.setIdUsuario(user.getId());
+						termoUsuarioDao.merge(termoUsuario);
+					}
+				}
+				for (UserVO user : this.listaExcluir) {
+
+					TermoUsuario termoUsuario = termoUsuarioDao.findTermoUsuario(objetoTermo.getId(), user.getId());
+					if (!CommonsUtil.semValor(termoUsuario)) {
+						termoUsuarioDao.delete(termoUsuario);
+					}
+				}
+			}
+
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", msgRetorno));
+
+		} catch (DAOException e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Termo: " + objetoTermo.getIdentificacao(), e.getMessage()));
+
+			return "";
+		} catch (DBConnectionException e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Termo: " + objetoTermo.getIdentificacao(), e.getMessage()));
+
+			return "";
+		}
+		// this.listaDestino = new ArrayList<>();
+
+		return "TermoConsultar.xhtml";
 	}
 
 	public String getDescricaoTermo() {

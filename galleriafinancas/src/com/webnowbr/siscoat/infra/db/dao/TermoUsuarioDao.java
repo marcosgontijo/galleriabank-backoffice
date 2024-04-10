@@ -1,6 +1,9 @@
 package com.webnowbr.siscoat.infra.db.dao;
 
 import java.sql.Connection;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;

@@ -78,6 +78,7 @@ public class ImovelCobranca implements Serializable {
 	private BigDecimal valorPreLaudo;
 
 	
+	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
@@ -261,6 +262,7 @@ public class ImovelCobranca implements Serializable {
 		tipos.add("Chácara,Chácara");
 		tipos.add("Rural,Rural");
 		tipos.add("Casa em construção,Casa em construção");
+		tipos.add("Posto,Posto");
 		return tipos;
 	}
 	
@@ -306,15 +308,23 @@ public class ImovelCobranca implements Serializable {
 	
 	
 	public String getEnderecoCompleto() {
-		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
-									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
-									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") +
+		String enderecoCompleto =   getEnderecoSimplificado() +
 									(!CommonsUtil.semValor(cidade)? ", " + cidade:"") +
 									(!CommonsUtil.semValor(estado)? ", " + estado:"") +
 									(!CommonsUtil.semValor(cep)? ", " + cep:"");
 									
 		return enderecoCompleto;
 	}
+	
+	public String getEnderecoSimplificado() {
+		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
+									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
+									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") ;
+									
+		return enderecoCompleto;
+	}
+	
+
 	
 	/**
 	 * @return the id
@@ -761,13 +771,12 @@ public class ImovelCobranca implements Serializable {
 
 	public int getCategoria() {
 		if (CommonsUtil.mesmoValor(this.getTipo(), "Apartamento")) {
+			this.setSubCategoria(1);
 			return 1;
 		}
-		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa")) {
+		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa") || this.getTipo().toLowerCase().contains("condomínio")) {
+			this.setSubCategoria(2);
 			return 2;
-		}
-		if (this.getTipo().toLowerCase().contains("condomínio")) {
-			return 3;
 		}
 		return 0;
 	}
@@ -839,4 +848,6 @@ public class ImovelCobranca implements Serializable {
 	public void setSubCategoria(int subCategoria) {
 		this.subCategoria = subCategoria;
 	}
+
+	
 }

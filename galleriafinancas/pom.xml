@@ -181,7 +181,7 @@
 			<groupId>
 				com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.0.6</version>
+			<version>5.5.13.2</version>
 		</dependency>
 		<dependency>
 			<groupId>
@@ -486,13 +486,14 @@
 			<groupId>
 				br.com.galleriabank.bigdata-cliente</groupId>
 			<artifactId>bigdata-cliente</artifactId>
-			<version>1.0.15</version>
+			<version>1.0.16</version>
 		</dependency>		
 		<dependency>
 			<groupId>br.com.galleriabank.debit-cliente</groupId>
 			<artifactId>debit-cliente</artifactId>
 			<version>1.0.1</version>
-		</dependency><dependency>
+		</dependency>
+		<dependency>
 			<groupId>br.com.galleriabank.drcalc-cliente</groupId>
 			<artifactId>drcalc-cliente</artifactId>
 			<version>1.0.2</version>
@@ -504,5 +505,26 @@
 				laudoimovel-cliente</artifactId>
             <version>1.0.3</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+	  		<groupId>org.apache.httpcomponents</groupId>
+	  		<artifactId>httpclient</artifactId>
+	  		<version>4.5.13</version>
+	  	</dependency>
+	  	<dependency>
+	    	<groupId>org.bouncycastle</groupId>
+	    	<artifactId>bcprov-jdk18on</artifactId>
+	    	<version>1.72</version>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.bouncycastle</groupId>
+	    	<artifactId>bcutil-jdk18on</artifactId>
+	    	<version>1.72</version>
+	    </dependency>
+	  	<dependency>
+	    	<groupId>org.bouncycastle</groupId>
+	    	<artifactId>bcpkix-jdk18on</artifactId>
+	    	<version>1.72</version>
+	    </dependency>
 	</dependencies>
 </project>

@@ -276,7 +276,12 @@ public class NetrinService {
 			receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(), ReceitaFederalPF.class);
 		} else
 			receitaFederalPF = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
-
+		
+		if(!CommonsUtil.semValor(receitaFederalPF) 
+				&& !CommonsUtil.semValor(receitaFederalPF.getCpfBirthdate()) 
+				&& CommonsUtil.mesmoValor(receitaFederalPF.getCpfBirthdate().getMessage(), "Menor de idade"))
+			return receitaFederalPF;
+		
 		pagadorRecebedor.setNome(receitaFederalPF.getCpfBirthdate().getNome());
 		pagadorRecebedor.setDtNascimento(
 				CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/yyyy"));
@@ -1935,6 +1940,16 @@ public class NetrinService {
 			netrinConsultaDao.merge(netrin);
 			return;
 		}	
+		if(CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
+			pdf = baixarDocumentoProcesso(retorno);
+			if(CommonsUtil.semValor(pdf)) {
+				netrin.setStatus("Falha: Retorno sem pdf");
+				netrin.setRetorno(null);
+				pedirConsulta(netrin, user);
+				netrinConsultaDao.merge(netrin);
+				return;
+			} 
+		}
 		if(retorno.contains("Não conseguimos gerar o link do comprovante.")) {
 			netrin.setStatus("Falha: Retorno sem link do pdf");
 			netrin.setRetorno(null);

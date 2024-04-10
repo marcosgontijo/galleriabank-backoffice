@@ -41,6 +41,8 @@
 			}
 			</h:outputStylesheet>
 			<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
+			
+			<ui:include src="ContratoCobrancaAnaliseDocumentoReanalise.xhtml"></ui:include>
 				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
@@ -53,7 +55,7 @@
 					<h:outputText id="dataContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.dataContrato}"  autocomplete="no" style="width:250px;font-weight: bold; font-size: 18px;">			            	
 				          <f:convertDateTime locale="pt_BR"  />
 				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-				    </h:outputText>																				
+				    </h:outputText>
 				</h:panelGrid>
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"

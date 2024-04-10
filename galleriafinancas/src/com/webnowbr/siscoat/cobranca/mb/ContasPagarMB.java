@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -479,7 +480,7 @@ public class ContasPagarMB {
 		this.objetoContasPagar.setTipoDespesa("C");
 		this.objetoContasPagar.setOrigem(ContasPagarOrigemEnum.POS);
 		this.objetoContasPagar.setResponsavel(this.selectedContratoLov.getResponsavel());
-		if(!CommonsUtil.semValor(this.objetoContasPagar.getValor())) {
+		/*if(!CommonsUtil.semValor(this.objetoContasPagar.getValor())) {
 			if(!CommonsUtil.semValor(this.selectedContratoLov.getContaPagarValorTotal())) {
 				this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
 						.getContaPagarValorTotal().add(this.objetoContasPagar.getValor()));
@@ -493,7 +494,7 @@ public class ContasPagarMB {
 				this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
 						.getContaPagarValorTotal().subtract(this.objetoContasPagar.getValorPagamento()));
 			}
-		}	
+		}	*/
 		
 		if(this.objetoContasPagar.isContaPaga() && CommonsUtil.semValor(this.objetoContasPagar.getDataPagamento())) {
 			this.objetoContasPagar.setDataPagamento(DateUtil.gerarDataHoje());
@@ -511,6 +512,26 @@ public class ContasPagarMB {
 		this.addContasPagar = false;
 	}
 	
+	private BigDecimal calcularValorTotalContasPagar() {
+		BigDecimal valorTotalContasPagarNovo = BigDecimal.ZERO;
+		for (ContasPagar conta : this.selectedContratoLov.getListContasPagar()) {
+			if (conta.isEditada()) 
+				continue;
+			
+			if (!CommonsUtil.semValor(conta.getValor())) {
+				valorTotalContasPagarNovo = valorTotalContasPagarNovo.add(conta.getValor());
+			}
+
+			/*if (!CommonsUtil.semValor(conta.getValorPagamento())) {
+				if (CommonsUtil.mesmoValor(conta.getValorPagamento(), conta.getValor())) {
+					conta.setContaPaga(true);
+				}
+				valorTotalContasPagarNovo = valorTotalContasPagarNovo.subtract(conta.getValorPagamento());
+			}*/
+		}
+		return valorTotalContasPagarNovo;
+	}
+	
 	public void editarContaPosOperacao(ContasPagar conta) {
 		this.addContasPagar = true;
 		this.objetoContasPagar = new ContasPagar();
@@ -519,14 +540,15 @@ public class ContasPagarMB {
 	}
 	
 	public void removerContaPosOperacao(ContasPagar conta) {
-		if(!CommonsUtil.semValor(this.objetoContasPagar.getValor())) {
+		/*if(!CommonsUtil.semValor(this.objetoContasPagar.getValor())) {
 			this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
 					.getContaPagarValorTotal().subtract(this.objetoContasPagar.getValor()));
 		}
 		if(!CommonsUtil.semValor(this.objetoContasPagar.getValorPagamento())) {
 			this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
 					.getContaPagarValorTotal().add(this.objetoContasPagar.getValorPagamento()));
-		}
+		}*/
+		selectedContratoLov.setContaPagarValorTotal(calcularValorTotalContasPagar());
 		this.selectedContratoLov.getListContasPagar().remove(conta);
 	}
 	
@@ -634,6 +656,8 @@ public class ContasPagarMB {
 		this.contasPagarPosOperacao =  new ArrayList<>(setResult.stream()
 																.filter(x -> x.getOrigem() == ContasPagarOrigemEnum.POS)
 																.collect(Collectors.toList()));
+		
+		selectedContratoLov.setContaPagarValorTotal(calcularValorTotalContasPagar());
 		
 		filesPagar = listaArquivosPagar();
 	}

@@ -89,17 +89,16 @@ public class RelatoriosService {
 
 		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
 		ContratoCobranca con = cDao.findById(idContrato);
+		
+		SimuladorMB simuladorMB = new SimuladorMB();
+		simuladorMB.clearFields();
+		
 		String cpf = "";
 		if (!CommonsUtil.semValor(con.getPagador().getCpf())) {
 			cpf = con.getPagador().getCpf();
-		} else {
-			cpf = con.getPagador().getCnpj();
-		}
-		SimuladorMB simuladorMB = new SimuladorMB();
-		simuladorMB.clearFields();
-		if (con.getPagador() != null) {
 			simuladorMB.setTipoPessoa("PF");
 		} else {
+			cpf = con.getPagador().getCnpj();
 			simuladorMB.setTipoPessoa("PJ");
 		}
 		simuladorMB.setTipoCalculo("Price");
@@ -133,13 +132,14 @@ public class RelatoriosService {
 
 		BigDecimal valorLiquido = BigDecimal.ZERO;
 		List<PreAprovadoPDFDetalheDespesas> detalhesDespesas = new ArrayList<>();
-
-		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de IPTU", "Se houver"));
+		
+		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Dívidas Fiscais", "Se houver"));
+		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Débitos de IPTU", "Se houver"));
 		List<String> ImoveisComCondominio = Arrays.asList("Casa de Condomínio", "Apartamento", "Terreno de Condomínio",
 				"Terreno", "Sala Comercial");
 
 		if (ImoveisComCondominio.contains(con.getImovel().getTipo()))
-			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se houver"));
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Débitos de Condomínio", "Se houver"));
 
 		int qtdMatriculas = 1;
 		String matriculas = con.getImovel().getNumeroMatricula().trim();
@@ -171,7 +171,7 @@ public class RelatoriosService {
 				valorRegistroDespesa = valorRegistroDespesa.multiply(CommonsUtil.bigDecimalValue(2));
 
 			despesa = despesa.add(valorRegistroDespesa);
-			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custas Estimada Para Registro",
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custas Estimadas Para Registro",
 					CommonsUtil.formataValorMonetario(valorRegistroDespesa, "R$ ")));
 		}
 
@@ -182,7 +182,7 @@ public class RelatoriosService {
 
 		if (con.getValorLaudoPajuFaltante().compareTo(BigDecimal.ZERO) > 0) {
 			despesa = despesa.add(con.getValorLaudoPajuFaltante());
-			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Parecer Juridico",
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Parecer Jurídico",
 					CommonsUtil.formataValorMonetario(con.getValorLaudoPajuFaltante(), "R$ ")));
 		}
 
@@ -211,7 +211,7 @@ public class RelatoriosService {
 				(!CommonsUtil.semValor(con.getAprovadoComiteData()) ? con.getAprovadoComiteData()
 						: con.getDataContrato()),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), observacao, con.getImovel().getCidade(),
-				con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(), con.getPrazoMaxAprovado().toString(),
+				con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(), con.getPrazoAprovadoCCB().toString(),
 				simulador.getValorCredito(), con.getValorMercadoImovel(), parcelaPGTO, con.getTipoValorComite(), cep,
 				carencia, despesa, valorCustoEmissao, valorIOF, valorLiquido, detalhesDespesas,
 				simulador.getParcelas());
