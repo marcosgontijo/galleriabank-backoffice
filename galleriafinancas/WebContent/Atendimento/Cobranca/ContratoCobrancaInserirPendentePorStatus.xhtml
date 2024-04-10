@@ -49,7 +49,7 @@
 				
 			}
 			</h:outputStylesheet>
-
+			<p:messages id="messageComentarioJuridicoId"></p:messages>
 			<p:panel id="PanelLocador"
 				header="Contrato - #{contratoCobrancaMB.tituloPainel}"
 				style="margin-bottom:10px;">
@@ -1834,6 +1834,16 @@
 									style="FONT-SIZE: 10pt;width:300px;" required="true"
 									disabled="#{contratoCobrancaMB.deleteMode}">
 								</p:inputText>
+								<p:outputLabel for="valorPreLaudo" value="Valor Pré Laudo 2: "
+									styleClass="labelBold" />
+								<p:inputText id="valorPreLaudo2"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo2}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:300px;" required="true"
+									disabled="#{contratoCobrancaMB.deleteMode}">
+								</p:inputText>
 
 								<p:outputLabel for="valorMercadoImovel"
 									value="Valor de mercado total dos imóveis: " styleClass="labelBold" />
@@ -1860,23 +1870,23 @@
 							<h:panelGrid columns="2">
 								<p:outputLabel for="NumeroMatriculaLaudoPaju"
 									value="Numero Matrícula: " />
-								<p:inputText id="NumeroMatriculaLaudoPaju"
+								<p:inputText id="NumeroMatriculaLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}"
 									label="NumeroMatricula" onblur="" style="width:400px;" />
 
 								<p:outputLabel for="EnderecoImovelLaudoPaju" value="Endereço: " />
-								<p:inputText id="EnderecoImovelLaudoPaju"
+								<p:inputText id="EnderecoImovelLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
 									label="Endereço" onblur="" style="width:400px;" />
 
 								<p:outputLabel for="linkGMapsImovelLaudoPaju"
 									value="Link Google Maps: " />
-								<p:inputText id="linkGMapsImovelLaudoPaju"
+								<p:inputText id="linkGMapsImovelLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
 									label="Link Google Maps" style="width:400px;" />
 
 								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
-								<p:autoComplete id="TipoLaudoPaju"
+								<p:autoComplete id="TipoLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
 									completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}"
 									autocomplete="no" dropdown="true" forceSelection="true"
@@ -1888,13 +1898,13 @@
 
 								<p:outputLabel for="AreaTotalLaudoPaju"
 									value="Área Total / Terreno (metros):  " />
-								<p:inputText id="AreaTotalLaudoPaju"
+								<p:inputText id="AreaTotalLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
 									style="width:150px;" />
 
 								<p:outputLabel for="AreaConstruidaLaudoPaju"
 									value="Área Útil / Construída (metros): " />
-								<p:inputText id="AreaConstruidaLaudoPaju"
+								<p:inputText id="AreaConstruidaLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
 									style="width:150px;" />
 							</h:panelGrid>
@@ -5442,8 +5452,10 @@
 			</p:panel>
 
 			<div align="center">
-				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check"
+				<p:commandButton value="Atualizar" ajax="true" icon="ui-icon-check"
 					action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+					oncomplete="PF('comparacoesPopPupIdvar').show()"
+					update="comparacoesPopPupId "
 					style="TEXT-DECORATION: bold;"
 					rendered="#{contratoCobrancaMB.updateMode}">
 					<f:setPropertyActionListener
@@ -7457,6 +7469,7 @@
 		<ui:include src="../../Dialog/ConstasPagarInserirDialog.xhtml">
 			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>		
 		</ui:include>
+		<ui:include src="ContratoCobrancaFormValidacaoAntesDepois.xhtml"></ui:include>
 		
 	</ui:define>
 </ui:composition>
