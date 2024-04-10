@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,6 +17,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
@@ -29,8 +32,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -40,22 +45,43 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DualListModel;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
+import org.primefaces.event.UnselectEvent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.TermoPopup;
+import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
+import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
+import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -68,6 +94,7 @@ import com.webnowbr.siscoat.infra.db.model.TermoUsuario;
 import com.webnowbr.siscoat.infra.db.model.TermoUsuarioVO;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.db.model.UserPerfil;
+import com.webnowbr.siscoat.infra.db.model.UserVO;
 import com.webnowbr.siscoat.infra.db.model.UserVO;
 import com.webnowbr.siscoat.security.LoginBean;
 
@@ -82,7 +109,10 @@ public class TermoMB {
 	/** Controle dos dados da Paginação. */
 	private LazyDataModel<Termo> lazyModel;
 	private TermoUsuario termoUsuario;
+	private TermoUsuario termoUsuario;
 	private Termo objetoTermo;
+	private String base64imagem;
+	private TermoUsuario objetoTermoUsuario;
 	private String base64imagem;
 	private TermoUsuario objetoTermoUsuario;
 	private boolean updateMode = false;
@@ -94,14 +124,54 @@ public class TermoMB {
 	private StreamedContent pdfContent;
 	private Termo termoUsuarioPopup;
 	private String nomeUsuario;
+	private String nomeUsuario;
 	List<Termo> termos = new ArrayList<>();
 	int itermo = -1;
 
 	private UploadedFile file;
 	private String idPerfilSelecionado;
+	private String idPerfilSelecionado;
 
 	private List<UserPerfil> perfil;
 	Optional<UserPerfil> userPerfilPublico;
+	Optional<UserPerfil> userPerfilIndividual;
+	private List<User> users;
+	private List<User> selectedUsers;
+
+	private List<TermoUsuario> termosUsuario;
+	private List<TermoPopup> usuarios = new ArrayList<>();
+	private List<User> todosUsuario;
+	List<UserVO> usuariosVinculados = new ArrayList<>();
+	List<UserVO> listaOrigem = new ArrayList<>();
+	List<UserVO> listaDestino = new ArrayList<>();
+	List<UserVO> listaExcluir = new ArrayList<>();
+	List<String> listaNomes = new ArrayList<>();
+
+	private TermoUsuarioVO usuarioVO;
+	User usuarioNew = null;
+	Date dataAceite = null;
+
+	private DualListModel<UserVO> listaDeUsuariosPickList;
+
+	public DualListModel<UserVO> getListaDeUsuariosPickList() {
+		return listaDeUsuariosPickList;
+	}
+
+	public void setListaDeUsuariosPickList(DualListModel<UserVO> listaDeUsuariosPickList) {
+		this.listaDeUsuariosPickList = listaDeUsuariosPickList;
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public List<User> getSelectedUsers() {
+		return selectedUsers;
+	}
+
+	public void setSelectedUsers(List<User> selectedUsers) {
+		this.selectedUsers = selectedUsers;
+	}
 	Optional<UserPerfil> userPerfilIndividual;
 	private List<User> users;
 	private List<User> selectedUsers;
@@ -156,23 +226,23 @@ public class TermoMB {
 
 				filters.put("termo", "false");
 				filters.put("deletado", "false");
+				filters.put("deletado", "false");
 
 				setRowCount(termoDao.count(filters));
+
 
 				return termoDao.findByFilter(first, pageSize, sortField, sortOrder.toString(), filters);
 			}
 		};
-
 	}
+	
 
-	// Getters e Setters
-	public String getNomeUsuario() {
-		return nomeUsuario;
-	}
+	private List<TermoUsuario> termosUsuario;
+	private List<TermoPopup> usuarios = new ArrayList<>();
 
-	public void setNomeUsuario() {
-		this.nomeUsuario = loginBean.getUsuarioLogado().getLogin();
-	}
+	private TermoUsuarioVO usuarioVO;
+	User usuarioNew = null;
+	Date dataAceite = null;
 
 	public void listaUsuario(Long id) {
 		usuarios.clear();
@@ -186,8 +256,7 @@ public class TermoMB {
 			User userPesquisa = usuario.findById(user.getIdUsuario());
 			TermoUsuariovo.setDataAceite(user.getDataAceite());
 			TermoUsuariovo.setUsuario(userPesquisa);
-			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(),
-					CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
+			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(), CommonsUtil.formataDataHora(TermoUsuariovo.getDataAceite())));
 
 		}
 
@@ -202,40 +271,45 @@ public class TermoMB {
 	public StreamedContent geraPDF(Long id) {
 		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 		UserDao userDao = new UserDao();
+	@SuppressWarnings("deprecation")
+	public StreamedContent geraPDF(Long id) {
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
+		UserDao userDao = new UserDao();
 		Document document = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		termosUsuario = termoUsuarioDao.findByFilter("idTermo", id);
-
+		termosUsuario = termoUsuarioDao.findByFilter("idTermo", id );
+		
 		try {
-			// Criar um novo documento PDF
-			document = new Document();
-			PdfWriter.getInstance(document, baos);
-			document.open();
-			Paragraph paragrafo = new Paragraph();
-			Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
-			paragrafo.setAlignment(Element.ALIGN_CENTER);
-			paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
-			document.add(paragrafo);
-			Paragraph spacer = new Paragraph("");
-			spacer.setSpacingAfter(20f);
-			document.add(spacer);
-			PdfPTable table = new PdfPTable(2);
-			table.setWidthPercentage(100);
-			for (TermoUsuario user : termosUsuario) {
-				User usuario = userDao.findById(user.getIdUsuario());
-				Paragraph paragrafoUsuario = new Paragraph(usuario.getName());
-				paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
-				table.addCell(paragrafoUsuario);
-				Paragraph paragrafoData = new Paragraph(CommonsUtil.formataData(user.getDataAceite()));
-				paragrafoData.setAlignment(Element.ALIGN_LEFT);
-				table.addCell(paragrafoData);
+            // Criar um novo documento PDF
+			 document = new Document();
+            PdfWriter.getInstance(document, baos);
+            document.open();
+            Paragraph paragrafo = new Paragraph();
+            Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
+            paragrafo.setAlignment(Element.ALIGN_CENTER);
+            paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
+            document.add(paragrafo);
+            Paragraph spacer = new Paragraph("");
+            spacer.setSpacingAfter(20f);
+            document.add(spacer);
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
+            for(TermoUsuario user : termosUsuario) {
+            	User usuario = userDao.findById(user.getIdUsuario());
+            Paragraph	paragrafoUsuario = new Paragraph( usuario.getName());
+            paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
+            table.addCell(paragrafoUsuario);
+            Paragraph paragrafoData = new Paragraph( CommonsUtil.formataDataHora(user.getDataAceite()));
+            paragrafoData.setAlignment(Element.ALIGN_LEFT);
+            table.addCell(paragrafoData);
+           
+            }
+            document.add(table);
+            // Fechar o documento
+            document.close();
 
-			}
-			document.add(table);
-			// Fechar o documento
-			document.close();
+            System.out.println("PDF gerado com sucesso!");
 
-			System.out.println("PDF gerado com sucesso!");
 
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
@@ -291,13 +365,35 @@ public class TermoMB {
 	
 
 		this.listaDeUsuariosPickList = new DualListModel<>(this.listaOrigem, this.listaDestino);
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
+		TermoDao termoDao = new TermoDao();
+		UserDao userdao = new UserDao();
+
+		this.todosUsuario = userdao.carregarUsuariosLista();
+
+		listaOrigem = new ArrayList<>();
+		listaDestino = new ArrayList<>();
+		listaExcluir = new ArrayList<>();
+		listaOrigem.addAll(todosUsuario.stream()
+				.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList()));
+		carregaListaPerfil();
+	
+
+		this.listaDeUsuariosPickList = new DualListModel<>(this.listaOrigem, this.listaDestino);
 
 		if (objetoTermo == null) {
 			setNomeUsuario();
+			setNomeUsuario();
 			objetoTermo = new Termo();
+			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
 			objetoTermo.setUserPerfil(userPerfilPublico.get());
 			this.tituloPainel = "Inserir";
+			objetoTermo.setDeletado(false);
+			objetoTermo.setUsuarioCriador(nomeUsuario);
+
+		} else {
+			this.idPerfilSelecionado = CommonsUtil.stringValue(this.objetoTermo.getUserPerfil().getId());
 			objetoTermo.setDeletado(false);
 			objetoTermo.setUsuarioCriador(nomeUsuario);
 
@@ -319,9 +415,34 @@ public class TermoMB {
 			this.listaDeUsuariosPickList = novaListaDeUsuariosPickList;
 		}
 
+			usuariosVinculados = termoUsuarioDao.findUsersByTermoId(objetoTermo.getId()).stream()
+					.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList());
+//			 listaOrigem.removeAll(usuariosVinculados);
+//			 listaOrigem = listaOrigem.stream().filter(p -> !usuariosVinculados.stream().map(m -> m.getId()).collect(Collectors.toList()).contains(p.getId())).collect(Collectors.toList());
+			List<Long> f = usuariosVinculados.stream().map(m -> m.getId()).collect(Collectors.toList());
+			List<UserVO> listaOrigemvinc = listaOrigem.stream().filter(p -> f.contains(p.getId()))
+					.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList());
+
+			listaOrigem.removeAll(listaOrigemvinc);
+
+			listaDestino = usuariosVinculados;
+			DualListModel<UserVO> novaListaDeUsuariosPickList = new DualListModel<>(listaOrigem, listaDestino);
+			this.listaDeUsuariosPickList = novaListaDeUsuariosPickList;
+		}
+
 		return "/Cadastros/Cobranca/TermoInserir.xhtml";
 
 	}
+	public void excluirTermo(Termo objetoTermoExcluir) {
+	    TermoDao termoDao = new TermoDao();
+	    setNomeUsuario();
+	    objetoTermoExcluir.setUsuarioDelete(nomeUsuario);
+	    objetoTermoExcluir.setDataDelete(DateUtil.gerarDataHoje());
+	    objetoTermoExcluir.setDeletado(true);
+	    termoDao.merge(objetoTermoExcluir);    
+	    FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "/Cadastros/Cobranca/TermoConsultar.xhtml?faces-redirect=true");
+	}
+
 	public void excluirTermo(Termo objetoTermoExcluir) {
 	    TermoDao termoDao = new TermoDao();
 	    setNomeUsuario();
@@ -434,11 +555,14 @@ public class TermoMB {
 			if (!CommonsUtil.semValor(termoUsuario)) {
 				if (CommonsUtil.semValor(termoUsuario.getDataCiencia())) {
 					termoUsuario.setDataCiencia(DateUtil.getDataHoraAgora());
+				if (CommonsUtil.semValor(termoUsuario.getDataCiencia())) {
+					termoUsuario.setDataCiencia(DateUtil.getDataHoraAgora());
 //							termoUsuarioDao.merge(termoUsuario);
 				}
 			} else {
 				if (termo.getId() > 0) {
 					termoUsuario = new TermoUsuario();
+					termoUsuario.setDataCiencia(DateUtil.getDataHoraAgora());
 					termoUsuario.setDataCiencia(DateUtil.getDataHoraAgora());
 					termoUsuario.setIdTermo(termo.getId());
 					termoUsuario.setIdUsuario(loginBean.getUsuarioLogado().getId());
@@ -460,6 +584,65 @@ public class TermoMB {
 		}
 
 		return null;
+	}
+
+	public String salvar() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		TermoDao termoDao = new TermoDao();
+		String msgRetorno = null;
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
+
+		try {
+			if (CommonsUtil.semValor(objetoTermo.getArquivo())) {
+				if (!validaFileUpload())
+					return "";
+			}
+			if (CommonsUtil.semValor(objetoTermo.getId())) {
+				termoDao.create(objetoTermo);
+				msgRetorno = "inserido";
+			} else {
+				termoDao.merge(objetoTermo);
+				msgRetorno = "atualizado";
+			}
+
+			if (!CommonsUtil.semValor(pathArquivoAnteriorSalvo)) {
+				new File(pathArquivoAnteriorSalvo).delete();
+			}
+
+			if (objetoTermo.getUserPerfil().getId() == 5000) {
+				for (UserVO user : this.listaDestino) {
+					if (CommonsUtil.semValor(termoUsuarioDao.findTermoUsuario(objetoTermo.getId(), user.getId()))) {
+						TermoUsuario termoUsuario = new TermoUsuario();
+						termoUsuario.setIdTermo(objetoTermo.getId());
+						termoUsuario.setIdUsuario(user.getId());
+						termoUsuarioDao.merge(termoUsuario);
+					}
+				}
+				for (UserVO user : this.listaExcluir) {
+
+					TermoUsuario termoUsuario = termoUsuarioDao.findTermoUsuario(objetoTermo.getId(), user.getId());
+					if (!CommonsUtil.semValor(termoUsuario)) {
+						termoUsuarioDao.delete(termoUsuario);
+					}
+				}
+			}
+
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", msgRetorno));
+
+		} catch (DAOException e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Termo: " + objetoTermo.getIdentificacao(), e.getMessage()));
+
+			return "";
+		} catch (DBConnectionException e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Termo: " + objetoTermo.getIdentificacao(), e.getMessage()));
+
+			return "";
+		}
+		// this.listaDestino = new ArrayList<>();
+
+		return "TermoConsultar.xhtml";
 	}
 
 	public String salvar() {
@@ -650,10 +833,10 @@ public class TermoMB {
 		termos.remove(itermo);
 		return null;
 	}
-	private List<Termo> usuarioTermosAssinados = new ArrayList<>();
+ private List<Termo> usuarioTermosAssinados = new ArrayList<>();
 	public void consultaTermosAssinados() {
 		TermoUsuarioDao dao = new TermoUsuarioDao();
-		setUsuarioTermosAssinados(dao.termosAssinados(loginBean.getUsuarioLogado()));
+		usuarioTermosAssinados = dao.termosAssinados(loginBean.getUsuarioLogado());
 	
 	}
 	public void AbrirDocumentoTermo(Termo termo) throws IOException {
@@ -699,25 +882,7 @@ public class TermoMB {
 			
 			base64imagem = "data:image/png;base64," + base64;
 	}
-
-	public long buscarIdUsuarioPorNome(String nome, List<User> usuarios) {
-		for (User usuario : usuarios) {
-			if (usuario.getName().equals(nome)) {
-				return usuario.getId();
-			}
-		}
-		return -1;
-	}
-
-	public String getIdPerfilSelecionado() {
-		return idPerfilSelecionado;
-	}
-
-	public void setIdPerfilSelecionado(String idPerfilSelecionado) {
-		this.idPerfilSelecionado = idPerfilSelecionado;
-		this.objetoTermo.setUserPerfil(this.perfil.stream()
-				.filter(p -> (p.getId()) == (CommonsUtil.longValue(this.idPerfilSelecionado))).findAny().orElse(null));
-	}
+	
 
 	public LoginBean getLoginBean() {
 		return loginBean;
@@ -855,83 +1020,12 @@ public class TermoMB {
 		this.usuarios = usuarios;
 	}
 
-
-	public List<String> userNames(List<User> usuario) {
-		for (User items : usuario) {
-			this.listaNomes.add(items.getName());
-		}
-		return this.listaNomes;
+	public List<Termo> getUsuarioTermosAssinados() {
+		return usuarioTermosAssinados;
 	}
 
-	@SuppressWarnings({ "unused", "unchecked" })
-	public void onTransfer(TransferEvent event) {
-		
-
-		List<User> itensTransferidos = (List<User>) event.getItems();
-		
-		if (!event.isAdd()) {
-			for (Object item : event.getItems()) {
-				UserVO usuario = (UserVO) item;
-				
-				if (usuario != null) {
-					this.listaExcluir.add(usuario);
-					this.listaOrigem.add(usuario);
-					
-					Optional<UserVO> userR = this.listaDestino.stream()
-							.filter(u -> CommonsUtil.mesmoValor(u.getId(), usuario.getId())).findAny();
-
-					if (userR.isPresent())
-						this.listaDestino.remove(userR.get());
-					
-				}}
-				
-			} else {
-				for (Object item : event.getItems()) {
-					if (item != null) {
-						UserVO usuario = (UserVO) item;
-						Optional<UserVO> userR = this.listaExcluir.stream()
-								.filter(u -> CommonsUtil.mesmoValor(u.getId(), usuario.getId())).findAny();
-
-						if (userR.isPresent())
-							this.listaExcluir.remove(userR.get());
-						this.listaDestino.add(usuario);
-
-					}
-				}
-			}
-	}
-
-
-	public void onSelect(SelectEvent event) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		// context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item
-		// Selected", event.getObject());
-	}
-
-	public void onUnselect(UnselectEvent event) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		// context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item
-		// Unselected", event.getObject().getName()));
-	}
-
-	public void onReorder(TransferEvent event) {
-		FacesContext context = FacesContext.getCurrentInstance();
-	}
-
-	public List<User> getTodosUsuario() {
-		return todosUsuario;
-	}
-
-	public void setTodosUsuario(List<User> todosUsuario) {
-		this.todosUsuario = todosUsuario;
-	}
-
-	public TermoUsuario getTermoUsuario() {
-		return termoUsuario;
-	}
-
-	public void setTermoUsuario(TermoUsuario termoUsuario) {
-		this.termoUsuario = termoUsuario;
+	public void setUsuarioTermosAssinados(List<Termo> usuarioTermosAssinados) {
+		this.usuarioTermosAssinados = usuarioTermosAssinados;
 	}
 
 	public String getBase64imagem() {
@@ -940,14 +1034,6 @@ public class TermoMB {
 
 	public void setBase64imagem(String base64imagem) {
 		this.base64imagem = base64imagem;
-	}
-
-	public List<Termo> getUsuarioTermosAssinados() {
-		return usuarioTermosAssinados;
-	}
-
-	public void setUsuarioTermosAssinados(List<Termo> usuarioTermosAssinados) {
-		this.usuarioTermosAssinados = usuarioTermosAssinados;
 	}
 
 }

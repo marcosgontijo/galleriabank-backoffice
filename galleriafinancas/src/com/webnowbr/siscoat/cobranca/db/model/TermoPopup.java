@@ -5,16 +5,19 @@ import java.util.Date;
 public class TermoPopup {
 	private String usuario;
 	private String data;
+	private String data;
 	
 	
-	public TermoPopup(String usuario,String string) {
-		this.data = string;
+	public TermoPopup(String usuario,String data) {
+		this.data = data;
 		this.usuario = usuario;
 		
 	}
 	public String getData() {
+	public String getData() {
 		return data;
 	}
+	public void setData(String data) {
 	public void setData(String data) {
 		this.data = data;
 	}

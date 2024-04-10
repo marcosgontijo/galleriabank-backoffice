@@ -63,8 +63,6 @@ public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdi
 					
 					ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 					
-					Long idTeste;
-					
 					while (rs.next()) {
 						ImovelCobranca imovelCobranca = new ImovelCobranca();
 						imovelCobranca.setId(rs.getLong(1));
@@ -82,8 +80,6 @@ public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdi
 						imovelCobranca.setPreLaudoEntregue(rs.getBoolean(13));
 						imovelCobranca.setValorPreLaudo(rs.getBigDecimal(14));
 						
-						//idTeste = rs.getLong(1);
-						//imovelCobranca = imovelCobrancaDao.findById(rs.getLong(1));
 						objects.add(imovelCobranca);
 					}
 							

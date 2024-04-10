@@ -1658,6 +1658,10 @@
 		<property name="valorPreLaudo2" type="big_decimal">
 			<column name="valorPreLaudo2" />
 		</property>			
+		</property>	
+		<property name="valorPreLaudo2" type="big_decimal">
+			<column name="valorPreLaudo2" />
+		</property>			
 		<property name="analiseComercialData" type="java.util.Date">
 			<column name="analiseComercialData" />
 		</property>		
@@ -2371,6 +2375,13 @@
 		<property name="valorCreditoImovelPrincipal" type="big_decimal">
 			<column name="valorCreditoImovelPrincipal" />
 		</property>
+		<property name="porcentagemLeilaoImovelPrincipal" type="big_decimal">
+			<column name="porcentagemLeilaoImovelPrincipal" />
+		</property>
+		
+		<property name="valorCreditoImovelPrincipal" type="big_decimal">
+			<column name="valorCreditoImovelPrincipal" />
+		</property>
 		
 		<property name="ispbBancarioContaPagar" type="java.lang.String">
 			<column name="ispbBancarioContaPagar" />
@@ -2389,12 +2400,18 @@
 		</property>
 		
 		<property name="todosPreLaudoEntregues" type="boolean">
+		<property name="todosPreLaudoEntregues" type="boolean">
 			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
 		</property>
 		
 		<property name="tipoContaContaPagar" type="java.lang.String">
 			<column name="tipoContaContaPagar" />
 		</property>
+		
+		<property name="valorCertidao" type="big_decimal">
+			<column name="valorCertidao" />
+		</property>
+
 		
 		<property name="valorCertidao" type="big_decimal">
 			<column name="valorCertidao" />
@@ -2462,9 +2479,25 @@
 			<column name="notaFiscalAgendadaProblemaUsuario" />
 		</property>
 		
-		<property name="contemSegredoJustica" type="boolean">
-			<column name="contemSegredoJustica" not-null="true" default="false"/>
-		</property>	
-
+		<property name="porcentagemLeilaoImovelPrincipal" type="big_decimal">
+			<column name="porcentagemLeilaoImovelPrincipal" />
+		</property>
+		
+		<property name="valorCreditoImovelPrincipal" type="big_decimal">
+			<column name="valorCreditoImovelPrincipal" />
+		</property>
+		
+		<property name="inicioComentarioJuridicoUsuario" type="java.lang.String">
+			<column name="inicioComentarioJuridicoUsuario" />
+		</property>
+		
+		<property name="inicioComentarioJuridicoData" type="java.util.Date">
+			<column name="inicioComentarioJuridicoData" />
+		</property>
+		
+		<property name="iniciouComentarioJuridico" type="boolean">
+			<column name="iniciouComentarioJuridico" not-null="true" default="false" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

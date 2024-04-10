@@ -78,6 +78,7 @@
 			            <f:selectItem itemLabel="CPF Pagador" itemValue="cpfPagador" />
 			            <f:selectItem itemLabel="CNPJ Pagador" itemValue="cnpjPagador" />
 						<f:selectItem itemLabel="Nome Participantes" itemValue="nomeParticipantes" />
+						<f:selectItem itemLabel="Nome Participantes" itemValue="nomeParticipantes" />
 			            <f:selectItem itemLabel="CCB" itemValue="numeroCCB" />
 						<p:ajax event="change" update="panelParametros, ConsultaContratos" 
 							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
@@ -87,6 +88,7 @@
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="Contrato" style="width:150px;" required="true"
 						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomeParticipantes' || 						
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomeParticipantes' || 						
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroCCB' ||
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
@@ -112,6 +114,7 @@
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' }
+	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
 	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
 	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : '' }" 
    		         rows="50"
@@ -155,18 +158,20 @@
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Status" filterEvent="enter" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
 			            <h:outputText value="#{contratos.statusEsteira}" />
+			            <h:outputText value="#{contratos.statusEsteira}" />
 			        </p:column>	
 			        
 			        <p:column style="width:180px;">
-			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes"> 
+			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" 
+			        		ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes" >
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 		                </p:commandButton>
-		                
-				
+						
+					<shiro:hasAnyRoles name="ROOT"> 
 	                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" >
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
@@ -175,7 +180,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.blockForm}" value="false" />
 		                </p:commandButton>					              
-		           
+		          	 </shiro:hasAnyRoles>
 		                <p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
 			                and contratos.statusLead == 'Completo' 
 			                and contratos.inicioAnalise == true

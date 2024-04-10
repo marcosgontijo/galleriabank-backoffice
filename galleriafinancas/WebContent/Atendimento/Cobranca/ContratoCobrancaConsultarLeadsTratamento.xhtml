@@ -46,7 +46,12 @@
 
 				</h:panelGrid>
 			</p:panel>									
-			<p:panel id="ConsultaContratos" header="Leads #{contratoCobrancaMB.tituloTelaLead} - Consultar" style="margin-bottom:10px;">		    		    
+			<p:panel id="ConsultaContratos" header="Leads #{contratoCobrancaMB.tituloTelaLead} - Consultar" style="margin-bottom:10px;">
+			<f:facet name="header">
+			<div style="text-align: center;">
+			<p:commandButton value="Gerar Excel" action="#{contratoCobrancaMB.geraXLSXLeads()}" ajax="false"></p:commandButton>
+			</div>
+			</f:facet>		    				    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending" 
    		         rows="50"
                  paginator="true"
@@ -64,7 +69,10 @@
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
 			            <h:outputText value="#{contratos.pagador.nome}" />
-			        </p:column>	
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="e-mail" filterBy="#{contratos.pagador.email}" filterMatchMode="contains" sortBy="#{contratos.pagador.email}">
+			            <h:outputText value="#{contratos.pagador.email}" />
+			        </p:column>		
 			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
 			            <h:outputText value="#{contratos.responsavel.nome}" />
 			        </p:column>	        

@@ -46,7 +46,12 @@
 
 				</h:panelGrid>
 			</p:panel>									
-			<p:panel id="ConsultaContratos" header="Leads Reprovados - Consultar" style="margin-bottom:10px;">		    		    
+			<p:panel id="ConsultaContratos" header="Leads Reprovados - Consultar" style="margin-bottom:10px;">	
+			<f:facet name="header">
+			<div style="text-align: center;">
+			<p:commandButton value="Gerar Excel" action="#{contratoCobrancaMB.geraXLSXLeadsReprovados()}" ajax="false"></p:commandButton>
+			</div>
+			</f:facet>		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
    		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }">           
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
@@ -66,6 +71,9 @@
 			        </p:column>	        
 			        <p:column style="text-align: center;" headerText="Motivo Reprova">
 			           <h:outputText value="#{contratos.motivoReprovaLead}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="e-mail" filterBy="#{contratos.pagador.email}" filterMatchMode="contains" sortBy="#{contratos.pagador.email}">
+			            <h:outputText value="#{contratos.pagador.email}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ComparativoCamposEsteira" table="COMPARATIVOCAMPOSESTEIRA">
+       <id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+   
+		<property name="id_form" type="java.lang.String">
+            <column name="id_form"/>
+        </property>
+       
+		<property name="nome_propiedade" type="java.lang.String">
+			<column name="nome_propiedade" />
+		</property>
+		
+		<property name="descricao" type="java.lang.String">
+			<column name="descricao" />
+		</property>
+		
+		<property name="validarClasses" type="java.lang.String">
+			<column name="validarClasses" />
+		</property>
+		
+		<property name="validar" type="boolean">
+			<column name="validar" default="true" not-null="true"/>
+		</property>
+		
+		<property name="ordem" type="long">
+			<column name="ordem" />
+		</property>
+		
+		
+    </class>
+</hibernate-mapping>

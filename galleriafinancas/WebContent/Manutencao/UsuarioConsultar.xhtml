@@ -27,18 +27,15 @@
 			</p:panel>							
 			<p:panel id="ConsultaUsuário" header="Usuário - Consultar" style="margin-bottom:10px;">		
 				    
-   		         <p:dataTable id="dtUsuário" var="usuario" value="#{usuarioMB.usuarioLista}"  rows="10"
-                     paginator="true" paginatorPosition="both"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                     rowsPerPageTemplate="5,10,{ShowAll|'All'}" sortBy="#{usuario.login}" >
-   		         
+   		         <p:dataTable id="dtUsuário" var="usuario" value="#{usuarioMB.usuarioLista}" paginator="true" rows="10" sortBy="#{usuario.login}">
 			        <p:column style="text-align: center;" headerText="Login" filterBy="#{usuario.login}" filterMatchMode="contains" sortBy="#{usuario.login}">
 			            <h:outputText value="#{usuario.login}" />
 			        </p:column>	
 			        <p:column style="text-align: center;"  headerText="Nome" filterBy="#{usuario.name}" filterMatchMode="contains" sortBy="#{usuario.name}">
+			        <p:column style="text-align: center;"  headerText="Nome" filterBy="#{usuario.name}" filterMatchMode="contains" sortBy="#{usuario.name}">
 			            <h:outputText value="#{usuario.name}" />
 			        </p:column>	
+			         <p:column style="text-align: center;" headerText="Perfil" filterBy="#{usuario.userPerfil.perfil}" filterMatchMode="exact" sortBy="#{usuario.userPerfil.perfil}">
 			         <p:column style="text-align: center;" headerText="Perfil" filterBy="#{usuario.userPerfil.perfil}" filterMatchMode="exact" sortBy="#{usuario.userPerfil.perfil}">
 			            <h:outputText value="#{usuario.userPerfil.perfil}" />
 			        </p:column>

@@ -594,7 +594,7 @@
 			</h:form>
 		</p:dialog>
 	</shiro:hasAnyRoles>
-			
+
 
 	<p:dialog id="resumoDialogMultiploHeader"
 		widgetVar="resumoConsutlasDialogMultiplo" showEffect="fade"
@@ -607,7 +607,8 @@
 				<h:outputText value="#{multiplo.dialogHeader}"
 					styleClass="labelBold" />
 
-				<ui:include src="ConstratoCobrancaAnaliseDocumentoResumoDetalhe.xhtml">
+				<ui:include
+					src="ConstratoCobrancaAnaliseDocumentoResumoDetalhe.xhtml">
 					<ui:param name="paramDocumentoAnalise" value="#{multiplo}"></ui:param>
 				</ui:include>
 			</p:repeat>

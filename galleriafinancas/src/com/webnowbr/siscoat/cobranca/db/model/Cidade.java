@@ -16,6 +16,7 @@ public class Cidade implements Serializable {
 	private int populacao;
 	private boolean praia;
 	private boolean pintarLinha;
+	private boolean cidadesVetadas;
 	
 	public Cidade(){
 
@@ -98,5 +99,12 @@ public class Cidade implements Serializable {
 		this.pintarLinha = pintarLinha;
 	}
 
+	public boolean isCidadesVetadas() {
+		return cidadesVetadas;
+	}
+
+	public void setCidadesVetadas(boolean cidadesVetadas) {
+		this.cidadesVetadas = cidadesVetadas;
+	}
 	
 }

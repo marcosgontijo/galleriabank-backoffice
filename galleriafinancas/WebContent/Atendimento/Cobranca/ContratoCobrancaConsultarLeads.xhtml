@@ -46,11 +46,17 @@
 
 				</h:panelGrid>
 			</p:panel>												
-			<p:panel id="ConsultaContratos" header="Leads - Consultar" style="margin-bottom:10px;">					
+			<p:panel id="ConsultaContratos" header="Leads - Consultar" style="margin-bottom:10px;">	
+			<f:facet name="header">
+			<div style="text-align: center;">
+			<p:commandButton value="Gerar Excel" action="#{contratoCobrancaMB.geraXLSXLeadsLazy()}" ajax="false"/>
+			</div>
+			</f:facet>				
 			   	<p:dataTable id="dtLeads" var="contratos" value="#{leadsLazyMB.leads}" paginator="true" rows="10" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
                  rowsPerPageTemplate="5,10,15" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending">
+                 
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
@@ -74,6 +80,9 @@
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Tel. Pagador" filterBy="#{contratos.pagador.telCelular}" filterMatchMode="contains" sortBy="#{contratos.pagador.telCelular}">
 			            <h:outputText value="#{contratos.pagador.telCelular}" />
+			        </p:column>	
+			         <p:column style="text-align: center;" headerText="e-mail" filterBy="#{contratos.pagador.email}" filterMatchMode="contains" sortBy="#{contratos.pagador.email}">
+			            <h:outputText value="#{contratos.pagador.email}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
 			            <h:outputText value="#{contratos.imovel.cidade}" />

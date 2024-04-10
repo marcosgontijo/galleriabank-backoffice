@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe" table="contratocobrancalogsalteracaodetalhe">
+      <id name="id" type="long">
+			<column name="id" />
+			<generator class="increment" />
+		</id>
+   
+		<property name="nomeClasse" type="java.lang.String">
+			<column name="nomeClasse" />
+		</property>
+		
+		<property name="nomeCampo" type="java.lang.String">
+			<column name="nomeCampo" />
+		</property>
+		
+		<property name="valorBanco" type="java.lang.String">
+			<column name="valorBanco" />
+		</property>
+		
+		<property name="valorAlterado" type="java.lang.String">
+			<column name="valorAlterado" />
+		</property>
+		
+		
+		<many-to-one name="logsalteracao"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao"
+			lazy="false">
+			<column name="logsalteracao" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

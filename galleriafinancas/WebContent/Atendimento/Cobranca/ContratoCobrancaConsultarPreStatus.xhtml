@@ -73,14 +73,17 @@
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}"  emptyMessage=""
    		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq false ) ? 'linhaDourada' : ''}
    		         	 #{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq true) ? 'linhaAqua' : ''}
+   		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq false ) ? 'linhaDourada' : ''}
+   		         	 #{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq true) ? 'linhaAqua' : ''}
    		         	 #{(contratos.emAgComite eq true) ? 'linhaBranca' : '' }
    		         	 #{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' } 
-	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
-	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}"
+	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true) ? 'parcelaBoletoPago' : '' }
+	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}
+	   		         #{(contratos.imovel.objetoCidade.cidadesVetadas eq true) ? 'cidadesVetadas' : '' }"
    		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
@@ -124,32 +127,37 @@
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">
 						<h:outputText value="#{contratos.preAprovadoComiteUsuario}"  escape="false"/>
 					</p:column>
-			        
-			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
-			            <h:outputText value="#{contratos.nomeResponsavel}" />
-			        </p:column>
-			        
-			        
-			        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
+					
+					 <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
 			        	filterMatchMode="contains" sortBy="#{contratos.nomeGerente}"
 			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
 			        				or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}" >
 				    	<h:outputText value="#{contratos.nomeGerente}" />
 				    </p:column>	
-
-				        	  
+			        
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
-			        </p:column>	    
-    
-			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)"
-			        	rendered="#!{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
+			        </p:column>	  
+			        
+<!-- 			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}"> -->
+<!-- 			            <h:outputText value="#{contratos.nomeResponsavel}" /> -->
+<!-- 			        </p:column> -->
+				        	  
+			        <p:column style="text-align: center;" headerText="Qual Valor Precisa? (R$)"
+			        	rendered="#{!(contratoCobrancaMB.tituloTelaConsultaPreStatus eq 'Ag. DOC'
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Assinatura' 
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'
-			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.'}">
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.')}">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
+			        
+			        <p:column style="text-align: center;" headerText="Cidade"
+						filterBy="#{contratos.nomeCidadeImovel}"
+						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pedir PAJU'}">
+						<h:outputText value="#{contratos.nomeCidadeImovel}" />
+					</p:column>
 			        
 			        <p:column style="text-align: center;" 
 			        	headerText="Valor Aprovado no Comitê (R$)"
@@ -166,23 +174,19 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorCCB}"  rendered="#{!contratos.agRegistro}"  converter="bigDecimalConverter" />
 			        </p:column>	
 						
-			        <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" 
-				        filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}"
-				        rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'
-				        			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico - Luvison'}">
+			        <p:column style="text-align:center; width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">
 			           <p:outputLabel value="#{contratos.dataUltimaAtualizacao}" >			            	
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 						</p:outputLabel>
 			        </p:column>
-			        
-			         <p:column style="text-align: center;width: 100px" headerText="Data Entrada Esteira" 
-				         filterBy="#{contratos.analiseComercialData}" filterMatchMode="contains" sortBy="#{contratos.analiseComercialData}"
-				         rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
-				        			or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
-			           <p:outputLabel value="#{contratos.analiseComercialData}" >			            	
-							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-						</p:outputLabel>
-			        </p:column>
+					
+					<p:column style="text-align:center;" headerText="Advogado(a)">
+							<p:outputLabel value="#{contratos.inicioComentarioJuridicoUsuario}"></p:outputLabel>
+							<br></br>
+							<p:outputLabel value="#{contratos.inicioComentarioJuridicoData}" >			            	
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+							</p:outputLabel>
+					</p:column>
 
 					<p:column style="text-align: center;width: 100px"
 						headerText="Aprovado Comite Por:" 
@@ -193,12 +197,6 @@
 						</p:repeat>	
 					</p:column>
 
-					<p:column style="text-align: center;" headerText="Cidade"
-						filterBy="#{contratos.nomeCidadeImovel}"
-						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}"
-						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pedir PAJU'}">
-						<h:outputText value="#{contratos.nomeCidadeImovel}" />
-					</p:column>
 					<p:column style="text-align: center;" headerText="Taxa pré aprovada"
 						filterBy="#{contratos.taxaPreAprovada}"
 						filterMatchMode="contains" sortBy="#{contratos.taxaPreAprovada}"
@@ -277,6 +275,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 		                </p:commandButton>
+		                						
 		                						
 						<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
 			                <p:commandButton value="Enviar Esteira Interna" ajax="true" icon="ui-icon-arrowreturnthick-1-e"

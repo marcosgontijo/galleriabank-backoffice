@@ -33,7 +33,7 @@
 		<property name="path" type="java.lang.String">
 			<column name="path" not-null="true" />
 		</property>
-		<many-to-one name="UserPerfil"
+		<many-to-one name="userPerfil"
 			class="com.webnowbr.siscoat.infra.db.model.UserPerfil" lazy="false">
 			<column name="idUserPerfil" />
 		</many-to-one>
