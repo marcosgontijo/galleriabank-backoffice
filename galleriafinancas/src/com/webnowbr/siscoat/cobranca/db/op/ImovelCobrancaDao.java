@@ -10,6 +10,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
+import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 
 /**
  * DAO access layer for the Tecnico entity

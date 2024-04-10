@@ -146,6 +146,14 @@ public final class User implements Serializable {
 		this.login = login;
 	}
 
+    
+    public User(Long id, String name, String login) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.login = login;
+	}
+
     @Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", login=" + login + "]";

@@ -78,6 +78,7 @@
 			            <f:selectItem itemLabel="CPF Pagador" itemValue="cpfPagador" />
 			            <f:selectItem itemLabel="CNPJ Pagador" itemValue="cnpjPagador" />
 						<f:selectItem itemLabel="Nome Participantes" itemValue="nomeParticipantes" />
+						<f:selectItem itemLabel="Nome Participantes" itemValue="nomeParticipantes" />
 			            <f:selectItem itemLabel="CCB" itemValue="numeroCCB" />
 						<p:ajax event="change" update="panelParametros, ConsultaContratos" 
 							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
@@ -87,6 +88,7 @@
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="Contrato" style="width:150px;" required="true"
 						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomeParticipantes' || 						
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomeParticipantes' || 						
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroCCB' ||
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
@@ -112,6 +114,7 @@
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' }
+	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
 	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
 	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : '' }" 
    		         rows="50"
@@ -154,6 +157,7 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Status" filterEvent="enter" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
+			            <h:outputText value="#{contratos.statusEsteira}" />
 			            <h:outputText value="#{contratos.statusEsteira}" />
 			        </p:column>	
 			        
