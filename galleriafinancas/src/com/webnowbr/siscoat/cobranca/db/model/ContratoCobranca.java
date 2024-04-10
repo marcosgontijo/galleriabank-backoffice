@@ -923,7 +923,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
-	
+		
 	public int qtdParcelasAtraso;
 	public BigDecimal somaParcelasAtraso;
 	public Cartorio ultimoCartorio;

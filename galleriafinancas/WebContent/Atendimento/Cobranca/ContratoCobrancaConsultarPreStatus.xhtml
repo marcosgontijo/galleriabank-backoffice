@@ -73,8 +73,6 @@
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}"  emptyMessage=""
    		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq false ) ? 'linhaDourada' : ''}
    		         	 #{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq true) ? 'linhaAqua' : ''}
-   		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq false ) ? 'linhaDourada' : ''}
-   		         	 #{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq true) ? 'linhaAqua' : ''}
    		         	 #{(contratos.emAgComite eq true) ? 'linhaBranca' : '' }
    		         	 #{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
