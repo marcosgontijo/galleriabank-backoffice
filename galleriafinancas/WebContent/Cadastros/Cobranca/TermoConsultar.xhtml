@@ -95,30 +95,33 @@
 					icon="ui-icon-close" action="/Menus/menu.xhtml" />
 			</div>
 		</h:form>
-		<p:dialog header="Assinantes" widgetVar="AssinantesDialog"
-			showEffect="fade" hideEffect="fade" resizable="false"
-			responsive="false" width="1000" positionType="center center"
-			closable="true">
-			<h:form id="assinantesDialogForm">
-				<h:panelGrid columns="3">
-					<p:panel>
-						<f:facet name="header">
-							<h:outputText value="Assinantes" />
-						</f:facet>
-						<p:dataTable var="assinantes" value="#{termoMB.usuarios}">
-							<p:column>
-								<h:outputText value="#{assinantes.usuario}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{assinantes.data}" />
-							</p:column>
-						</p:dataTable>
-						<p:commandButton action="#{termoMB.geraPDF(termoMB.objetoTermo.id)}"
-							value="Download Documento" ajax="false"></p:commandButton>
-
-					</p:panel>
-				</h:panelGrid>
-			</h:form>
-		</p:dialog>
+		<p:dialog widgetVar="AssinantesDialog"
+    showEffect="fade" hideEffect="fade" resizable="false"
+    responsive="false" width="1000" positionType="center center"
+    closable="true"
+    style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div style="max-height: 500px; overflow-y: auto;">
+        <h:form id="assinantesDialogForm">
+            <h:panelGrid columns="3">
+                <p:panel>
+                    <f:facet name="header">
+                        <h:outputText value="Assinantes" />
+                    </f:facet>
+                    <p:dataTable var="assinantes" value="#{termoMB.usuarios}">
+                        <p:column>
+                            <h:outputText value="#{assinantes.usuario}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{assinantes.data}" />
+                        </p:column>
+                    </p:dataTable>
+                    <p:commandButton
+                        action="#{termoMB.geraPDF(termoMB.objetoTermo.id)}"
+                        value="Download Documento" ajax="false"></p:commandButton>
+                </p:panel>
+            </h:panelGrid>
+        </h:form>
+    </div>
+</p:dialog>
 	</ui:define>
 </ui:composition>
