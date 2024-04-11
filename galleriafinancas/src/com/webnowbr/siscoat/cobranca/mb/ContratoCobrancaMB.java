@@ -946,6 +946,9 @@ public class ContratoCobrancaMB {
 	
 	private Date dataVencimentoOrdemPagamentoStark;
 	private String nomePagadorOrdemPagamentoStark;
+	
+	private BigDecimal contasPagarValorTotalPago;
+	private BigDecimal contasPagarValorTotalPagoCartaSplit;
 	/***
 	 * FIM ORDEM PAGAMENTO STARK BANK
 	 */
@@ -21329,6 +21332,21 @@ public class ContratoCobrancaMB {
 					"Pagamento StarkBank: Ordem de Pagamento não pode ser gerada! Contrato não informado, tente novamente!", ""));
 		}
 	}
+	
+	public BigDecimal consultaPagamentosStarkBankAprovados(ContasPagar despesa, String tipoDespesa) {
+		
+		this.contasPagarValorTotalPago = BigDecimal.ZERO;
+		
+		for (StarkBankBaixa baixas : despesa.getListContasPagarBaixas()) {
+			if (tipoDespesa.equals("Pagamento Carta Split")) {
+				contasPagarValorTotalPago = contasPagarValorTotalPagoCartaSplit.add(baixas.getValor());
+			} else {
+				contasPagarValorTotalPago = contasPagarValorTotalPago.add(baixas.getValor());			
+			}
+		}
+		
+		return contasPagarValorTotalPago;
+	}
 
 	public String consultaPagamentosStarkBankPendentes() {
 
@@ -38286,9 +38304,23 @@ public class ContratoCobrancaMB {
 	public void setValoSobraDepsesasCalculado(BigDecimal valoSobraDepsesasCalculado) {
 		this.valoSobraDepsesasCalculado = valoSobraDepsesasCalculado;
 	}
-	
-	
 
+	public BigDecimal getContasPagarValorTotalPago() {
+		return contasPagarValorTotalPago;
+	}
+
+	public void setContasPagarValorTotalPago(BigDecimal contasPagarValorTotalPago) {
+		this.contasPagarValorTotalPago = contasPagarValorTotalPago;
+	}
+
+	public BigDecimal getContasPagarValorTotalPagoCartaSplit() {
+		return contasPagarValorTotalPagoCartaSplit;
+	}
+
+	public void setContasPagarValorTotalPagoCartaSplit(BigDecimal contasPagarValorTotalPagoCartaSplit) {
+		this.contasPagarValorTotalPagoCartaSplit = contasPagarValorTotalPagoCartaSplit;
+	}
+	
 	public ContratoCobrancaLogsAlteracao getContratoCobrancaLogsAlteracao() {
 		return contratoCobrancaLogsAlteracao;
 	}
@@ -38525,5 +38557,4 @@ public class ContratoCobrancaMB {
 	public void setDisableBotao(boolean disableBotao) {
 		this.disableBotao = disableBotao;
 	}
-	
 }
