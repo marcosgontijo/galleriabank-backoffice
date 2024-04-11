@@ -4060,7 +4060,7 @@ public class ContratoCobrancaMB {
 					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getCpfCC()))
 						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCpfCC());
 					else
-						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
+					despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
 					despesaNotaFiscal.setBancoTed(this.objetoContratoCobranca.getResponsavel().getCodigoBanco());
 					despesaNotaFiscal.setAgenciaTed(this.objetoContratoCobranca.getResponsavel().getAgencia());
 					despesaNotaFiscal.setContaTed(this.objetoContratoCobranca.getResponsavel().getConta());
@@ -21338,13 +21338,25 @@ public class ContratoCobrancaMB {
 		 BigDecimal contasPagarValorTotalPagoSum = BigDecimal.ZERO;
 		
 		for (StarkBankBaixa baixas : despesa.getListContasPagarBaixas()) {
+			if (CommonsUtil.semValor(baixas))
+				continue;
+			
 			if (tipoDespesa.equals("Pagamento Carta Split")) {
+<<<<<<< HEAD
 				if (baixas != null && baixas.getValor() != null && baixas.getStatusPagamento().equals("Aprovado")) {
 					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());
 				}
 			} else {
 				if (baixas != null && baixas.getValor() != null && baixas.getStatusPagamento().equals("Aprovado")) {
 					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());	
+=======
+				if (!CommonsUtil.semValor(baixas.getValor())) {
+					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoCartaSplit.add(baixas.getValor());
+				}
+			} else {
+				if (!CommonsUtil.semValor(baixas.getValor())) {
+					contasPagarValorTotalPagoSum = contasPagarValorTotalPago.add(baixas.getValor());	
+>>>>>>> 1c1317275ef908fd5f64046996537ad4f22bc4a9
 				}
 			}
 		}
@@ -38414,7 +38426,7 @@ public class ContratoCobrancaMB {
 						.addAll(contratoCobrancaLogsAlteracaoBase.getDetalhes());
 
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
-				if(contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivo()) {
+ 				if(contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivoOuSeEstiverEmAnalise(objetoContratoCobranca)) {
 					PrimeFaces current = PrimeFaces.current();
 					current.executeScript("PF('comparacoesPopPupIdvar').show();");
 					return false;

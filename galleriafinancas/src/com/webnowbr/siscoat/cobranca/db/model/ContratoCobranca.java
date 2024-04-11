@@ -951,7 +951,7 @@ public class ContratoCobranca implements Serializable {
 			if (conta.getListContasPagarBaixas().size() > 0) {
 				// sub despesas pagto stark bank + pagamentos por fora do starkbank
 				for (StarkBankBaixa baixas : conta.getListContasPagarBaixas()) {
-					if (CommonsUtil.semValor(baixas.getValor())) 
+					if (CommonsUtil.semValor(baixas) || CommonsUtil.semValor(baixas.getValor())) 
 						continue;
 					
 					if (!conta.getDescricao().contains("Pagamento Carta Split") && baixas.getStatusPagamento().equals("Aprovado")){

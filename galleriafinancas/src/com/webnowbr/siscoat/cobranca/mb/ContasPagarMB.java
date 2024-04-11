@@ -79,6 +79,7 @@ public class ContasPagarMB {
 	// private String numeroContrato;
 	private ContratoCobranca selectedContratoLov;
 	private List<ContasPagar> contasPagarPosOperacao;
+	private List<ContasPagar> contasPagarTodasOperacao;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listRecebedorPagador;
@@ -101,6 +102,7 @@ public class ContasPagarMB {
 	
 	
 	private boolean addContasPagar;
+	private boolean buscarContasPagar;
 	StreamedContent downloadFile;
 	FileUploaded selectedFile =  new FileUploaded();
 	byte[] arquivos = null;
@@ -514,7 +516,7 @@ public class ContasPagarMB {
 	
 	private BigDecimal calcularValorTotalContasPagar() {
 		BigDecimal valorTotalContasPagarNovo = BigDecimal.ZERO;
-		for (ContasPagar conta : this.selectedContratoLov.getListContasPagar()) {
+		for (ContasPagar conta : this.contasPagarPosOperacao) {
 			if (conta.isEditada()) 
 				continue;
 			
@@ -1114,5 +1116,38 @@ public class ContasPagarMB {
 	public void setDeletefiles(List<FileUploaded> deletefiles) {
 		this.deletefiles = deletefiles;
 	}
+	public boolean isBuscarContasPagar() {
+		return buscarContasPagar;
+	}
+	public List<ContasPagar> getContasPagarTodasOperacao() {
+		return contasPagarTodasOperacao;
+	}
+	public void setContasPagarTodasOperacao(List<ContasPagar> contasPagarTodasOperacao) {
+		this.contasPagarTodasOperacao = contasPagarTodasOperacao;
+	}
+	public void setBuscarContasPagar(boolean buscarContasPagar) throws Exception {
+		this.buscarContasPagar = buscarContasPagar;
+		ContasPagarDao cDao = new ContasPagarDao();
+		
+		if (this.getSelectedContratoLov().getId() != 0 
+				&& contasPagarTodasOperacao == null) {
+			contasPagarTodasOperacao = cDao.buscarContasPre(this.getSelectedContratoLov().getId());
+		}
+	}
+	public void contasPagarPrePos(ContasPagar conta) {
+		this.objetoContasPagar = new ContasPagar();
+		this.objetoContasPagar = conta;
+		this.objetoContasPagar.setOrigem(ContasPagarOrigemEnum.POS);
+			
+		if (this.contasPagarTodasOperacao.contains(conta)) {
+			ContasPagarDao cDao = new ContasPagarDao();
+			cDao.merge(this.objetoContasPagar);
+			this.contasPagarTodasOperacao.remove(conta);
+			this.objetoContasPagar = null;
+			this.contasPagarPosOperacao.add(conta);
+			calcularValorTotalContasPagar();
+		}
+	}
 
+	
 }
