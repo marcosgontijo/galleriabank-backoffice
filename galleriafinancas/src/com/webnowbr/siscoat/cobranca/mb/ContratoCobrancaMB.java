@@ -4057,7 +4057,7 @@ public class ContratoCobrancaMB {
 					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getCpfCC()))
 						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCpfCC());
 					else
-						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
+					despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
 					despesaNotaFiscal.setBancoTed(this.objetoContratoCobranca.getResponsavel().getCodigoBanco());
 					despesaNotaFiscal.setAgenciaTed(this.objetoContratoCobranca.getResponsavel().getAgencia());
 					despesaNotaFiscal.setContaTed(this.objetoContratoCobranca.getResponsavel().getConta());
@@ -38378,7 +38378,7 @@ public class ContratoCobrancaMB {
 						.addAll(contratoCobrancaLogsAlteracaoBase.getDetalhes());
 
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
-				if(contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivo()) {
+ 				if(contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivoOuSeEstiverEmAnalise(objetoContratoCobranca)) {
 					PrimeFaces current = PrimeFaces.current();
 					current.executeScript("PF('comparacoesPopPupIdvar').show();");
 					return false;
