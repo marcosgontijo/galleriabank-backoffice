@@ -516,7 +516,7 @@ public class ContasPagarMB {
 	
 	private BigDecimal calcularValorTotalContasPagar() {
 		BigDecimal valorTotalContasPagarNovo = BigDecimal.ZERO;
-		for (ContasPagar conta : this.selectedContratoLov.getListContasPagar()) {
+		for (ContasPagar conta : this.contasPagarPosOperacao) {
 			if (conta.isEditada()) 
 				continue;
 			
@@ -1144,6 +1144,8 @@ public class ContasPagarMB {
 			cDao.merge(this.objetoContasPagar);
 			this.contasPagarTodasOperacao.remove(conta);
 			this.objetoContasPagar = null;
+			this.contasPagarPosOperacao.add(conta);
+			calcularValorTotalContasPagar();
 		}
 	}
 
