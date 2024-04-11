@@ -662,7 +662,8 @@
 												<p:commandButton value="Excluir Ordem de Pagamento" ajax="false" icon="ui-icon-trash" 
 													action="#{contratoCobrancaMB.excluirOrdemPagamentoStarkBank(pagamento.contasPagar, pagamento)}" 
 													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"
-													disabled="#{pagamento.statusPagamento eq 'Aprovado'}"/>
+													disabled="#{pagamento.statusPagamento eq 'Aprovado'}" rendered="#{pagamento.formaPagamento eq 'Pagamento fora do Sistema'}"/>
+													 
 												<p:commandButton value="Enviar Ordem para Aprovação" ajax="false" icon="ui-icon-arrowthick-1-s" 
 													action="#{contratoCobrancaMB.enviarOrdemPagamentoStarkBank(pagamento)}" 
 													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"

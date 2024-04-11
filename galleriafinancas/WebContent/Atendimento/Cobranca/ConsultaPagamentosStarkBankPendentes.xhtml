@@ -73,9 +73,17 @@
 			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
 			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
 			        </p:column>
+			        <p:column style="text-align: center;" headerText="Valor Original (R$)"  >
+						<p:outputLabel value="#{pagamento.contasPagar.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>   
 			        <p:column style="text-align: center;width:105px;" headerText="Esteira">
 			            <h:outputText value="#{pagamento.contasPagar.contrato.statusEsteira}" />
 			        </p:column>  
+			        <p:column style="text-align: center;width:105px;" headerText="Consta Pagamento?">
+			            <h:outputText value="#{contratoCobrancaMB.consultaPagamentosStarkBankAprovados(pagamento.contasPagar, 'Despesa')}" converter="bigDecimalConverter" />
+			        </p:column> 
 			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
 			            <h:outputText value="#{pagamento.formaPagamento}" />
 			        </p:column>  
@@ -85,8 +93,11 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>		
+			        <p:column style="text-align: center;width:105px;" headerText="Recebedor" >
+			            <h:outputText value="#{pagamento.nomePagador}" />
+			        </p:column>
 					<p:column style="text-align: center;" headerText="Valor (R$)"  >
-						<p:outputLabel value="#{pagamento.valor}" 
+						<p:outputLabel value="#{pagamento.nomeRecebedor}" 
 							style="FONT-SIZE: 10pt;"
 							converter="bigDecimalConverter" />
 					</p:column>   
@@ -209,6 +220,14 @@
 			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
 			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
 			        </p:column>
+			        <p:column style="text-align: center;" headerText="Valor Original (R$)"  >
+						<p:outputLabel value="#{pagamento.contasPagar.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>   
+					<p:column style="text-align: center;width:105px;" headerText="Consta Pagamento?">
+			            <h:outputText value="#{contratoCobrancaMB.consultaPagamentosStarkBankAprovados(pagamento.contasPagar, 'Pagamento Carta Split')}"  converter="bigDecimalConverter"/>
+			        </p:column> 
 			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
 			            <h:outputText value="#{pagamento.formaPagamento}" />
 			        </p:column>  
