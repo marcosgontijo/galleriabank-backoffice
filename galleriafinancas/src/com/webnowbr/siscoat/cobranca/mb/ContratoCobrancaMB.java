@@ -21335,17 +21335,21 @@ public class ContratoCobrancaMB {
 	
 	public BigDecimal consultaPagamentosStarkBankAprovados(ContasPagar despesa, String tipoDespesa) {
 		
-		this.contasPagarValorTotalPago = BigDecimal.ZERO;
+		 BigDecimal contasPagarValorTotalPagoSum = BigDecimal.ZERO;
 		
 		for (StarkBankBaixa baixas : despesa.getListContasPagarBaixas()) {
 			if (tipoDespesa.equals("Pagamento Carta Split")) {
-				contasPagarValorTotalPago = contasPagarValorTotalPagoCartaSplit.add(baixas.getValor());
+				if (baixas.getValor() != null) {
+					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());
+				}
 			} else {
-				contasPagarValorTotalPago = contasPagarValorTotalPago.add(baixas.getValor());			
+				if (baixas.getValor() != null) {
+					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());	
+				}
 			}
 		}
 		
-		return contasPagarValorTotalPago;
+		return contasPagarValorTotalPagoSum;
 	}
 
 	public String consultaPagamentosStarkBankPendentes() {
