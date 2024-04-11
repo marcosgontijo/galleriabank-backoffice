@@ -645,6 +645,7 @@ public class CcbMB {
 		listaTipoDownload.add("Endossos Em Preto");
 		listaTipoDownload.add("FinanciamentoCCI");
 		listaTipoDownload.add("Aquisicao/Emprestimo");
+		listaTipoDownload.add("AquisicaoFinanciamento");
 		listaTipoDownload.add("Ficha Cadastro Nova");
 		listaTipoDownload.add("Ficha PPE - PF");
 		listaTipoDownload.add("Ficha PLD e FT - PJ");
@@ -662,6 +663,8 @@ public class CcbMB {
 	
 	private void listarDownloadsAditamento() {
 		listaTipoDownload.clear();
+
+		listaTipoDownload.add("AquisicaoFinanciamento");
 		listaTipoDownload.add("Aditamento Carta de Desconto");
 		listaTipoDownload.add("Aditamento Data Parcela");
 		listaTipoDownload.add("Endossos Em Preto");
@@ -1817,6 +1820,13 @@ public class CcbMB {
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aquisicao/Emprestimo")) {
 					arquivo = ccbService.geraCciAquisicao();
 					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AquisicaoCCI.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);					
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "AquisicaoFinanciamento")) {
+					arquivo = ccbService.geraCciAquisicaoFinanciamento();
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AquisicaoFinanciamentoCCI.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else

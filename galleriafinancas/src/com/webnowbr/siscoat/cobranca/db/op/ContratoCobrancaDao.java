@@ -7180,7 +7180,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPendenciaResolvidaCartorio(rs.getBoolean("pendenciaResolvidaCartorio"));
 						contratoCobranca.setResolucaoExigenciaCartorio(rs.getBoolean("resolucaoExigenciaCartorio"));
 						
-
+						contratoCobranca.setOperacaoPaga(rs.getBoolean("operacaoPaga"));
+						contratoCobranca.setPendenciaPagamento(rs.getBoolean("pendenciaPagamento"));
 						contratoCobranca.setSolicitarNota(rs.getString("solicitarNota")); 
 						contratoCobranca.setNotaFiscalAgendada(rs.getBoolean("notaFiscalAgendada"));
 						contratoCobranca.setNotaFiscalEmitida(rs.getBoolean("notaFiscalEmitida"));
@@ -7221,7 +7222,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " coco.reanalise, coco.reanalisePronta, coco.reanaliseJuridico, coco.certificadoEmitido, pare.id idPagador,"
 			+ " imv.cidade, imv.estado, c2.pintarLinha, coco.contratoPrioridadeAlta, coco.okCliente, "
 			+ "	coco.pendenciaExternaCartorio, coco.pendenciaResolvidaCartorio, coco.resolucaoExigenciaCartorio, "
-			+ " solicitarNota , notaFiscalAgendada, notaFiscalEmitida "
+			+ " operacaoPaga, pendenciaPagamento, solicitarNota , notaFiscalAgendada, notaFiscalEmitida "
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
@@ -7320,6 +7321,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setCertificadoEmitido(rs.getBoolean("certificadoEmitido"));
 						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
 						contratoCobranca.setOkCliente(rs.getBoolean("okCliente"));
+						
+						contratoCobranca.setPendenciaExternaCartorio(rs.getBoolean("pendenciaExternaCartorio"));
+						contratoCobranca.setPendenciaResolvidaCartorio(rs.getBoolean("pendenciaResolvidaCartorio"));
+						contratoCobranca.setResolucaoExigenciaCartorio(rs.getBoolean("resolucaoExigenciaCartorio"));
 						
 						contratoCobranca.setPendenciaExternaCartorio(rs.getBoolean("pendenciaExternaCartorio"));
 						contratoCobranca.setPendenciaResolvidaCartorio(rs.getBoolean("pendenciaResolvidaCartorio"));
@@ -8012,10 +8017,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and c.operacaoPaga = false or c.pendenciapagamento = true";			
 					}
 					if (status.equals("Ag. Emissão NFs")) {
-						query = query + " and c.operacaoPaga = true and c.solicitarnota='Solicitado' and c.notaFiscalEmitida = false";				
+						query = query + " and c.solicitarnota='Solicitado' and c.notaFiscalEmitida = false";				
 					}
 					if (status.equals("Ag. Pagamento NFs")) {
-						query = query + " and c.operacaoPaga = true and c.notaFiscalEmitida = true and c.notaFiscalPaga = false";				
+						query = query + " and c.notaFiscalEmitida = true and c.notaFiscalPaga = false";				
 					}
 					query = query + " order by id desc";
 					connection = getConnection();

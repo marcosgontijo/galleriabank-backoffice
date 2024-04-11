@@ -14541,7 +14541,7 @@ public class ContratoCobrancaMB {
 		}
 		this.tituloTelaConsultaPreStatus = "PreContratos";
 
-		this.contratosPendentes = populaStatus(this.contratosPendentes);
+		//this.contratosPendentes = populaStatus(this.contratosPendentes);
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
 		// }

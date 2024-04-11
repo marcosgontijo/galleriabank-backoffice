@@ -1174,7 +1174,11 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
+			if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Ag. Pagamento");
+			} else if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Pagamento com Pendência");
+			} else if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Emissão NFs");
 			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Pagamento NFs");
@@ -7140,12 +7144,16 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
-				statusEsteira = ("Ag. Emissão NFs");
+			if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Ag. Pagamento");
+			} else if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Pagamento com Pendência");
+			} else if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
+				c.setStatusEsteira("Ag. Emissão NFs");
 			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
-				statusEsteira = ("Ag. Pagamento NFs");
+				c.setStatusEsteira("Ag. Pagamento NFs");
 			} else {
-				statusEsteira = ("Aprovado");
+				c.setStatusEsteira("Aprovado");
 			}
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
 			statusEsteira = ("Reprovado");
