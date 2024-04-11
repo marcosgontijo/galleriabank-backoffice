@@ -21342,21 +21342,12 @@ public class ContratoCobrancaMB {
 				continue;
 			
 			if (tipoDespesa.equals("Pagamento Carta Split")) {
-<<<<<<< HEAD
 				if (baixas != null && baixas.getValor() != null && baixas.getStatusPagamento().equals("Aprovado")) {
 					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());
 				}
 			} else {
 				if (baixas != null && baixas.getValor() != null && baixas.getStatusPagamento().equals("Aprovado")) {
 					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());	
-=======
-				if (!CommonsUtil.semValor(baixas.getValor())) {
-					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoCartaSplit.add(baixas.getValor());
-				}
-			} else {
-				if (!CommonsUtil.semValor(baixas.getValor())) {
-					contasPagarValorTotalPagoSum = contasPagarValorTotalPago.add(baixas.getValor());	
->>>>>>> 1c1317275ef908fd5f64046996537ad4f22bc4a9
 				}
 			}
 		}
