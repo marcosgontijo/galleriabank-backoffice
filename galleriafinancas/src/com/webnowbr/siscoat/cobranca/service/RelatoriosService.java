@@ -49,6 +49,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.model.request.FichaIndividualRequest;
 import com.webnowbr.siscoat.cobranca.model.request.TermoCienciaRequest;
+import com.webnowbr.siscoat.cobranca.vo.PlanilhaRestituicaoVO;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ReportUtil;
@@ -56,12 +57,14 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.data.JsonDataSource;
 
 public class RelatoriosService {
@@ -554,9 +557,37 @@ public class RelatoriosService {
 //		parameters.put(JsonQueryExecuterFactory.JSON_INPUT_STREAM, GsonUtil.toJson(termoCienciaRequest));
 		JsonDataSource dataSource = new JsonDataSource(
 				new ByteArrayInputStream(GsonUtil.toJson(termoCienciaRequest).getBytes()));
+		String xmlData;
+		try {
+			xmlData = CommonsUtil.convertToXml(termoCienciaRequest);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		JRXmlDataSource xmlDataSource = new JRXmlDataSource(new ByteArrayInputStream(xmlData.getBytes()));
 
-		return JasperFillManager.fillReport(rptTermoCiencia, parameters, dataSource);
+		return JasperFillManager.fillReport(rptTermoCiencia, parameters, xmlDataSource);
 
+	}
+
+	
+	public JasperPrint geraPDFPPlanilhaRestituicao(PlanilhaRestituicaoVO planilhaRestituicaoVO) throws JRException, IOException {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("PlanilhaRestituicao");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado2.png");
+
+		JasperReport rptDetalhe = ReportUtil.getRelatorio("PlanilhaRestituicao_Detalhe");
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+
+		parameters.put("SUBREPORT_DETALHE_DESPESA", rptDetalhe);
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+	
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 	}
 
 }

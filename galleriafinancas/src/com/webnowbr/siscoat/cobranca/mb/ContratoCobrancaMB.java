@@ -57,7 +57,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -230,6 +229,7 @@ import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.PlanilhaRestituicaoVO;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsultaDao;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
@@ -18065,8 +18065,7 @@ public class ContratoCobrancaMB {
 		}
 
 		if (!CommonsUtil.semValor(this.objetoCcb)) {
-			CcbDao ccbDao = new CcbDao();
-			this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+			buscaObjetoCcb();
 		}
 
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
@@ -18091,6 +18090,11 @@ public class ContratoCobrancaMB {
 		this.averbacaoSelecionada = new Averbacao();
 		this.pagadorProcesso = new PagadorRecebedor();
 		listarPessoas();
+	}
+
+	private void buscaObjetoCcb() {
+		CcbDao ccbDao = new CcbDao();
+		this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
 	}
 
 	public void clearSelectedLovsPendentes() {
@@ -38526,4 +38530,25 @@ public class ContratoCobrancaMB {
 		this.disableBotao = disableBotao;
 	}
 	
+	
+	public void gerarPlanilhaRestituicao() {
+		PlanilhaRestituicaoVO planilhaRestituicaoVO = new PlanilhaRestituicaoVO();
+		planilhaRestituicaoVO.setNome(objetoContratoCobranca.getPagador().getNome());
+		planilhaRestituicaoVO
+				.setCpfCnpj(CommonsUtil.formataCnpjCpf(objetoContratoCobranca.getPagador().getCpfCnpj(), false));
+		if (CommonsUtil.semValor( objetoCcb )) {
+			buscaObjetoCcb();			
+		}
+		if (!CommonsUtil.semValor( objetoCcb )) 
+		planilhaRestituicaoVO.setNumeroCcb(objetoCcb.getNumeroCcb());
+		
+		planilhaRestituicaoVO.setValorCartaSplitGalleria(objetoContratoCobranca.getValorCartaSplitGalleria());
+		planilhaRestituicaoVO.setSomaValorPago(objetoContratoCobranca.getSomaValorPago());
+		planilhaRestituicaoVO.setContaPagarValorTotal(valoSobraDepsesasCalculado);
+
+		planilhaRestituicaoVO.setListContasPagar(objetoContratoCobranca.getListContasPagar().stream()
+				.filter(c -> !c.getDescricao().startsWith("Carta Split")).collect(Collectors.toSet()));
+		
+		
+	}
 }

@@ -49,6 +49,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 
 import io.jsonwebtoken.security.Keys;
@@ -2008,4 +2010,20 @@ public class CommonsUtil {
 
         return d[a.length()][b.length()];
     }
+	
+	public static String convertToXml(Object object) {
+	    try {
+	        // Convert object to JSON
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        String json = objectMapper.writeValueAsString(object);
+	        
+	        // Convert JSON to XML
+	        XmlMapper xmlMapper = new XmlMapper();
+	        Object xmlObj = xmlMapper.readValue(json, Object.class);
+	        return xmlMapper.writeValueAsString(xmlObj);
+	    } catch (IOException e) {
+	        e.printStackTrace(); // Handle IOException appropriately
+	        return null;
+	    }
+	}
 }
