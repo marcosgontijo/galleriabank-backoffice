@@ -178,38 +178,39 @@
 
 	</p:dialog>
 	<p:dialog widgetVar="DialogTermosAssinados" header="Termos Assinados"
-		draggable="false" closable="true" resizable="false"
-		style="top: 50% !important; left: 50% !important;transform: translate(-50%, -50%) !important;"
-		width="30%">
-		<h:form id="TermoForm">
-			<p:panel id="panelTermos">
-				<h:panelGrid columns="2">
-					<p:dataTable var="termos" value="#{termoMB.usuarioTermosAssinados}">
-						<p:column>
-							<p:outputLabel value="#{termos.identificacao}" />
-						</p:column>
-						<p:column>
-							<p:outputLabel value="#{termos.descricao}" />
-						</p:column>
-						<p:column>
-							<p:commandButton action="#{termoMB.AbrirDocumentoTermo(termos)}"
-								oncomplete="PF('dialogTermo').show()" update="dialogTermo"
-								icon="ui-icon ui-icon-print" value="Abrir Termo" ajax="true">
-							</p:commandButton>
-						</p:column>
-
-					</p:dataTable>
-
-				</h:panelGrid>
-
-			</p:panel>
-		</h:form>
-	</p:dialog>
+    draggable="false" closable="true" resizable="false"
+    style="top: 50% !important; left: 50% !important;transform: translate(-50%, -50%) !important;"
+    width="30%">
+    <div style="max-height: 400px; overflow-y: auto;">
+        <h:form id="TermoForm">
+            <p:panel id="panelTermos">
+                <h:panelGrid columns="2">
+                    <p:dataTable var="termos" value="#{termoMB.usuarioTermosAssinados}">
+                        <p:column>
+                            <p:outputLabel value="#{termos.identificacao}" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{termos.descricao}" />
+                        </p:column>
+                        <p:column>
+                            <p:commandButton action="#{termoMB.AbrirDocumentoTermo(termos)}"
+                                oncomplete="PF('dialogTermo').show()" update="dialogTermo"
+                                icon="ui-icon ui-icon-print" value="Abrir Termo" ajax="true">
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </div>
+</p:dialog>
 	<p:dialog resizable="false" closable="true"
-		style="top: 50% !important; left: 50% !important;transform: translate(-50%, -50%) !important;"
-		width="30%" id="dialogTermo" widgetVar="dialogTermo">
-		<img width="100%" height="100%" src="#{termoMB.base64imagem}"></img>
-	</p:dialog>
+    style="top: 50% !important; left: 50% !important;transform: translate(-50%, -50%) !important;"
+    width="70%" id="dialogTermo" widgetVar="dialogTermo">
+    <div style="max-height: 800px; overflow-y: auto;">
+        <img width="100%" src="#{termoMB.base64imagem}" />
+    </div>
+</p:dialog>
 
 	<p:dialog id="comparacoesPopPupIdIndex"
 		widgetVar="comparacoesPopPupIdIndexvar" resizable="false" width="1000"
