@@ -45,6 +45,66 @@
 							<p:ajax update=":form:ContasPagarPanel" event="change" />
 						</p:selectBooleanButton>
 					</f:facet>
+					<f:facet name="header"> Buscar Contas 
+						<p:outputLabel value="" />							
+						<p:selectBooleanButton
+							value="#{contasPagarMB.buscarContasPagar}"
+							onLabel="Buscar Contas" offLabel="Buscar Contas"
+							onIcon="ui-icon-plus" offIcon="ui-icon-plus">
+							<p:ajax update=":form:ContasPagarPanel" event="change" />
+						</p:selectBooleanButton>
+					</f:facet>
+					
+					<h:panelGroup id="buscarContasPagar"
+						rendered="#{contasPagarMB.buscarContasPagar}">
+						<p:dataTable var="contas"
+							value="#{contasPagarMB.contasPagarTodasOperacao}"
+							id="tblBuscarContasPagarList" allowUnsorting="true">
+							<p:column style="text-align: center;" headerText="Descrição: "
+								styleClass="labelBold">
+								<p:outputLabel value="#{contas.descricao}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+							</p:column>
+
+							<p:column style="text-align: center;" headerText="Valor: "
+								styleClass="labelBold">
+								<p:outputLabel value="#{contas.valor}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
+							</p:column>
+
+							<p:column style="text-align: center;"
+								headerText="Data Vencimento: " styleClass="labelBold">
+								<h:outputText value="#{contas.dataVencimento}"
+									styleClass="labelBold">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column style="text-align: center;" headerText="Valor Pago: "
+								styleClass="labelBold" sortBy="#{contas.valorPagamento}">
+								<p:outputLabel value="#{contas.valorPagamento}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
+							</p:column>
+
+							<p:column style="text-align: center;"
+								headerText="Data Pagamento: " styleClass="labelBold"
+								sortBy="#{contas.dataPagamento}">
+								<p:outputLabel value="#{contas.dataPagamento}"
+									styleClass="labelBold">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+							</p:column>
+
+							<p:column styleClass="colunaResponsiva">
+								<p:commandButton value="POS" icon="ui-icon-pencil"
+								action="#{contasPagarMB.contasPagarPrePos(contas)}"
+								oncomplete="#{contasPagarMB.pesquisaContratoCobranca()}"
+								ajax="true" update=":form:ContasPagarPanel"/>
+							</p:column>
+						</p:dataTable>
+					</h:panelGroup>
 
 					<p:outputLabel for="ContaPagarValorTotal"
 						value="Valor Total (R$): " styleClass="labelBold" />
@@ -181,7 +241,8 @@
 							action="#{contasPagarMB.concluirContaPosOperacao()}"
 							update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 					</h:panelGroup>
-				
+
+
 					<p:dataTable var="contas" value="#{contasPagarMB.contasPagarPosOperacao}" id="tblContasPagarList" allowUnsorting="true" > 
 						<p:column style="text-align: center;" headerText="Descrição: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.descricao}"
