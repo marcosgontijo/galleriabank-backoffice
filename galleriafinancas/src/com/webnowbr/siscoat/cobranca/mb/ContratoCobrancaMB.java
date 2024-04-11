@@ -4091,12 +4091,12 @@ public class ContratoCobrancaMB {
 			contratoCobrancaLogsAlteracaoBase.setObservacao(contratoCobrancaLogsAlteracao.getObservacao());
 			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracaoBase);
 			
-			contratoCobrancaDao.merge(this.objetoContratoCobranca);
-			
 			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {
 				contratoCobrancaService.adicionaNovoDetalhe(detalhe);				
 			}
 		}
+		
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
 		// verifica se o contrato for aprovado, manda um tipo de email..
 		// senao valida se houve alteração no checklist para envio de email.
