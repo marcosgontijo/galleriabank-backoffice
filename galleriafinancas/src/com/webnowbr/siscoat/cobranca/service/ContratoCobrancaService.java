@@ -216,14 +216,19 @@ public class ContratoCobrancaService {
 		return contratoCobrancaLogsAlteracao;
 	}
 	
-	public boolean escondePopPupDeValidacoesSeEstaAtivo() {
+	public boolean escondePopPupDeValidacoesSeEstaAtivoOuSeEstiverEmAnalise(ContratoCobranca contratoCobranca) {
 		ParametrosDao pDao = new ParametrosDao();
 		List<Parametros> popPupValidacaoEsteira = pDao.findByFilter("nome", "POPPUP_VALIDACOES_ESTEIRA");
 
 		if (!CommonsUtil.semValor(popPupValidacaoEsteira) && popPupValidacaoEsteira.get(0).isValorBoolean()) {
 			return false;
-		} else
-			return true;
+		}
 
+		if (contratoCobranca.getStatusEsteira() == "Em Análise" || contratoCobranca.isEmAnalise()) {
+			return false;
+		} else
+
+			return true;
 	}
+	
 }

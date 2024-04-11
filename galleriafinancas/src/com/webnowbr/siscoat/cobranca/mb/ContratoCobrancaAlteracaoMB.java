@@ -10,6 +10,7 @@ import javax.faces.bean.SessionScoped;
 import org.primefaces.PrimeFaces;
 
 import com.webnowbr.siscoat.cobranca.db.model.ComparativoCamposEsteira;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe;
 import com.webnowbr.siscoat.cobranca.db.op.ComparativoCamposEsteiraDao;
@@ -39,14 +40,14 @@ public class ContratoCobrancaAlteracaoMB {
 	public String exibePopPupSeNaoConfirmar() {
 		ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
 		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+		ContratoCobranca objetoContratoCobranca = new ContratoCobranca();
 		PrimeFaces current = PrimeFaces.current();
 
 		this.contratoCobrancaLogsAlteracao = contratoCobrancaService
 				.exibePopPupSeNaoConfirmar(this.loginBean.getUsuarioLogado().getLogin());
 
 		if (contratoCobrancaLogsAlteracao != null) {
-			if (contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivo()) {
-
+			if (contratoCobrancaService.escondePopPupDeValidacoesSeEstaAtivoOuSeEstiverEmAnalise(objetoContratoCobranca)) {
 				ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
 
 				this.comparativoCamposEsteira = comparativosCamposEsteraDao.findByFilter("validar", true);
@@ -54,7 +55,11 @@ public class ContratoCobrancaAlteracaoMB {
 
 			} else {
 				contratoCobrancaLogsAlteracao.setLogJustificado(true);
-				contratoCobrancaLogsAlteracao.setObservacao("POPPUP DE VALIDAÇÃO DESABILITADO!");
+				if (objetoContratoCobranca.getStatusEsteira() == "Em Análise" || objetoContratoCobranca.isEmAnalise()) {
+					contratoCobrancaLogsAlteracao.setObservacao("Em Análise!");
+				} else {
+					contratoCobrancaLogsAlteracao.setObservacao("POPPUP DE VALIDAÇÃO DESABILITADO!");
+				}
 				contratoCobrancaLogsAlteracaoDao.merge(contratoCobrancaLogsAlteracao);
 				contratoCobrancaLogsAlteracao = null;
 			}
