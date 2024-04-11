@@ -248,7 +248,7 @@
 	</p:dialog>
 
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 		<p:dialog header="Documentos REA" id="documentosReaDlgId"
 			widgetVar="documentosReaDlg" resizable="true" responsive="true"
 			width="1000" closable="true" ajax="true">
@@ -318,7 +318,7 @@
 	</shiro:hasAnyRoles>
 
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
@@ -513,7 +513,7 @@
 	</p:dialog>
 
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 		<p:dialog header="Inserir Estado" widgetVar="estadoDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="400">
 			<h:form id="estadoDialogdlg">
@@ -565,7 +565,7 @@
 		</p:dialog>
 	</shiro:hasAnyRoles>
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 		<p:dialog header="Editar pessoa Analise" overflow="auto"
 			id="dialogEditarPessoaAnalise" widgetVar="editarPessoaAnaliseDlg"
 			resizable="true" style="FONT-SIZE: 13pt;" width="800" minWidth="800">
@@ -594,7 +594,7 @@
 			</h:form>
 		</p:dialog>
 	</shiro:hasAnyRoles>
-
+			
 
 	<p:dialog id="resumoDialogMultiploHeader"
 		widgetVar="resumoConsutlasDialogMultiplo" showEffect="fade"
@@ -607,8 +607,7 @@
 				<h:outputText value="#{multiplo.dialogHeader}"
 					styleClass="labelBold" />
 
-				<ui:include
-					src="ConstratoCobrancaAnaliseDocumentoResumoDetalhe.xhtml">
+				<ui:include src="ConstratoCobrancaAnaliseDocumentoResumoDetalhe.xhtml">
 					<ui:param name="paramDocumentoAnalise" value="#{multiplo}"></ui:param>
 				</ui:include>
 			</p:repeat>

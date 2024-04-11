@@ -24,13 +24,11 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
-	private ImovelCobranca imovel;
 	private String cessionario;
 
 	private BigDecimal valorAgilCessao;
 	private BigDecimal valorCessao;
 	private boolean enviadoCartorio = false;
-	private boolean preContratoSalvo;
 
 	private String ispbPixContaPagar;
 
@@ -320,7 +318,7 @@ public class ContratoCobranca implements Serializable {
 
 	private Responsavel responsavel;
 
-	
+	private ImovelCobranca imovel;
 
 	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes;
 	private List<ContratoCobrancaObservacoes> listContratoCobrancaObservacoes;
@@ -695,6 +693,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
 	private BigDecimal valorPreLaudo;
+	private BigDecimal valorPreLaudo2;
 
 	private String avaliacaoEngenharia;
 	private String avaliacaoEquipeLaudo;
@@ -702,6 +701,7 @@ public class ContratoCobranca implements Serializable {
 	private Date dataPajuComentado;
 	private String processosPajuExterno;
 	private String processosPajuInterno;
+	private boolean contemSegredoJustica;
 
 	private BigDecimal taxaAprovada;
 	private BigInteger prazoMaxAprovado;
@@ -760,6 +760,8 @@ public class ContratoCobranca implements Serializable {
 
 	private BigDecimal somaValorPago;
 
+	private BigDecimal valorTotalDespesas;
+	
 	private BigDecimal contaPagarValorTotal;
 	private String nomeBancarioContaPagar;
 	private String cpfCnpjBancarioContaPagar;
@@ -840,8 +842,8 @@ public class ContratoCobranca implements Serializable {
 	private String statusPropostaMoneyPlus;
 
 	private String proprietarioAnterior;
-
 	private String terciroGarantidorRessalva;
+
 	private String matriculaRessalva;
 	private String pefinRefinRessalva;
 	private String protestoRessalva;
@@ -904,6 +906,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal dividaIPTU;
 	private BigDecimal dividaCondominio;
 	private BigDecimal valorCartorio;
+	private BigDecimal valorCertidao;
 
 	private String emailPagador;
 	private String celularPagador;
@@ -920,22 +923,17 @@ public class ContratoCobranca implements Serializable {
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
-	
-	private boolean travaCamposEsteira = false;
-	
+		
 	public int qtdParcelasAtraso;
 	public BigDecimal somaParcelasAtraso;
 	public Cartorio ultimoCartorio;
 	
 	private boolean todosPreLaudoEntregues;
-	
-	private String inicioComentarioJuridicoUsuario;
-	private Date inicioComentarioJuridicoData;
-	private boolean iniciouComentarioJuridico;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
 		somaValorPago = BigDecimal.ZERO;
+		/*
 		for (ContasPagar conta : this.getListContasPagar()) {
 			if (conta.isEditada()) 
 				continue;
@@ -944,6 +942,30 @@ public class ContratoCobranca implements Serializable {
 			
 			somaValorPago = somaValorPago.add(conta.getValorPagamento());
 		}
+		*/
+		
+		for (ContasPagar conta : this.getListContasPagar()) {
+			if (conta.isEditada()) 
+				continue;
+			
+			if (conta.getListContasPagarBaixas().size() > 0) {
+				// sub despesas pagto stark bank + pagamentos por fora do starkbank
+				for (StarkBankBaixa baixas : conta.getListContasPagarBaixas()) {
+					if (CommonsUtil.semValor(baixas.getValor())) 
+						continue;
+					
+					if (!conta.getDescricao().contains("Pagamento Carta Split") && baixas.getStatusPagamento().equals("Aprovado")){
+						somaValorPago = somaValorPago.add(baixas.getValor());
+					}
+				}
+			} else {
+				// despesas legadas
+				if (CommonsUtil.semValor(conta.getValorPagamento())) 
+					continue;
+				
+				somaValorPago = somaValorPago.add(conta.getValorPagamento());
+			}
+		}
 		return somaValorPago;
 	}
 
@@ -951,7 +973,7 @@ public class ContratoCobranca implements Serializable {
 		if (CommonsUtil.semValor(this.taxaPreDefinida))
 			return taxaPreAprovada;
 		else {
-			if (this.taxaPreDefinida.compareTo(taxaPreAprovada) > 0)
+			if (this.taxaPreDefinida.compareTo(CommonsUtil.bigDecimalValue(taxaPreAprovada)) > 0)
 				return taxaPreDefinida;
 			else
 				return taxaPreAprovada;
@@ -960,8 +982,8 @@ public class ContratoCobranca implements Serializable {
 
 	public ContratoCobranca() {
 		super();
-		this.pagador = new PagadorRecebedor();
-		this.recebedor = new PagadorRecebedor();
+		this.pagador = new PagadorRecebedor("ContratoCobranca");
+		this.recebedor = new PagadorRecebedor("ContratoCobranca");
 		this.recebedor2 = null;
 		this.recebedor3 = null;
 		this.recebedor4 = null;
@@ -1152,7 +1174,11 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
+			if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Ag. Pagamento");
+			} else if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Pagamento com Pendência");
+			} else if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Emissão NFs");
 			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Pagamento NFs");
@@ -1654,6 +1680,7 @@ public class ContratoCobranca implements Serializable {
 			empresas.add(new SelectItem("CRI 3","CRI 3"));
 			empresas.add(new SelectItem("CRI 4","CRI 4"));
 			empresas.add(new SelectItem("CRI 5","CRI 5"));
+			empresas.add(new SelectItem("CRI 6","CRI 6"));
 		//}
 		return empresas;
 	}
@@ -7112,271 +7139,286 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public String getStatusEsteira() {
+		// POPULA STATUS
+		String statusAnterior = statusEsteira;
+		ContratoCobranca c = this;
 
-		if (CommonsUtil.semValor(this.statusLead)) {
-			this.statusEsteira = "Não Definido";
-			return this.statusEsteira;
-		} else if (!this.statusLead.equals("Completo")) {
-			if (this.statusLead.equals("Novo Lead")) {
-				this.statusEsteira = "Novo Lead";
-			} else if (this.statusLead.equals("Em Tratamento")) {
-				this.statusEsteira = "Lead em Tratamento";
-			} else if (this.statusLead.equals("Ag. Contato")) {
-				this.statusEsteira = "Lead Ag. Contato";
-			} else if (this.statusLead.equals("Ag. Doc.")) {
-				this.statusEsteira = "Lead Ag. Doc.";
-			} else if (CommonsUtil.mesmoValor(this.statusLead, "Reprovado")) {
-				this.statusEsteira = "Lead Reprovado";
-			} else if (this.statusLead.equals("Arquivado")) {
-				this.statusEsteira = "Lead Arquivado";
+		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+			if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Ag. Pagamento");
+			} else if(!c.isOperacaoPaga() && !c.isPendenciaPagamento()) {
+				c.setStatusEsteira("Pagamento com Pendência");
+			} else if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
+				c.setStatusEsteira("Ag. Emissão NFs");
+			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
+				c.setStatusEsteira("Ag. Pagamento NFs");
+			} else {
+				c.setStatusEsteira("Aprovado");
 			}
-			return this.statusEsteira;
-		}
-
-		this.statusEsteira = "Lead Completo";
-
-		if (inicioAnalise)
-			this.statusEsteira = "Ag. Análise";
-
-		if (this.inicioAnalise)
-			this.statusEsteira = "Em Análise";
-
-		if (this.cadastroAprovadoValor != null) {
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Pendente")) {
-				this.statusEsteira = "Análise Pendente";
-			} else if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")) {
-				this.statusEsteira = "Análise Pré-Aprovada";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoPreLaudoComercial) {
-				this.statusEsteira = "Pedir Pré-Laudo";
-			}
-
-			String status = "";
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudoPajuComercial
-					&& !this.pedidoLaudo) {
-				this.statusEsteira = "Pedir Laudo";
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
+			statusEsteira = ("Reprovado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {
+			statusEsteira = ("Baixado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
+			statusEsteira = ("Reprovado");
+		} else {
+			if (CommonsUtil.semValor(c.getStatusLead())) {
+				statusEsteira = ("Não Definido");
+				return statusEsteira;
+			} else if (!c.getStatusLead().equals("Completo")) {
+				if (c.getStatusLead().equals("Novo Lead")) {
+					statusEsteira = ("Novo Lead");
+				} else if (c.getStatusLead().equals("Em Tratamento")) {
+					statusEsteira = ("Lead em Tratamento");
+				} else if (c.getStatusLead().equals("Ag. Contato")) {
+					statusEsteira = ("Lead Ag. Contato");
+				} else if (c.getStatusLead().equals("Ag. Doc.")) {
+					statusEsteira = ("Lead Ag. Doc.");
+				} else if (CommonsUtil.mesmoValor(c.getStatusLead(), "Reprovado")) {
+					statusEsteira = ("Lead Reprovado");
+				} else if (c.getStatusLead().equals("Arquivado")) {
+					statusEsteira = ("Lead Arquivado");
+				}
+				return statusEsteira;
 			}
 
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudo
-					&& !this.laudoRecebido) {
-				if (!CommonsUtil.semValor(this.avaliacaoLaudo)
-						&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Compass")) {
-//						c.setStatus("Pedir Laudo Compass");
+			statusEsteira = ("Lead Completo");
+
+			if (!this.inicioAnalise)
+				statusEsteira = ("Ag. Análise");
+
+			if (this.inicioAnalise)
+				statusEsteira = ("Em Análise");
+
+			if (this.cadastroAprovadoValor != null) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Pendente")) {
+					statusEsteira = ("Análise Pendente");
+				} else if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")) {
+					statusEsteira = ("Análise Pré-Aprovada");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
+						&& this.pedidoPreLaudoComercial) {
+					statusEsteira = ("Pedir Pré-Laudo");
+				}
+
+				String status = "";
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudoPajuComercial
+						&& !this.pedidoLaudo) {
+					statusEsteira = ("Pedir Laudo");
+					status = status + "Pedir Laudo";
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudo
+						&& !this.laudoRecebido) {
+					if (!CommonsUtil.semValor(this.avaliacaoLaudo)
+							&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Compass")) {
+						statusEsteira = ("Aguardando Laudo Compass");
+						if (!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Aguardando Laudo Compass";
+					} else if (!CommonsUtil.semValor(this.avaliacaoLaudo)
+							&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Galache")) {
+						statusEsteira = ("Aguardando Laudo Galache");
+						if (!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Aguardando Laudo Galache";
+					} else {
+						statusEsteira = ("Ag. Laudo");
+						if (!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Ag. Laudo";
+					}
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudoPajuComercial
+						&& !this.pagtoLaudoConfirmada) {
+					statusEsteira = ("Pedir PAJU");
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Aguardando Laudo Compass";
-				} else if (!CommonsUtil.semValor(this.avaliacaoLaudo)
-						&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Galache")) {
-//						c.setStatus("Pedir Laudo Galache");
+					status = status + "Pedir PAJU";
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& !this.pajurFavoravel) {
+					statusEsteira = ("Ag. PAJU");
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Aguardando Laudo Galache";
-				} else {
-//						c.setStatus("Ag. Laudo");
+					if (!CommonsUtil.semValor(this.avaliacaoPaju)
+							&& CommonsUtil.mesmoValor(this.avaliacaoPaju, "Neves")) {
+						status = status + "Ag. PAJU Neves";
+					} else if (!CommonsUtil.semValor(this.avaliacaoPaju)
+							&& CommonsUtil.mesmoValor(this.avaliacaoPaju, "Luvison")) {
+						status = status + "Ag. PAJU Luvison";
+					} else {
+						status = status + "Ag. PAJU";
+					}
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pendenciaLaudoPaju
+						&& (!this.laudoRecebido || !this.pajurFavoravel)) {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Ag. Laudo";
+					status = status + "Laudo + Paju Pendente";
+					// statusEsteira = ("Laudo + Paju Pendente");
 				}
-			}
 
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudoPajuComercial
-					&& !this.pagtoLaudoConfirmada) {
-//					c.setStatus("Pedir PAJU");
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.pajurFavoravel && !this.analiseComercial) {
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Análise Comercial";
+					// statusEsteira = ("Análise Comercial");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.pajurFavoravel && this.analiseComercial && !this.comentarioJuridicoEsteira) {
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Comentário Jurídico";
+					// statusEsteira = ("Comentário Jurídico");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.pajurFavoravel && this.analiseComercial && this.comentarioJuridicoEsteira
+						&& !this.preAprovadoComite) {
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Pré-Comite";
+					// statusEsteira = ("Pré-Comite");
+				}
+
 				if (!CommonsUtil.semValor(status)) {
-					status = status + " | ";
+					statusEsteira = (status);
 				}
-				status = status + "Pedir PAJU";
-			}
 
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& !this.pajurFavoravel) {
-//					c.setStatus("Ag. PAJU");
-				if (!CommonsUtil.semValor(status)) {
-					status = status + " | ";
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && !this.documentosComite) {
+					statusEsteira = ("Ag. Validação DOCs");
 				}
-				if (!CommonsUtil.semValor(this.avaliacaoPaju) && CommonsUtil.mesmoValor(this.avaliacaoPaju, "Neves")) {
-					status = status + "Ag. PAJU Neves";
-				} else if (!CommonsUtil.semValor(this.avaliacaoPaju)
-						&& CommonsUtil.mesmoValor(this.avaliacaoPaju, "Luvison")) {
-					status = status + "Ag. PAJU Luvison";
-				} else {
-					status = status + "Ag. PAJU";
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& !this.aprovadoComite) {
+					statusEsteira = ("Ag. Comite");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && !this.okCliente) {
+					statusEsteira = ("Ag. Ok Cliente");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && !this.documentosCompletos) {
+					statusEsteira = ("Ag. DOC");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && !this.reanalise
+						&& !this.certificadoEmitido) {
+					statusEsteira = ("Ag. Certificado");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && !this.reanalise
+						&& this.certificadoEmitido && !this.ccbPronta) {
+					statusEsteira = ("Ag. CCB");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && !this.contratoConferido) {
+					statusEsteira = ("Ag. Conferência");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && this.agAssinatura) {
+					statusEsteira = ("Ag. Assinatura");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && this.reanalise && !this.reanalisePronta) {
+					statusEsteira = ("Ag. Reanalise");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && this.reanalise && this.reanalisePronta
+						&& !this.reanaliseJuridico) {
+					statusEsteira = ("Ag. Reanalise Juridico");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+						&& this.agEnvioCartorio) {
+					statusEsteira = ("Ag. Envio Cartório");
+				}
+				
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+						&& !this.agEnvioCartorio && this.pendenciaExternaCartorio && !this.pendenciaResolvidaCartorio) {
+					statusEsteira = ("Ag. Resolução Pendência Cartório");
+				}
+				
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+						&& !this.agEnvioCartorio && !this.pendenciaExternaCartorio && !this.resolucaoExigenciaCartorio) {
+					statusEsteira = ("Ag. Resolução Exigências/Pagamento");
+				}
+
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
+						&& this.resolucaoExigenciaCartorio && this.agRegistro) {
+					statusEsteira = ("Ag. Registro");
 				}
 			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pendenciaLaudoPaju
-					&& (!this.laudoRecebido || !this.pajurFavoravel)) {
-				if (!CommonsUtil.semValor(status)) {
-					status = status + " | ";
-				}
-				status = status + "Laudo + Paju Pendente";
-				// c.setStatus("Laudo + Paju Pendente");
+			if (c.isAnaliseReprovada()) {
+				statusEsteira = ("Análise Reprovada");
 			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.pajurFavoravel && !this.analiseComercial) {
-				if (!CommonsUtil.semValor(status)) {
-					status = status + " | ";
-				}
-				status = status + "Análise Comercial";
-				// c.setStatus("Análise Comercial");
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.pajurFavoravel && this.analiseComercial && !this.comentarioJuridicoEsteira) {
-				if (!CommonsUtil.semValor(status)) {
-					status = status + " | ";
-				}
-				status = status + "Comentário Jurídico";
-				// c.setStatus("Comentário Jurídico");
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.pajurFavoravel && this.analiseComercial && this.comentarioJuridicoEsteira
-					&& !this.preAprovadoComite) {
-				if (!CommonsUtil.semValor(status)) {
-					status = status + " | ";
-				}
-				status = status + "Pré-Comite";
-				// c.setStatus("Pré-Comite");
-			}
-
-			if (!CommonsUtil.semValor(status)) {
-				this.statusEsteira = status;
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && !this.documentosComite) {
-				this.statusEsteira = "Ag. Validação DOCs";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& !this.aprovadoComite) {
-				this.statusEsteira = "Ag. Comite";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && !this.okCliente) {
-				this.statusEsteira = "Ag. Ok Cliente";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && !this.documentosCompletos) {
-				this.statusEsteira = "Ag. DOC";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && !this.reanalise
-					&& !this.certificadoEmitido) {
-				this.statusEsteira = "Ag. Certificado";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && !this.reanalise
-					&& this.certificadoEmitido && !this.ccbPronta) {
-				this.statusEsteira = "Ag. CCB";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && !this.contratoConferido) {
-				this.statusEsteira = "Ag. Conferência";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && this.contratoConferido && this.agAssinatura) {
-				this.statusEsteira = "Ag. Assinatura";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && this.contratoConferido && this.reanalise && !this.reanalisePronta) {
-				this.statusEsteira = "Ag. Reanalise";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && this.contratoConferido && this.reanalise && this.reanalisePronta
-					&& !this.reanaliseJuridico) {
-				this.statusEsteira = "Ag. Reanalise Juridico";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
-					&& this.agEnvioCartorio) {
-				this.statusEsteira = "Ag. Envio Cartório";
-			}
-			
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
-					&& !this.agEnvioCartorio && this.pendenciaExternaCartorio && !this.pendenciaResolvidaCartorio) {
-				this.statusEsteira = "Ag. Resolução Pendência Cartório";
-			}
-			
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
-					&& !this.agEnvioCartorio && !this.pendenciaExternaCartorio && !this.resolucaoExigenciaCartorio) {
-				this.statusEsteira = "Ag. Resolução Exigências/Pagamento";
-			}
-
-			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
-					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
-					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
-					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
-					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
-					&& this.resolucaoExigenciaCartorio && this.agRegistro) {
-				this.statusEsteira = "Ag. Registro";
-			}
-		}
-
-		if (this.analiseReprovada) {
-			this.statusEsteira = "Análise Reprovada";
 		}
 		
-		if(this.status.equals("Aprovado")) {
-			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
-				this.statusEsteira = "Ag. Emissão NFs";
-			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
-				this.statusEsteira = "Ag. Pagamento NFs";
-			} else {
-				this.statusEsteira = "Aprovado";
-			}
-		}
-
 		return this.statusEsteira;
 	}
 
@@ -7965,44 +8007,35 @@ public class ContratoCobranca implements Serializable {
 		this.tipoContaContaPagar = tipoContaContaPagar;
 	}
 
-	public boolean isPreContratoSalvo() {
-		return preContratoSalvo;
+	public BigDecimal getValorCertidao() {
+		return valorCertidao;
 	}
 
-	public void setPreContratoSalvo(boolean preContratoSalvo) {
-		this.preContratoSalvo = preContratoSalvo;
+	public void setValorCertidao(BigDecimal valorCertidao) {
+		this.valorCertidao = valorCertidao;
 	}
 
-	public boolean getTravaCamposEsteira() {
-		return travaCamposEsteira;
+	public BigDecimal getValorTotalDespesas() {
+		return valorTotalDespesas;
 	}
 
-	public void setTravaCamposEsteira(boolean travaCamposEsteira) {
-		this.travaCamposEsteira = travaCamposEsteira;
-	}
-
-	public String getInicioComentarioJuridicoUsuario() {
-		return inicioComentarioJuridicoUsuario;
-	}
-
-	public void setInicioComentarioJuridicoUsuario(String inicioComentarioJuridicoUsuario) {
-		this.inicioComentarioJuridicoUsuario = inicioComentarioJuridicoUsuario;
-	}
-
-	public Date getInicioComentarioJuridicoData() {
-		return inicioComentarioJuridicoData;
-	}
-
-	public void setInicioComentarioJuridicoData(Date inicioComentarioJuridicoData) {
-		this.inicioComentarioJuridicoData = inicioComentarioJuridicoData;
-	}
-
-	public boolean isIniciouComentarioJuridico() {
-		return iniciouComentarioJuridico;
-	}
-
-	public void setIniciouComentarioJuridico(boolean iniciouComentarioJuridico) {
-		this.iniciouComentarioJuridico = iniciouComentarioJuridico;
+	public void setValorTotalDespesas(BigDecimal valorTotalDespesas) {
+		this.valorTotalDespesas = valorTotalDespesas;
 	}
 	
+	public boolean isContemSegredoJustica() {
+		return contemSegredoJustica;
+	}
+
+	public void setContemSegredoJustica(boolean contemSegredoJustica) {
+		this.contemSegredoJustica = contemSegredoJustica;
+	}
+
+	public BigDecimal getValorPreLaudo2() {
+		return valorPreLaudo2;
+	}
+
+	public void setValorPreLaudo2(BigDecimal valorPreLaudo2) {
+		this.valorPreLaudo2 = valorPreLaudo2;
+	}
 }

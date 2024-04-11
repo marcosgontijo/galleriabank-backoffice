@@ -504,6 +504,30 @@
 		<property name="dataCompraImovel" type="java.util.Date">
 			<column name="dataCompraImovel" />
 		</property>
+		
+		<property name="porcentagemVendaCompra" type="big_decimal">
+			<column name="porcentagemVendaCompra" />
+		</property>
+		
+		<property name="carenciaAnterior" type="java.lang.String">
+			<column name="carenciaAnterior" />
+		</property> 
+		
+		<property name="prazoAnterior" type="java.lang.String">
+			<column name="prazoAnterior" />
+		</property> 
+		
+		<property name="numeroCcbAnterior" type="java.lang.String">
+			<column name="numeroCcbAnterior" />
+		</property> 
+		
+		<property name="dataDeEmissaoAnterior" type="java.util.Date">
+			<column name="dataDeEmissaoAnterior" />
+		</property>
+		
+		<property name="vencimentoUltimaParcelaPagamentoAnterior" type="java.util.Date">
+			<column name="vencimentoUltimaParcelaPagamentoAnterior" />
+		</property>
 		        
     </class>
 </hibernate-mapping>

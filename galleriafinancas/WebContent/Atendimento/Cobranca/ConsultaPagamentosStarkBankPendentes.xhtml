@@ -65,7 +65,7 @@
 			            <p:rowToggler />
 			        </p:column> 
                  	<p:column style="text-align: center;width:105px;" headerText="Contrato">
-			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" />
+			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" /> 
 			        </p:column>          
                 	<p:column style="text-align: center;width:105px;" headerText="Nome" >
 			            <h:outputText value="#{pagamento.nomePagador}" />
@@ -73,6 +73,17 @@
 			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
 			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
 			        </p:column>
+			        <p:column style="text-align: center;" headerText="Valor Original (R$)"  >
+						<p:outputLabel value="#{pagamento.contasPagar.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>   
+			        <p:column style="text-align: center;width:105px;" headerText="Esteira">
+			            <h:outputText value="#{pagamento.contasPagar.contrato.statusEsteira}" />
+			        </p:column>  
+			        <p:column style="text-align: center;width:105px;" headerText="Consta Pagamento?">
+			            <h:outputText value="#{contratoCobrancaMB.consultaPagamentosStarkBankAprovados(pagamento.contasPagar, 'Despesa')}" converter="bigDecimalConverter" />
+			        </p:column> 
 			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
 			            <h:outputText value="#{pagamento.formaPagamento}" />
 			        </p:column>  
@@ -82,144 +93,94 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>		
-			        <p:column style="text-align: center;" headerText="Valor (R$)"  >
-						<p:outputLabel value="#{pagamento.contasPagar.valor}"
-							style="FONT-SIZE: 10pt;"
-							converter="bigDecimalConverter" />
-					</p:column>   
-					<p:column style="text-align: center;" headerText="Valor Pagamento (R$)"  >
-						<p:outputLabel value="#{pagamento.valor}" 
+			        <p:column style="text-align: center;width:105px;" headerText="Recebedor" >
+			            <h:outputText value="#{pagamento.nomePagador}" />
+			        </p:column>
+					<p:column style="text-align: center;" headerText="Valor (R$)"  >
+						<p:outputLabel value="#{pagamento.nomeRecebedor}" 
 							style="FONT-SIZE: 10pt;"
 							converter="bigDecimalConverter" />
 					</p:column>   
 					<p:rowExpansion>
 						<p:panel id="TEDStarkBank" header="TED"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
+							style="margin-bottom:10px;" rendered="#{pagamento.formaPagamento eq 'TED'}">
 							<h:panelGrid columns="2">
 								<p:outputLabel value="Nome:" 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.nomeBancarioContaPagar}"/>	
+								<p:outputLabel value="#{pagamento.nomeRecebedor}"/>	
 		
 								<p:outputLabel value="CPF/CNPJ: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.cpfCnpjBancarioContaPagar}"/>
+								<p:outputLabel value="#{pagamento.documento}"/>
 		
 								<p:outputLabel value="Banco: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.bancoBancarioContaPagar}"/>
+								<p:outputLabel value="#{pagamento.banco}"/>
 		
 								<p:outputLabel value="Agência: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.agenciaBancarioContaPagar}"/>
+								<p:outputLabel value="#{pagamento.agencia}"/>
 		
 								<p:outputLabel value="C/C: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>	
+								<p:outputLabel value="#{pagamento.conta}"/>	
 								
 								<p:outputLabel value="Tipo da Conta: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>									
+								<p:outputLabel value="#{pagamento.tipoContaBancaria}"/>									
 							</h:panelGrid>												
 						</p:panel>
 						<p:panel id="PIXStarkBank" header="PIX"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Pix'}">
+							style="margin-bottom:10px;" rendered="#{pagamento.formaPagamento eq 'Pix' || pagamento.formaPagamento eq 'PIX' }">
 							<h:panelGrid columns="2">
+								<p:outputLabel value="Método Pix: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.metodoPix}"/>	
+								
 								<p:outputLabel value="Nome:" 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.nomeBancarioContaPagar}"/>	
+								<p:outputLabel value="#{pagamento.nomeRecebedor}"/>	
 		
 								<p:outputLabel value="CPF/CNPJ: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.cpfCnpjBancarioContaPagar}"/>
+								<p:outputLabel value="#{pagamento.documento}"/>
 		
 								<p:outputLabel value="Banco: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.bancoBancarioContaPagar}"/>
+								<p:outputLabel value="#{pagamento.banco}"/>
 		
 								<p:outputLabel value="Agência: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.agenciaBancarioContaPagar}"/>
+								<p:outputLabel value="#{pagamento.agencia}"/>
 		
 								<p:outputLabel value="C/C: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>	
+								<p:outputLabel value="#{pagamento.conta}"/>	
+								
+								<p:outputLabel value="Tipo da Conta: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.tipoContaBancaria}"/>		
 								
 								<p:outputLabel value="Chave Pix: " 
 									style="width:250px;" styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.chavePIXBancarioContaPagar}"/>
+								<p:outputLabel value="#{pagamento.pix}"/>
 								
-								<p:outputLabel value="Tipo da Conta: " 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>															
+								<p:outputLabel value="ISPB: " 
+									style="width:250px;" styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.ispb}"/>														
 							</h:panelGrid>												
 						</p:panel>
 						<p:panel id="BoletoStarkBank" header="Boleto"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Boleto'}">
-							<h:panelGrid columns="2">
-								<p:outputLabel value="Recebedor:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value=" "/>	
-		
+							style="margin-bottom:10px;" rendered="#{pagamento.formaPagamento eq 'Boleto'}">
+							<h:panelGrid columns="2">		
 								<p:outputLabel value="CPF/CNPJ Recebedor boleto: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.numeroDocumentoPagadorStarkBank}"/>
+								<p:outputLabel value="#{pagamento.documento}"/>
 		
 								<p:outputLabel value="Linha Digitável: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.linhaDigitavelStarkBank}"/>												
-							</h:panelGrid>												
-						</p:panel>
-						<p:panel id="PixStarkBank" header="PIX"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'PIX'}">
-							<h:panelGrid columns="2">
-								<p:outputLabel value="Chave PIX:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.pix}"/>	
-								
-								<p:outputLabel value="Banco:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
-		
-								<p:outputLabel value="Banco:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
-								
-								<p:outputLabel value="Banco:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
-								
-								<p:outputLabel value="Nome: " 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>
-								
-								<p:outputLabel value="Tipo da Conta: " 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>														
-							</h:panelGrid>												
-						</p:panel>
-						<p:panel id="TedStarkBank" header="TED"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
-							<h:panelGrid columns="2">
-								<p:outputLabel value="Banco:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
-		
-								<p:outputLabel value="Banco:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
-								
-								<p:outputLabel value="Banco:" 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
-								
-								<p:outputLabel value="Nome: " 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>
-								
-								<p:outputLabel value="Tipo da Conta: " 
-									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>											
-							</h:panelGrid>												
+								<p:outputLabel value="#{pagamento.linhaBoleto}"/>												
+							</h:panelGrid>																						
 						</p:panel>
 			        </p:rowExpansion>      
 			        <p:column styleClass="colunaResponsiva">	
@@ -259,6 +220,14 @@
 			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
 			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
 			        </p:column>
+			        <p:column style="text-align: center;" headerText="Valor Original (R$)"  >
+						<p:outputLabel value="#{pagamento.contasPagar.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>   
+					<p:column style="text-align: center;width:105px;" headerText="Consta Pagamento?">
+			            <h:outputText value="#{contratoCobrancaMB.consultaPagamentosStarkBankAprovados(pagamento.contasPagar, 'Pagamento Carta Split')}"  converter="bigDecimalConverter"/>
+			        </p:column> 
 			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
 			            <h:outputText value="#{pagamento.formaPagamento}" />
 			        </p:column>  

@@ -22,7 +22,9 @@
 			
 			</p:panel>							
 			<p:panel id="ConsultaEstoque" header="Estoque - Consultar" style="margin-bottom:10px;">		    		    
+
    		         <p:dataTable id="dtEstoque" var="estoque" value="#{imovelEstoqueMB.listaConsultaEstoque}" selection="" emptyMessage="">
+
                  	<f:facet name="header">
 	                 	<p:commandButton value="Gerar Arquivo Estoque" icon="ui-icon-print"
 							action="#{imovelEstoqueMB.readXLSXFileRelatorioEstoque}"
@@ -73,7 +75,7 @@
 			      		
 		                </p:commandButton>
 		                <p:commandButton icon="ui-icon-trash" action="#{imovelEstoqueMB.ApagaImovelEstoque(estoque.imovel.imovelEstoque)}" update="@all">
-		              
+		              	<p:confirm header="Confirmação" message="Deseja Excluir o item selecionado?"/>
 		                </p:commandButton>
 		            </p:column>			        		               		        			        			           			 		
 			        

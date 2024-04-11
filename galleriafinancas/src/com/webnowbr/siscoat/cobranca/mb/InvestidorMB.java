@@ -394,6 +394,20 @@ public class InvestidorMB {
 					this.labelAnoBase = "Valor em 31/12/2022";
 					this.labelAnoAnterior = "Valor em 31/12/2021";
 				}
+				
+				if (this.anoBase.equals("2023")) {
+					this.dataInicio = format.parse("31/12/2022");
+					this.dataFim = format.parse("31/12/2023");
+
+					dataInicioAnterior = format.parse("31/12/2021");
+					dataFimAnterior = format.parse("31/12/2022");
+
+					this.labelAnoBase = "Valor em 31/12/2023";
+					this.labelAnoAnterior = "Valor em 31/12/2022";
+				}
+				
+				
+				
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1008,6 +1022,9 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcela : parcelasInvestidorAnoAnterior) {
 			ContratoCobranca contrato = contratoCobrancaDao.findById( parcela.getIdContrato());
+			
+			if ( CommonsUtil.mesmoValor(parcela.getNumeroParcela(), "Antecipação"))
+				continue;
 			
 			if (verificarAnoBaseInvestidor(this.selectedPagador, contrato, dataInicioAnoAnterior,
 					dataFimAnoAnterior)) {

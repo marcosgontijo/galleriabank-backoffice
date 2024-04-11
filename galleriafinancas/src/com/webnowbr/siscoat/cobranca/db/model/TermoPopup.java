@@ -7,8 +7,8 @@ public class TermoPopup {
 	private String data;
 	
 	
-	public TermoPopup(String usuario,String data) {
-		this.data = data;
+	public TermoPopup(String usuario,String string) {
+		this.data = string;
 		this.usuario = usuario;
 		
 	}

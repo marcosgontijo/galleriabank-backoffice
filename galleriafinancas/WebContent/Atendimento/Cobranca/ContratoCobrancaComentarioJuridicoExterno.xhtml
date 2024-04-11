@@ -414,15 +414,23 @@
 
 							<p:outputLabel for="DtNascimento" value="Data de Nascimento: "
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:outputLabel for="DtNascimento" value="Data da Fundação: "
+							<p:outputLabel for="DtNascimentoEmpresa" value="Data da Fundação: "
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 								
 							<h:panelGroup>
 								<p:outputLabel id="DtNascimento"
 									value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
-									mask="99/99/9999" label="Data de Nascimento">
+									mask="99/99/9999" label="Data de Nascimento"
+									rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 									<p:ajax event="blur" update="idade"
 										listener="#{contratoCobrancaMB.objetoPagadorRecebedor.calcularIdade()}" />
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+								
+								<p:outputLabel id="DtNascimentoEmpresa"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.inicioEmpresa}"
+									mask="99/99/9999" 
+									rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</p:outputLabel>
 								

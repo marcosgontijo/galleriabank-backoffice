@@ -45,6 +45,20 @@
 					</p:selectOneMenu>
 
 
+				   <h:outputLabel for="Interno" value="Usuario Interno"
+						class="labelBold" />
+					<h:panelGroup>
+						<p:selectBooleanButton id="Interno"
+							value="#{usuarioMB.objetoUsuario.userInterno}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="INTERNO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+					
+
 					<h:outputLabel for="Administrador" value="Administrador: "
 						class="labelBold" />
 					<h:panelGroup>
@@ -613,6 +627,33 @@
 							</p:selectBooleanButton>
 							<shiro:hasAnyRoles name="ROOT">
 								<h:outputLabel value="CONSULTA_INDIVIDUAL" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
+						<h:outputLabel for="cartorio"
+							value="Cartorio:" class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="cartorio"
+								disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+								value="#{usuarioMB.objetoUsuario.profileCartorio}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_CARTORIO" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
+						<h:outputLabel for="profileJuridicoCobranca" value="Juridico Cobranca"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileJuridicoCobranca"
+								value="#{usuarioMB.objetoUsuario.profileJuridicoCobranca}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_JURIDICO_COBRANCA" />
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
 						

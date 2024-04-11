@@ -20,7 +20,10 @@
 		name="font-awesome/5.8.2/css/all.min-jsf.css" />
 	<h:outputStylesheet library="webjars"
 		name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
-		<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+	<h:outputStylesheet name="primeicons/primeicons.css"
+		library="primefaces" />
+	<h:outputStylesheet name="primeicons/primeicons.css"
+		library="primefaces" />
 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
 
@@ -40,45 +43,61 @@
 							src="/sistema/javax.faces.resource/image/LogoSiscoatSmall.png.xhtml" />
 					</div>
 
-				
-					  <div style="display: flex; flex-direction: row; width: 40%">
-					   <p:repeat var="modulo" value="#{menuItemMB.menuItemModulo}">
-					    <div>
-					    
 
-					    		<p:commandLink title="#{modulo.nome}"  action="#{menuItemMB.carregaMenu}" update="@all" ajax="false">
-					    		<img src="#{resource[modulo.icone]}"  alt=""/>
+					<div style="display: flex; flex-direction: row; width: 40%">
+						<p:repeat var="modulo" value="#{menuItemMB.menuItemModulo}">
+							<div>
 
-					    		<f:setPropertyActionListener value="false" target="#{menuItemMB.clickFavorito}"></f:setPropertyActionListener>
-					    		<f:setPropertyActionListener value="#{modulo.nome}" target="#{menuItemMB.menuAtual}"></f:setPropertyActionListener>
-					    		</p:commandLink>
-								
-					    </div>
-					    <p:spacer width="40px"/>
-					   </p:repeat>
-					   <div>
-					   <p:commandLink rendered="#{menuItemMB.temFavorito}" title="Favoritos" action="#{menuItemMB.carregaMenu}" update="@all" ajax="false"> <img src="#{resource['image/Commons/logoEstrelaFavoritos.png']}" alt=""/>
-					   <f:setPropertyActionListener value="Favoritos" target="#{menuItemMB.menuAtual}"></f:setPropertyActionListener>
-					   </p:commandLink>
-					   </div>
-					    <p:commandLink title="Sair" actionListener="#{logoutBean.logout}"><img src="#{resource['image/Commons/logoSairNovo.png']}" alt=""/><p:confirm header="Confirmation" message="Deseja realmente sair?" icon="ui-icon-alert"/></p:commandLink>
-					    </div>
-					    <div style="padding-top:5px; text-align: right; vertical-align: top; width: 30%" >
-					    <div style="vertical-align: top;">
-					    	<p:outputLabel value="Usuário:  " styleClass="usuarioLogin"/>
-					    	<h:outputText id="opcoesLabel"  value="#{loginBean.username}" styleClass="usuarioLogin" />
-					    	<p:overlayPanel id="opcoesMenu" for="opcoesLabel" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
-                    	dismissable="false" showCloseIcon="true">
-                    		<p:panelGrid columns="1">
-                    			<p:commandButton value="Ver Termos Assinados" action="#{termoMB.consultaTermosAssinados}" update="TermoForm" onclick="PF('DialogTermosAssinados').show();"></p:commandButton>					    
-                    		</p:panelGrid>
-                    		</p:overlayPanel>
-					    	<br></br>
-					    	<br></br>
-					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss"/>
-					    	</div>				    	
-					    </div>
-					  </div>
+
+								<p:commandLink title="#{modulo.nome}"
+									action="#{menuItemMB.carregaMenu}" update="@all" ajax="false">
+									<img src="#{resource[modulo.icone]}" alt="" />
+
+									<f:setPropertyActionListener value="false"
+										target="#{menuItemMB.clickFavorito}"></f:setPropertyActionListener>
+									<f:setPropertyActionListener value="#{modulo.nome}"
+										target="#{menuItemMB.menuAtual}"></f:setPropertyActionListener>
+								</p:commandLink>
+
+							</div>
+							<p:spacer width="40px" />
+						</p:repeat>
+						<div>
+							<p:commandLink rendered="#{menuItemMB.temFavorito}"
+								title="Favoritos" action="#{menuItemMB.carregaMenu}"
+								update="@all" ajax="false">
+								<img src="#{resource['image/Commons/logoEstrelaFavoritos.png']}"
+									alt="" />
+								<f:setPropertyActionListener value="Favoritos"
+									target="#{menuItemMB.menuAtual}"></f:setPropertyActionListener>
+							</p:commandLink>
+						</div>
+						<p:commandLink title="Sair" actionListener="#{logoutBean.logout}">
+							<img src="#{resource['image/Commons/logoSairNovo.png']}" alt="" />
+							<p:confirm header="Confirmation" message="Deseja realmente sair?"
+								icon="ui-icon-alert" />
+						</p:commandLink>
+					</div>
+					<div
+						style="padding-top: 5px; text-align: right; vertical-align: top; width: 30%">
+						<div style="vertical-align: top;">
+							<p:outputLabel value="Usuário:  " styleClass="usuarioLogin" />
+							<h:outputText id="opcoesLabel" value="#{loginBean.username}"
+								styleClass="usuarioLogin" />
+							<p:overlayPanel id="opcoesMenu" for="opcoesLabel"
+								showEffect="blind" hideEffect="blind" showEvent="mouseover"
+								hideEvent="mousedown" dismissable="false" showCloseIcon="true">
+								<p:panelGrid columns="1">
+									<p:commandButton value="Ver Termos Assinados"
+										action="#{termoMB.consultaTermosAssinados}" update="TermoForm"
+										onclick="PF('DialogTermosAssinados').show();"></p:commandButton>
+								</p:panelGrid>
+							</p:overlayPanel>
+							<br></br> <br></br>
+							<p:clock pattern="dd/MM/yyyy HH:mm:ss" />
+						</div>
+					</div>
+				</div>
 				<p:confirmDialog global="true" showEffect="fade" widgetVar="logout">
 					<p:commandButton value="Sim" type="button"
 						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
@@ -92,13 +111,14 @@
 		<p:layoutUnit id="menu" position="west" size="285" resizable="true"
 			closable="false" collapsible="true" maxSize="285" spacingOpen="0"
 			header="Siscoat">
-			
+
 			<ui:insert name="menu">
 				<h:form style="margin-bottom:10px;">
-				<p:commandButton value="Favoritar" rendered="#{menuItemMB.menuAtual != 'Favoritos'}" icon="ui-icon-star"
-						action="#{menuItemMB.carregafavoritar}" update="@all"></p:commandButton>
-					<p:menu style="width: 250px;"
-						model="#{menuItemMB.menuCarregado}" />
+					<p:commandButton value="Favoritar"
+						rendered="#{menuItemMB.menuAtual != 'Favoritos'}"
+						icon="ui-icon-star" action="#{menuItemMB.carregafavoritar}"
+						update="@all"></p:commandButton>
+					<p:menu style="width: 250px;" model="#{menuItemMB.menuCarregado}" />
 				</h:form>
 			</ui:insert>
 		</p:layoutUnit>
@@ -112,8 +132,9 @@
 				value="Copyright © 2024 Todos os direitos reservados. "
 				styleClass="labelBold" />
 		</p:layoutUnit>
-		<p:outputLabel value="#{termoMB.verificaTermosNaoAssinados()}" />	
-		<p:outputLabel value="#{contratoCobrancaAlteracaoMB.exibePopPupSeNaoConfirmar()}" />
+		<p:outputLabel value="#{termoMB.verificaTermosNaoAssinados()}" />
+		<p:outputLabel
+			value="#{contratoCobrancaAlteracaoMB.exibePopPupSeNaoConfirmar()}" />
 	</p:layout>
 
 	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true"
@@ -191,9 +212,9 @@
     </div>
 </p:dialog>
 
-	<p:dialog id="comparacoesPopPupIdIndex" widgetVar="comparacoesPopPupIdIndexvar"
-		resizable="false" width="1000" height="700" closable="true"
-		showEffect="explode" hideEffect="fold">
+	<p:dialog id="comparacoesPopPupIdIndex"
+		widgetVar="comparacoesPopPupIdIndexvar" resizable="false" width="1000"
+		height="700" closable="true" showEffect="explode" hideEffect="fold">
 		<f:facet name="header">
 			<h:outputLabel escape="false"
 				value="Comparações dos campos que foram alterados." />
@@ -231,8 +252,9 @@
 				value="#{contratoCobrancaAlteracaoMB.contratoCobrancaLogsAlteracao.observacao}"
 				rows="5" cols="30" maxlength="200"
 				style="padding: 5px; width: 80%;height: 100%; display:block; text-align:center">
-				<p:ajax process="@this" partialSubmit="true" event="blur" update="salvarAlteracaoIdIndex" 
-							listener="#{contratoCobrancaAlteracaoMB.verificaDisableBotao}"/>
+				<p:ajax process="@this" partialSubmit="true" event="blur"
+					update="salvarAlteracaoIdIndex"
+					listener="#{contratoCobrancaAlteracaoMB.verificaDisableBotao}" />
 			</p:inputTextarea>
 		</div>
 
@@ -246,19 +268,18 @@
 				mesmo não será salvo.
 			</h4>
 		</div>
-			<div align="center">
-				<p:commandButton
-					disabled="#{contratoCobrancaAlteracaoMB.disableBotao}"
-					id="salvarAlteracaoIdIndex"
-					value="Salvar Alterações"
-					icon="pi pi-copy"
-					action="#{contratoCobrancaAlteracaoMB.finalizaCheckListStatus}"
-					style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);
+		<div align="center">
+			<p:commandButton
+				disabled="#{contratoCobrancaAlteracaoMB.disableBotao}"
+				id="salvarAlteracaoIdIndex" value="Salvar Alterações"
+				icon="pi pi-copy"
+				action="#{contratoCobrancaAlteracaoMB.finalizaCheckListStatus}"
+				style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);
 					margin: auto;
 					padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
 					-moz-border-radius: 5px; border-radius: 5px;">
-				</p:commandButton>
-			</div>
+			</p:commandButton>
+		</div>
 	</p:dialog>
 
 </h:body>

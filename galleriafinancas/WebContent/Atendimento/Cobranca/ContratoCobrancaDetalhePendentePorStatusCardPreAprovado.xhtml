@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+	<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
+		<p:panel header="Pré-Aprovado"
+			rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
+			<f:facet name="header">Pré-Aprovado
+			</f:facet>
+			<h:panelGrid id="panelGridPreAprovadoSemEngine"
+				rendered="#{contratoCobrancaMB.isEngineProcessados() == false}">
+				<ui:repeat value="#{contratoCobrancaMB.preAprovadoPendencia}"
+					var="pendencia">
+					<p:outputLabel value="#{pendencia}" styleClass="labelBold" />				
+					<br />
+				</ui:repeat>
+			</h:panelGrid>
+			<h:panelGrid columns="5" id="panelGridPreAprovado"
+				rendered="#{contratoCobrancaMB.isEngineProcessados() == true}">
+				<p:outputLabel value="Tem Protesto" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					value="#{contratoCobrancaMB.objetoContratoCobranca.protestoTaxa}"
+					disabled="true"
+					id="protestoCBox">
+				</p:selectBooleanCheckbox>
+				<p:spacer width="5px" />
+				<p:outputLabel value="Inicio Relacionamento Bacen &gt; 2018"
+					styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.relacionamentoBacenRecenteTaxa}">
+				</p:selectBooleanCheckbox>
+
+				<p:outputLabel value="Tem Cheque Devolvido" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoTaxa}">
+				</p:selectBooleanCheckbox>
+				<p:spacer width="5px" />
+				<p:outputLabel value="Tem Divida Vencida" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.dividaVencidaTaxa}">
+				</p:selectBooleanCheckbox>
+
+				<p:outputLabel value="Tem Pefin/Refin" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.pefinTaxa}"
+					id="pefinCBox">
+				</p:selectBooleanCheckbox>
+				<p:spacer width="5px" />
+				<p:outputLabel value="Tem Prejuízo Bacen " styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.prejuizoBacenTaxa}">
+				</p:selectBooleanCheckbox>
+
+				<p:outputLabel value="Risco Total &lt; 20.000,00"
+					styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal20kTaxa}">
+				</p:selectBooleanCheckbox>
+				<p:spacer width="5px" />
+				<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo450Taxa}">
+				</p:selectBooleanCheckbox>
+
+				<p:outputLabel value="Risco Total &lt; 50.000,00"
+					styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal50kTaxa}">
+				</p:selectBooleanCheckbox>
+				<p:spacer width="5px" />
+				<p:outputLabel value="Score &lt; 700" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo700Taxa}">
+				</p:selectBooleanCheckbox>
+
+				<p:outputLabel value="Garantia é Terreno ou Barracão?"
+					styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					disabled="true"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.terrenoOuBarracaoTaxa}">
+				</p:selectBooleanCheckbox>
+				<p:spacer width="5px" />
+				<p:outputLabel value="Inicio Bacen Inexistente" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					value="#{contratoCobrancaMB.objetoContratoCobranca.inicioRelacionamentoInexistenteTaxa}"
+					disabled="true">
+				</p:selectBooleanCheckbox>
+				
+				<p:outputLabel value="Nada Consta" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}"
+					disabled="true">
+				</p:selectBooleanCheckbox>
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:panelGroup id="taxaPreAprovadaPanel">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="taxaPreAprovada" value="Taxa Pré-Aprovada: "
+							styleClass="labelBold" />
+						<h:panelGroup>
+							<h:panelGrid columns="2">
+								<p:outputLabel id="taxaPreAprovada"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
+									style="FONT-SIZE: 10pt;width:60px;"
+									disabled="#{contratoCobrancaMB.deleteMode}"
+									converter="bigDecimalConverter" />
+								<h:panelGrid columns="1">
+									<p:outputLabel value="% + IPCA a.m. - Mediante " />
+									<p:outputLabel value="comprovação de renda compatível" />
+								</h:panelGrid>
+							</h:panelGrid>
+						</h:panelGroup>
+						<p:outputLabel for="taxaPreDefinida"
+										value="Taxa Pré-Definida: " styleClass="labelBold" />
+									<h:panelGroup>
+										<h:panelGrid columns="2">
+											<p:outputLabel id="taxaPreDefinida"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreDefinida}"
+												style="FONT-SIZE: 10pt;width:60px;"
+												disabled="#{contratoCobrancaMB.deleteMode}"
+												converter="bigDecimalConverter" />
+											<h:panelGrid columns="1">
+												<p:outputLabel value="% + IPCA a.m. - Mediante " />
+												<p:outputLabel value="comprovação de renda compatível" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</h:panelGroup>
+						<p:outputLabel for="prazoMaxPreAprovado"
+							value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
+						<h:panelGroup>
+							<h:panelGroup id="prazoMaxPreAprovado"
+								style="FONT-SIZE: 10pt;width:60px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
+								size="100" />
+							<p:outputLabel value=" meses" />
+						</h:panelGroup>
+
+						<p:outputLabel for="rendaComprovada" value="Renda Comprovada: "
+							styleClass="labelBold" />
+						<h:panelGroup>
+							<p:outputLabel value="R$ " />
+							<h:panelGroup id="rendaComprovada"
+								style="FONT-SIZE: 10pt;width:125px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
+								size="100" onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter" />
+						</h:panelGroup>
+
+						<p:outputLabel for="ccbxRenda" value="CCB X Renda: "
+							styleClass="labelBold" />
+						<h:panelGroup>
+							<p:outputLabel value="R$ " />
+							<h:panelGroup id="ccbxRenda" style="FONT-SIZE: 10pt;width:125px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.ccbxRenda}"
+								size="100" onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter" />
+						</h:panelGroup>
+
+						<p:outputLabel for="finalidadeRecursos"
+							value="Finalidade do Recurso " styleClass="labelBold" />
+						<p:outputLabel id="finalidadeRecursos"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.finalidadeRecurso}"
+							style="width:300px;" />
+
+					</h:panelGrid>
+				</h:panelGroup>
+				<h:panelGroup>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="observacaoRenda" value="Observação: "
+							styleClass="labelBold" />
+						<p:outputLabel id="observacaoRenda" rows="10" cols="48"
+							maxlength="3000" onblur="" style="white-space: pre-wrap;" 
+							counterTemplate="{0} characters remaining." autoResize="false"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
+					</h:panelGrid>
+				</h:panelGroup>
+				<h:panelGroup>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="proprietarioAnterior"
+							value="Proprietário Anterior: " styleClass="labelBold" />
+						<p:outputLabel id="proprietarioAnterior"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.proprietarioAnterior}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel for="terciroGarantidorRessalva"
+							value="3° Garantidor: " styleClass="labelBold" />
+						<p:outputLabel id="terciroGarantidorRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.terciroGarantidorRessalva}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel value="Ressalvas / Pendências. "
+							styleClass="labelBold" />
+						<p:spacer width="0" />
+
+						<p:outputLabel for="matriculaRessalva" value="Matrícula: "
+							style="margin-left:30px;" />
+						<p:outputLabel id="matriculaRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaRessalva}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel for="pefinRefinRessalva" value="Pefin / Refin: "
+							style="margin-left:30px;" />
+						<p:outputLabel id="pefinRefinRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.pefinRefinRessalva}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel for="protestoRessalva" value="Protesto: "
+							style="margin-left:30px;" />
+						<p:outputLabel id="protestoRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.protestoRessalva}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel for="processosRessalva" value="Processos: "
+							style="margin-left:30px;" />
+						<p:outputLabel id="processosRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.processosRessalva}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel for="trabalhistaRessalva" value="Trabalhista: "
+							style="margin-left:30px;" />
+						<p:outputLabel id="trabalhistaRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.trabalhistaRessalva}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel for="chequeDevolvidoRessalva"
+							value="Cheque Devolvido: " style="margin-left:30px;" />
+						<p:outputLabel id="chequeDevolvidoRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoRessalva}"
+							style="FONT-SIZE: 10pt;width:260px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+						<p:outputLabel for="obsDocsPendentesRessalva"
+							value="Obs. Documentos Pendentes: " style="margin-left:30px;" />
+						<p:outputLabel id="obsDocsPendentesRessalva"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.obsDocsPendentesRessalva}"
+							style="FONT-SIZE: 10pt;width:260px; white-space: pre-wrap;" rows="10" cols="48"
+							maxlength="3000" onblur="" autoResize="false"
+							counterTemplate="{0} characters remaining."
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+
+					</h:panelGrid>
+				</h:panelGroup>
+				<h:panelGroup>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="observacaoParaComite"
+							value="Observação para o Comitê: " styleClass="labelBold" />
+						<p:outputLabel id="observacaoParaComite" rows="10" cols="48"
+							maxlength="3000" onblur="" style="white-space: pre-wrap;" 
+							counterTemplate="{0} characters remaining." autoResize="false"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
+					</h:panelGrid>
+				</h:panelGroup>
+			</h:panelGrid>
+		</p:panel>
+	</h:panelGroup>
+</ui:composition>

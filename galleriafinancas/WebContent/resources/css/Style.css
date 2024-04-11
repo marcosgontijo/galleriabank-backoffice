@@ -93,7 +93,7 @@
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaRosa td{
-		    background-color: #ff80ff;
+		    background-color: #ff80ff !important;
 		}
 				
 		.ui-datatable .ui-datatable-data .linhaAzul td{
@@ -109,11 +109,11 @@
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaDourada td {
-		    background-color: #bf9b30 !important;
+		    background-color: #bf9b30;
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaAqua td {
-		    background-color: #7FFFD4 !important;
+		    background-color: #7FFFD4;
 		}
 		
 		.campoRequerido {

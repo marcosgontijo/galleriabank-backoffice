@@ -20,7 +20,7 @@ public class RelatorioContabilidadeInvestidor {
 	private List<ContratoCobrancaParcelasInvestidor> lisContratoCobrancaParcelasInvestidor;
 	
 	public RelatorioContabilidadeInvestidor() {
-		this.investidor = new PagadorRecebedor();
+		this.investidor = new PagadorRecebedor("RelatorioContabilidadeInvestidor");
 	}
 
 	public PagadorRecebedor getInvestidor() {

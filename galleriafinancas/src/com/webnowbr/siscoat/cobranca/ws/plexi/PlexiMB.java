@@ -305,8 +305,8 @@ public class PlexiMB {
 			for(String origem : origemArray) {
 				for(String competencia : competenciaArray) {
 					if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && 
-						(CommonsUtil.mesmoValor(competenciaArray, "criminal")
-						|| CommonsUtil.mesmoValor(competenciaArray, "criminalJuri"))) 
+						(CommonsUtil.mesmoValor(competencia, "criminal")
+						|| CommonsUtil.mesmoValor(competencia, "criminalJuri"))) 
 						continue;
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 					plexiConsultaAux.setOrigem(origem);

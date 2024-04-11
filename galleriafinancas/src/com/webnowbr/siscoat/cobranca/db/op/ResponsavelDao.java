@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.*;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.model.User;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -194,4 +197,89 @@ public class ResponsavelDao extends HibernateDao <Responsavel,Long> {
 			}
 		});	
 	}
+	
+	private static final String QUERY_GET_USUARIOS_COM_PERMISSAO =  "select u.id, u.\"name\" , u.codigoresponsavel, r.nome, r.codigo from infra.users u \r\n"
+			+ "inner join infra.usuario_responsavel_join urj on urj.idusuario = u.id\r\n"
+			+ "inner join cobranca.responsavel r on r.id = urj.idresponsavel \r\n"
+			+ "where r.codigo = ? and u.codigoresponsavel != ?\r\n"
+			+ "and u.codigoresponsavel != '15810' and u.codigoresponsavel != '111' "
+			+ "and u.codigoresponsavel != ?";
+	
+	@SuppressWarnings("unchecked")
+	public List<User> getUsersComPermissao(Responsavel responsavel) {
+		return (List<User>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<User> lista = new ArrayList<User>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+			
+					ps = connection.prepareStatement(QUERY_GET_USUARIOS_COM_PERMISSAO);	
+					
+					ps.setString(1, responsavel.getCodigo());
+					ps.setString(2, responsavel.getCodigo());
+					if(!CommonsUtil.semValor(responsavel.getDonoResponsavel()))
+						ps.setString(3, responsavel.getDonoResponsavel().getCodigo());
+					else
+						ps.setString(3, "1");
+					rs = ps.executeQuery();
+			
+					UserDao userDao = new UserDao();
+					while (rs.next()) {
+						User user = userDao.findById(rs.getLong(1));
+						/*user.getListResponsavel().remove(responsavel);
+						userDao.merge(user);*/
+						lista.add(user);
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return lista;
+			}
+		});	
+	}
+	
+	private static final String QUERY_GET_COMERCIAL_DONO =  "select u.id from infra.users u \r\n"
+			+ "where u.codigoresponsavel = ?";
+	
+	@SuppressWarnings("unchecked")
+	public User getUsersComercialDono(Responsavel responsavel) {
+		return (User) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				User user = null;
+				if(CommonsUtil.semValor(responsavel.getDonoResponsavel())){
+					return null;
+				}
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+			
+					ps = connection.prepareStatement(QUERY_GET_COMERCIAL_DONO);	
+					
+					ps.setString(1, responsavel.getDonoResponsavel().getCodigo());
+					rs = ps.executeQuery();
+			
+					UserDao userDao = new UserDao();
+					while (rs.next()) {
+						user = userDao.findById(rs.getLong(1));
+						/*if(!user.getListResponsavel().contains(responsavel)) {
+							user.getListResponsavel().add(responsavel);
+							userDao.merge(user);
+						}*/
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return user;
+			}
+		});	
+	}
+	
 }

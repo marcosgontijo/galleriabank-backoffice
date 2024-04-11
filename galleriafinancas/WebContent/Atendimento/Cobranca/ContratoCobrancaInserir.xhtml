@@ -31,8 +31,6 @@
 				<p:focus />
 				<p:messages />
 
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO">
-
 					<h:panelGrid columns="2">
 						<p:outputLabel for="numeroContrato" value="Número do Contrato: "
 							styleClass="labelBold"
@@ -1801,6 +1799,7 @@
 								<f:selectItem itemValue="Imóvel Comercial"
 									itemLabel="Imóvel Comercial" />
 								<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
+								<f:selectItem itemValue="Edifício" itemLabel="Edifício" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="EmpresaImovel" value="Empresa Imóvel: "
@@ -2030,8 +2029,8 @@
 							<p:spacer width="0" />
 						</h:panelGrid>
 					</p:panel>
-				</shiro:hasAnyRoles>
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO">
+
+				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">
 
 					<h:panelGroup id="ContasPagarPanel">
 						<p:panel header="Contas a Pagar" style="margin-bottom:10px;">
@@ -2214,7 +2213,7 @@
 								</p:dataViewListItem>
 							</p:dataView>
 							<shiro:hasAnyRoles
-								name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO, POSOPERACAO">
+								name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO, POSOPERACAO, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">
 								<p:panel id="ArquivosPagar" header="Selecionar conta a pagar"
 									style="margin-bottom:10px;text-align: center;">
 									<h:panelGrid columns="1">
@@ -2285,7 +2284,7 @@
 					</h:panelGroup>
 
 				</shiro:hasAnyRoles>
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO">
+				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">
 					<p:panel id="DetalheParcelas"
 						header="Detalhamento - Forma de Pagamento"
 						style="margin-bottom:10px;"

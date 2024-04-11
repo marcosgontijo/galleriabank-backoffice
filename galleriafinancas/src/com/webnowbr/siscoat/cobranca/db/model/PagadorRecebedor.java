@@ -253,6 +253,7 @@ public class PagadorRecebedor implements Serializable {
 	private List<CcbProcessosJudiciais> processos;
 	private Set<Averbacao> listAverbacao;
 	private BigDecimal valorProcessos;
+	private String origem;
 	
 	private User usuario;
 	
@@ -267,6 +268,11 @@ public class PagadorRecebedor implements Serializable {
 
 	public PagadorRecebedor(){
 		resetarBololean();
+	}
+	
+	public PagadorRecebedor(String origem){
+		resetarBololean();
+		this.setOrigem(origem);
 	}
 	
 	public PagadorRecebedor(long id, String nome, String endereco, String bairro, String complemento,
@@ -447,7 +453,7 @@ public class PagadorRecebedor implements Serializable {
 				if (pagadorRecebedorBD.size() > 0) {
 					conjuge = pagadorRecebedorBD.get(0);
 				} else {
-					conjuge = new PagadorRecebedor();
+					conjuge = new PagadorRecebedor("criarConjugeNoSistema");
 					registraPagador = true;
 				}
 			} else {
@@ -2429,5 +2435,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setUniaoEstavel(boolean uniaoEstavel) {
 		this.uniaoEstavel = uniaoEstavel;
+	}
+	
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+	
+	public String getOrigem() {
+		return origem;
 	}
 }

@@ -19,7 +19,7 @@
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{responsavelMB.clearFields}"/>
 						<p:spacer width="10px"/>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO">
 							<p:commandButton value="Comissão Geral" 
 							action="#{responsavelMB.clearComissaoTodos}" 
 							 ajax="true" update=":form:DadosComissaoNova"

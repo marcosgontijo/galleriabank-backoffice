@@ -1,10 +1,14 @@
 package com.webnowbr.siscoat.infra.db.dao;
 
 import java.sql.Connection;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
+
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
@@ -54,6 +58,75 @@ public class TermoUsuarioDao extends HibernateDao<TermoUsuario, Long> {
 			}
 		});
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> findUsersByTermoId(Long idtermo) {
+	    return (List<User>) executeDBOperation(new DBRunnable() {
+	        @Override
+	        public Object run() throws Exception {
+	            Connection connection = null;
+	            PreparedStatement ps = null;
+	            ResultSet rs = null;
+	            UserDao userDao = new UserDao();
+
+	            List<User> users = new ArrayList<>();
+
+	            try {
+	                connection = getConnection();
+	                ps = connection.prepareStatement("SELECT idusuario FROM infra.termoUsuario WHERE idtermo = ?");
+	                ps.setLong(1, idtermo);
+	                rs = ps.executeQuery();
+
+	                while (rs.next()) {
+	                    long userId = rs.getLong("idusuario");
+	                    User user = userDao.findById(userId); 
+	                    if (user != null) {
+	                        users.add(user);
+	                    }
+	                }
+	            } finally {
+	                closeResources(connection, ps, rs);
+	            }
+
+	            return users;
+	        }
+	    });
+	}
+
+	public TermoUsuario findTermoUsuario(Long idTermo, Long idUsuario) {
+        return (TermoUsuario) executeDBOperation(new DBRunnable() {
+            @Override
+            public Object run() throws Exception {
+                Connection connection = null;
+                PreparedStatement ps = null;
+                ResultSet rs = null;
+
+                TermoUsuario termoUsuario = null;
+
+                try {
+                    connection = getConnection();
+
+                    String query = "SELECT * FROM infra.termoUsuario WHERE idtermo = ? AND idusuario = ?";
+                    ps = connection.prepareStatement(query);
+                    ps.setLong(1, idTermo);
+                    ps.setLong(2, idUsuario);
+                    rs = ps.executeQuery();
+
+                    if (rs.next()) {
+                        termoUsuario = new TermoUsuario();
+                        termoUsuario.setId(rs.getLong("id"));
+                        termoUsuario.setIdTermo(rs.getLong("idtermo"));
+                        termoUsuario.setIdUsuario(rs.getLong("idusuario"));
+       
+                    }
+                } finally {
+                    closeResources(connection, ps, rs);
+                }
+
+                return termoUsuario;
+            }
+        });
+    }
 	@SuppressWarnings("unchecked")
 	public List<Termo> termosAssinados (User usuario) {
 		return (List<Termo>) executeDBOperation(new DBRunnable() {
@@ -92,5 +165,5 @@ public class TermoUsuarioDao extends HibernateDao<TermoUsuario, Long> {
 			}
 		});
 	}
-	
+	 
 }

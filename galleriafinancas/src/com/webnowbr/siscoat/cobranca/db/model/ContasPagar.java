@@ -134,12 +134,12 @@ public class ContasPagar implements Serializable {
 		listaNome.add("IPTU");
 		listaNome.add("Condomínio");
 		listaNome.add("IQ");
-		listaNome.add("Laudo");
+//		listaNome.add("Laudo");
 		listaNome.add("Processo");
 		listaNome.add("Averbação");
 		listaNome.add("Comissão");
 		listaNome.add("Registro");
-		listaNome.add("Laudo De Avaliação");
+		listaNome.add("Laudo De Avaliação e Parecer Jurídico");
 		listaNome.add("Crédito Cliente");
 
 		return listaNome.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());

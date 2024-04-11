@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -24,6 +25,8 @@ public class DocketConsulta {
 	private String estadoId;
 	private String cidadeId;
 	private String pedidoId;
+	
+	private BigDecimal valorCertidao;
 		
 	public DocketConsulta() {
 		super();
@@ -33,6 +36,11 @@ public class DocketConsulta {
 		super();
 		this.documentoAnalise = documentoAnalise;
 		populatePagadorRecebedor(documentoAnalise.getPagador());
+		this.docketDocumentos = docketDocumentos;
+	}
+	
+	public DocketConsulta( DocumentosDocket docketDocumentos) {
+		super();
 		this.docketDocumentos = docketDocumentos;
 	}
 	
@@ -49,6 +57,7 @@ public class DocketConsulta {
 		this.expirado = consulta.isExpirado();
 		this.estadoId = consulta.getEstadoId();
 		this.cidadeId = consulta.getCidadeId();
+		this.pedidoId = consulta.getPedidoId();
 	}
 
 	public void populatePagadorRecebedor(PagadorRecebedor pagador) {
@@ -72,6 +81,32 @@ public class DocketConsulta {
 			return nome;
 		}
 		return nome;
+	}
+	
+	public void verificaValor() {
+		if(CommonsUtil.mesmoValor(docketDocumentos.getId(), 14L)) {
+			if(CommonsUtil.mesmoValor(uf, "MT")) 
+				valorCertidao = BigDecimal.valueOf(73.40);
+			else if(CommonsUtil.mesmoValor(uf, "MA"))
+				valorCertidao = BigDecimal.valueOf(83.90);
+			else if(CommonsUtil.mesmoValor(uf, "PR"))
+				valorCertidao = BigDecimal.valueOf(93.45);
+			else if(CommonsUtil.mesmoValor(uf, "RS"))
+				valorCertidao = BigDecimal.valueOf(16.70);
+		} else if(CommonsUtil.mesmoValor(docketDocumentos.getId(), 15L)) {
+			if(CommonsUtil.mesmoValor(uf, "MT")) 
+				valorCertidao = BigDecimal.valueOf(73.40);
+			else if(CommonsUtil.mesmoValor(uf, "MA"))
+				valorCertidao = BigDecimal.valueOf(83.90);
+			else if(CommonsUtil.mesmoValor(uf, "PR"))
+				valorCertidao = BigDecimal.valueOf(126.00);
+			else if(CommonsUtil.mesmoValor(uf, "RS"))
+				valorCertidao = BigDecimal.valueOf(16.70);
+			else if(CommonsUtil.mesmoValor(uf, "CE"))
+				valorCertidao = BigDecimal.valueOf(83.90);
+			else if(CommonsUtil.mesmoValor(uf, "GO"))
+				valorCertidao = BigDecimal.valueOf(125.90);
+		}
 	}
 
 	public long getId() {
@@ -200,5 +235,13 @@ public class DocketConsulta {
 
 	public void setPedidoId(String pedidoId) {
 		this.pedidoId = pedidoId;
+	}
+
+	public BigDecimal getValorCertidao() {
+		return valorCertidao;
+	}
+
+	public void setValorCertidao(BigDecimal valorCertidao) {
+		this.valorCertidao = valorCertidao;
 	}	
 }

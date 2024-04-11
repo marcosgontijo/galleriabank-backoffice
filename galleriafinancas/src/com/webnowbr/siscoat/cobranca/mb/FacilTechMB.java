@@ -36,6 +36,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "facilTechMB")
@@ -56,8 +57,8 @@ public class FacilTechMB {
 	private String urlProducao = "https://wscredgalleria.facilinformatica.com.br/";
 	
 	private String urlHomologacao = "https://wscredhomogalleria.facilinformatica.com.br/wcf/rest/";
-	private String tokenJWTHomologacao = "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOjE2OTgyNDM3MjE3MTAsImlhdCI6MTY5ODI0MzcyMSwibmJmIjoxNjk4MjQzNzIxLCJleHAiOjE2OTgyNDM4NDEsInN1YiI6IkJBQ0tPRkZJQ0UifQ.MEYCIQCIdVL100bhrlRJK-41kNfptNUk05hHYkgpOc0RSXVj8gIhAIHD7I9UocUCzsOj7Il9HMzuPAkPWwCVtDoD27pdRoSF";
-	private String assinaturaHeaderHomologacao = "MEQCIQCbR1H6d12c6XixlV-jF8Tumu9BRRU9VHtHYNEWvwV66AIfHnJ43KAJ_iUwadJKHtatgOtBWH66nPE3XQdQTJZZ7g";
+	private String tokenJWTHomologacao = "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOjE3MDg2MDI3Mjc4ODcsImlhdCI6MTcwODYwMjcyNywibmJmIjoxNzA4NjAyNzI3LCJleHAiOjE3MDg2MDI4NDcsInN1YiI6IlBMQVRBRk9STUEifQ.QiQ0HeAZmUEwaNPXaSzqaO511KAunyIng_GVasBzBwYEABcVtfNEsPKjuneS-j21v_xuql2omtb3Ufry0GS16g";
+	private String assinaturaHeaderHomologacao = "MEQCIDVD3qfT8rdQj59pc5FySuOAqWSgwdKr344wgtFv20XIAiAx_3E0c-yBs7WWvbDRyaYtRG7OtNOHwONWNcHSCDZsBw";
 	
 	public JSONArray getTesteFacilTech() {
 		JSONArray myResponse = new JSONArray();
@@ -72,7 +73,7 @@ public class FacilTechMB {
 
 				URL myURL = new URL(urlFacilTech);	
 		
-				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection(); 
 				myURLConnection.setUseCaches(false);
 				myURLConnection.setRequestMethod("GET");
 				myURLConnection.setRequestProperty("Accept", "application/json");
@@ -115,13 +116,76 @@ public class FacilTechMB {
 		return null;
 	}
 	
+	public JSONArray getTesteCriaPessoa() { 
+		JSONArray myResponse = new JSONArray();
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		try {
+				int HTTP_COD_SUCESSO = 200;
+
+				boolean temFiltro = false;
+				
+				PagadorRecebedor pessoa = new PagadorRecebedor();
+				PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+				pessoa = pDao.findById((long) 10648);
+				
+				JSONObject jsonObj = getJSONCliente(pessoa);
+				
+				byte[] postDataBytes = jsonObj.toString().getBytes();
+								
+				String urlFacilTech = "http://wscredhomogalleria.facilinformatica.com.br/wcf/rest/RegistroDePessoa.svc/pessoas";									 
+
+				URL myURL = new URL(urlFacilTech);	
+		
+				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection(); 
+				myURLConnection.setUseCaches(false);
+				myURLConnection.setRequestMethod("POST");
+				myURLConnection.setRequestProperty("Accept", "application/json");
+				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnection.setRequestProperty("Content-type", "Application/JSON");
+				myURLConnection.setRequestProperty("Authorization", tokenJWTHomologacao);
+				
+				myURLConnection.setDoOutput(true);
+				myURLConnection.getOutputStream().write(postDataBytes);
+		
+				int status = myURLConnection.getResponseCode();
+				
+				String result = IOUtils.toString(myURLConnection.getInputStream(), StandardCharsets.UTF_8.name());
+				
+				myResponse = new JSONArray(result);	
+				
+				if (status == 200) {
+					return myResponse;
+				} else {
+					if (status == 401) {
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+								"[Facil Tech] Falha de autenticação. Token inválido!", ""));
+					}
+					if (status == 403) {
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+								"[Facil Tech] Falha de permissão. ", ""));
+					}	
+					
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Facil Tech] Erro não conhecido! Código: " + status, ""));
+				}
+							
+				myURLConnection.disconnect();
+		
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+		return null;
+	}
 	
-	
-	public JSONObject getJSONCliente() {
+	public JSONObject getJSONCliente(PagadorRecebedor pagadorRecebedor) {
 				
 		JSONObject jsonCliente = new JSONObject();
-		
-		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
 		
 		jsonCliente.put("SituacaoDoAssociado", "N");
 		jsonCliente.put("CodigoDaAgenciaDeCredito", "1");
@@ -140,8 +204,23 @@ public class FacilTechMB {
 			jsonDadosPessoais.put("DataDeNascimento", pagadorRecebedor.getDtNascimento());
 			jsonDadosPessoais.put("Naturalidade", " ");
 			jsonDadosPessoais.put("Nacionalidade", " ");
-			jsonDadosPessoais.put("EstadoCivil", 0);
+
+			if (pagadorRecebedor.getEstadocivil().equals("SOLTEIRO")) {
+				jsonDadosPessoais.put("EstadoCivil", "S");
+			} else if (pagadorRecebedor.getEstadocivil().equals("CASADO")) {
+				jsonDadosPessoais.put("EstadoCivil", "C");
+			} else if (pagadorRecebedor.getEstadocivil().equals("VIÚVO")) {
+				jsonDadosPessoais.put("EstadoCivil", "V");
+			} else if (pagadorRecebedor.getEstadocivil().equals("DIVORCIADO")) {
+				jsonDadosPessoais.put("EstadoCivil", "D");
+			} else if (pagadorRecebedor.getEstadocivil().equals("SEPARADO JUDICIALMENTE")) {
+				jsonDadosPessoais.put("EstadoCivil", "J");
+			} else {
+				jsonDadosPessoais.put("EstadoCivil", "O");
+			}
+
 			jsonDadosPessoais.put("Genero", 0);
+			jsonDadosPessoais.put("Cooperado", true);
 			
 			JSONObject jsonDocumentoIdentidade = new JSONObject();
 			jsonDocumentoIdentidade.put("Numero", pagadorRecebedor.getRg());

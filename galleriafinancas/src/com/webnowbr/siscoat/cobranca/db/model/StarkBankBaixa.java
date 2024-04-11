@@ -10,9 +10,11 @@ public class StarkBankBaixa implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long id;
     public BigDecimal valor;
+    public BigDecimal valorPagamento;
     public String nomePagador;
     public String idTransacao;
     public Date dataPagamento;
+    public Date dataVencimento;
     public String documento;
     public String linhaBoleto;
     public String formaPagamento;
@@ -20,6 +22,26 @@ public class StarkBankBaixa implements Serializable {
     public String comentario;
     public ContasPagar contasPagar;
     
+    public String metodoPix;
+    
+	private String pix;
+	private String nomeRecebedor; 
+	private String banco;
+	private String conta;
+	private String agencia;
+	private String ispb;
+
+	private Responsavel responsavel;
+	
+	private String descricaoStarkBank;
+	
+	private String tipoContaBancaria;
+	
+	private StarkBankBoleto comprovantePagamentoStarkBank;
+	private StarkBankPix comprovantePagamentoPixStarkBank;
+	
+	private boolean contaIndividual;
+	
 	public StarkBankBaixa(){
 
 	}
@@ -115,4 +137,124 @@ public class StarkBankBaixa implements Serializable {
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
 	}
+
+	public String getPix() {
+		return pix;
+	}
+
+	public void setPix(String pix) {
+		this.pix = pix;
+	}
+
+	public String getNomeRecebedor() {
+		return nomeRecebedor;
+	}
+
+	public void setNomeRecebedor(String nomeRecebedor) {
+		this.nomeRecebedor = nomeRecebedor;
+	}
+
+	public String getBanco() {
+		return banco;
+	}
+
+	public void setBanco(String banco) {
+		this.banco = banco;
+	}
+
+	public String getConta() {
+		return conta;
+	}
+
+	public void setConta(String conta) {
+		this.conta = conta;
+	}
+
+	public String getAgencia() {
+		return agencia;
+	}
+
+	public void setAgencia(String agencia) {
+		this.agencia = agencia;
+	}
+
+	public String getIspb() {
+		return ispb;
+	}
+
+	public void setIspb(String ispb) {
+		this.ispb = ispb;
+	}
+
+	public Responsavel getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(Responsavel responsavel) {
+		this.responsavel = responsavel;
+	}
+
+	public String getDescricaoStarkBank() {
+		return descricaoStarkBank;
+	}
+
+	public void setDescricaoStarkBank(String descricaoStarkBank) {
+		this.descricaoStarkBank = descricaoStarkBank;
+	}
+
+	public StarkBankBoleto getComprovantePagamentoStarkBank() {
+		return comprovantePagamentoStarkBank;
+	}
+
+	public void setComprovantePagamentoStarkBank(StarkBankBoleto comprovantePagamentoStarkBank) {
+		this.comprovantePagamentoStarkBank = comprovantePagamentoStarkBank;
+	}
+
+	public StarkBankPix getComprovantePagamentoPixStarkBank() {
+		return comprovantePagamentoPixStarkBank;
+	}
+
+	public void setComprovantePagamentoPixStarkBank(StarkBankPix comprovantePagamentoPixStarkBank) {
+		this.comprovantePagamentoPixStarkBank = comprovantePagamentoPixStarkBank;
+	}
+
+	public String getTipoContaBancaria() {
+		return tipoContaBancaria;
+	}
+
+	public void setTipoContaBancaria(String tipoContaBancaria) {
+		this.tipoContaBancaria = tipoContaBancaria;
+	}
+
+	public BigDecimal getValorPagamento() {
+		return valorPagamento;
+	}
+
+	public void setValorPagamento(BigDecimal valorPagamento) {
+		this.valorPagamento = valorPagamento;
+	}
+
+	public String getMetodoPix() {
+		return metodoPix;
+	}
+
+	public void setMetodoPix(String metodoPix) {
+		this.metodoPix = metodoPix;
+	}
+
+	public boolean isContaIndividual() {
+		return contaIndividual;
+	}
+
+	public void setContaIndividual(boolean contaIndividual) {
+		this.contaIndividual = contaIndividual;
+	}
+
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}	
 }

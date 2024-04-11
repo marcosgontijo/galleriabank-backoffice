@@ -343,6 +343,37 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 		}
 		return listContasPagar;
 	}
+	
+	private static final String BUSCAR_CONTAS_PRE = "select * from cobranca.contaspagar c where contrato = ? and origem = 'PRE'";
+	public List<ContasPagar> buscarContasPre(final Long numeroContrato) throws Exception {
+		List<ContasPagar> listContasPagar = new ArrayList<ContasPagar>();
+
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			
+			String query = BUSCAR_CONTAS_PRE;
+		
+			ps = connection.prepareStatement(query);
+
+			ps.setLong(1, numeroContrato);
+			
+			rs = ps.executeQuery();
+			ContasPagarDao cDao = new ContasPagarDao();
+			
+			while (rs.next()) {
+				ContasPagar contasPagar = cDao.findById(rs.getLong("id"));
+				listContasPagar.add(contasPagar);
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			closeResources(connection, ps, rs);
+		}
+		return listContasPagar;
+	}
 }
 
 

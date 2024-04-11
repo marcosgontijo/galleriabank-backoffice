@@ -89,7 +89,7 @@ public class DocumentoAnaliseService {
 		if (!CommonsUtil.semValor(documentoAnalisePesquisa))
 			documentoAnalise = documentoAnalisePesquisa;
 		else {
-			PagadorRecebedor pagador = new PagadorRecebedor();
+			PagadorRecebedor pagador = new PagadorRecebedor("cadastrarPessoRetornoCredNet");
 			pagador.setId(0);
 
 			pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
@@ -108,7 +108,7 @@ public class DocumentoAnaliseService {
 	public PagadorRecebedor cadastrarPagadorRetornoRelato(RelatoDadosCadastrais dados, 
 			PagadorRecebedorService pagadorRecebedorService) {
 		
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarPagadorRetornoRelato");
 		pagador.setId(0);
 		String cnpj = dados.getCnpjEditado().trim();
 		//cnpj = CommonsUtil.formataCnpjCpf(cnpj, false);
@@ -120,7 +120,7 @@ public class DocumentoAnaliseService {
 	
 	public PagadorRecebedor cadastrarParticipadaRetornoRelato(Participada participada, 
 			PagadorRecebedorService pagadorRecebedorService) {
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarParticipadaRetornoRelato");
 		pagador.setId(0);
 		String digito = participada.getDigitoCnpj().toString();
 		if(digito.length() == 1) {
@@ -136,7 +136,7 @@ public class DocumentoAnaliseService {
 	
 	public PagadorRecebedor cadastrarParticipanteRetornoRelato(Participante participante, 
 			PagadorRecebedorService pagadorRecebedorService) {
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarParticipanteRetornoRelato");
 		pagador.setId(0);
 		String cnpjCpf;
 		if(CommonsUtil.mesmoValor(participante.getParticipacaoTipo(), "J")) {
@@ -163,7 +163,7 @@ public class DocumentoAnaliseService {
 	
 	public PagadorRecebedor cadastrarAdministradorRetornoRelato(Administrador administrador, 
 			PagadorRecebedorService pagadorRecebedorService) {
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarAdministradorRetornoRelato");
 		pagador.setId(0);
 		String cnpjCpf;
 		if(CommonsUtil.mesmoValor(administrador.getTipo(), "J")) {
@@ -190,7 +190,7 @@ public class DocumentoAnaliseService {
 	
 	public PagadorRecebedor cadastrarSocioRetornoRelato(Socio socio, 
 			PagadorRecebedorService pagadorRecebedorService) {
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarSocioRetornoRelato");
 		pagador.setId(0);
 		String cnpjCpf;
 		if(CommonsUtil.mesmoValor(socio.getTipo(), "J")) {
@@ -257,7 +257,7 @@ public class DocumentoAnaliseService {
 			return;
 		}
 
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarPessoRetornoEngine1");
 		pagador.setId(0);
 
 		pagador.setCnpj(sCPFCNPJ);
@@ -278,7 +278,7 @@ public class DocumentoAnaliseService {
 		
 		
 
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarPessoRetornoEngine2");
 		pagador.setId(0);
 
 		
@@ -348,7 +348,7 @@ public class DocumentoAnaliseService {
 		} 
 		
 		String sCNPJ = CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(), 14), false);
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarPartnershipRetornoEngine");
 		pagador.setId(0);
 		pagador.setCnpj(sCNPJ);
 		pagador.setNome(partnership.getCompanyName());
@@ -358,7 +358,7 @@ public class DocumentoAnaliseService {
 	
 	public PagadorRecebedor cadastrarPartnershipRetornoEnginePJ(EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership partnership, 
 			PagadorRecebedorService pagadorRecebedorService) {
-		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedor pagador = new PagadorRecebedor("cadastrarPartnershipRetornoEnginePJ");
 		pagador.setId(0);
 		String cnpjCpf = partnership.getRelatedEntityTaxIdNumber();
 

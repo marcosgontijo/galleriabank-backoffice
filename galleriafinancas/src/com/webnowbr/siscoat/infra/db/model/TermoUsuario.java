@@ -12,11 +12,23 @@ public class TermoUsuario {
 
 	private long idUsuario;
 
-	private Date dataCienca;
+	private Date dataCiencia;
 	
 	private Date dataAdiado;
 	
 	private Date dataAceite;
+	
+	public TermoUsuario() {
+		
+	}
+	
+	public TermoUsuario(long idTermo, long idUsuario, Date dataCiencia, Date dataAdiado, Date dataAceite) {
+		this.idTermo = idTermo;
+		this.idUsuario = idUsuario;
+		this.dataCiencia = dataCiencia;	
+		this.dataAdiado = dataAdiado;
+		this.dataAceite = dataAceite;		
+	}
 
 	public long getIdTermo() {
 		return idTermo;
@@ -66,12 +78,12 @@ public class TermoUsuario {
 		this.dataAceite = dataAceite;
 	}
 
-	public Date getDataCienca() {
-		return dataCienca;
+	public Date getDataCiencia() {
+		return dataCiencia;
 	}
 
-	public void setDataCienca(Date dataCienca) {
-		this.dataCienca = dataCienca;
+	public void setDataCiencia(Date dataCiencia) {
+		this.dataCiencia = dataCiencia;
 	}
 	
 	

@@ -77,6 +77,12 @@ public class CcbContrato implements Serializable{
 	private BigDecimal valorParcela;
 	private char tipoCalculoFinal; 
 	private boolean usarNovoCustoEmissao; 
+	
+	private String carenciaAnterior;
+	private String prazoAnterior;
+	private String numeroCcbAnterior;
+	private Date dataDeEmissaoAnterior;
+	private Date vencimentoUltimaParcelaPagamentoAnterior;
 	 
 	private BigDecimal percentualCustoEmissao; 
 		
@@ -106,6 +112,7 @@ public class CcbContrato implements Serializable{
 	private String bairroImovel;
 	private String cepImovel;
 	private BigDecimal precoVendaCompra;
+	private BigDecimal porcentagemVendaCompra = BigDecimal.valueOf(100);
 	private Date dataCompraImovel;
 	
 	private BigDecimal vendaLeilao;
@@ -1278,6 +1285,53 @@ public class CcbContrato implements Serializable{
 
 	public void setDataCompraImovel(Date dataCompraImovel) {
 		this.dataCompraImovel = dataCompraImovel;
-	} 
+	}
 
+	public BigDecimal getPorcentagemVendaCompra() {
+		return porcentagemVendaCompra;
+	}
+
+	public void setPorcentagemVendaCompra(BigDecimal porcentagemVendaCompra) {
+		this.porcentagemVendaCompra = porcentagemVendaCompra;
+	}
+
+	public String getCarenciaAnterior() {
+		return carenciaAnterior;
+	}
+
+	public void setCarenciaAnterior(String carenciaAnterior) {
+		this.carenciaAnterior = carenciaAnterior;
+	}
+
+	public String getPrazoAnterior() {
+		return prazoAnterior;
+	}
+
+	public void setPrazoAnterior(String prazoAnterior) {
+		this.prazoAnterior = prazoAnterior;
+	}
+
+	public String getNumeroCcbAnterior() {
+		return numeroCcbAnterior;
+	}
+
+	public void setNumeroCcbAnterior(String numeroCcbAnterior) {
+		this.numeroCcbAnterior = numeroCcbAnterior;
+	}
+
+	public Date getDataDeEmissaoAnterior() {
+		return dataDeEmissaoAnterior;
+	}
+
+	public void setDataDeEmissaoAnterior(Date dataDeEmissaoAnterior) {
+		this.dataDeEmissaoAnterior = dataDeEmissaoAnterior;
+	}
+
+	public Date getVencimentoUltimaParcelaPagamentoAnterior() {
+		return vencimentoUltimaParcelaPagamentoAnterior;
+	}
+
+	public void setVencimentoUltimaParcelaPagamentoAnterior(Date vencimentoUltimaParcelaPagamentoAnterior) {
+		this.vencimentoUltimaParcelaPagamentoAnterior = vencimentoUltimaParcelaPagamentoAnterior;
+	} 
 }

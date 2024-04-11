@@ -44,6 +44,7 @@ public class FileService {
 	
 			logger.info("INFO file server documentoConsultarTodos {} GET: "
 					.concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)));
+	//		HttpServletRequest request;
 	
 			URL myURL;
 			try {
@@ -74,15 +75,18 @@ public class FileService {
 				}
 	
 				if (!CommonsUtil.semValor(retornoConsulta)) {
-					ResponseApi responseApi  = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
+					ResponseApi teste  = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
 					Collection<FileUploaded> result = new ArrayList<FileUploaded>();
 					
 					
-					result = GsonUtil.fromJson(responseApi.getClasse(), new TypeToken<ArrayList<FileUploaded>>() {
+					result = GsonUtil.fromJson(teste.getClasse(), new TypeToken<ArrayList<FileUploaded>>() {
 		            }.getType());
 					return  result.stream().collect(Collectors.toList());
 				}
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -193,17 +197,20 @@ public class FileService {
 			}
 
 			if (!CommonsUtil.semValor(retornoConsulta)) {
-				ResponseApi responseApi = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
+				ResponseApi teste = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
 //				FileSiscoat result = null;
 //				Gson gson = new Gson();
-				return responseApi.getMensagem();
+				return teste.getMensagem();
 //				result = gson.fromJson(teste.getClasse(), FileSiscoat.class);
 //				return result.getFile();
 			}
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 

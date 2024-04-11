@@ -247,7 +247,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	(\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido1, cp.datavencimento, c.taxaremuneracaoinvestidor1,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido1, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor1,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor1 valorface, c.dataInicioInvestidor1,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  1 numeroInvestidor, c.recebedor recebedor\r\n"
 			+ "	from\r\n"
@@ -264,7 +264,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido2, cp.datavencimento, c.taxaremuneracaoinvestidor2,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido2, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor2,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor2 valorface, c.dataInicioInvestidor2,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  2 numeroInvestidor, c.recebedor2 recebedor\r\n"
 			+ "	from\r\n"
@@ -281,7 +281,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido3, cp.datavencimento, c.taxaremuneracaoinvestidor3,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido3, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor3,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor3 valorface, c.dataInicioInvestidor3,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  3 numeroInvestidor, c.recebedor3 recebedor \r\n"
 			+ "	from\r\n"
@@ -298,7 +298,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido4, cp.datavencimento, c.taxaremuneracaoinvestidor4,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido4, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor4,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor4 valorface, c.dataInicioInvestidor4,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  4 numeroInvestidor, c.recebedor4 recebedor \r\n"
 			+ "	from\r\n"
@@ -315,7 +315,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido5, cp.datavencimento, c.taxaremuneracaoinvestidor5,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido5, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor5,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor5 valorface, c.dataInicioInvestidor5,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  5 numeroInvestidor, c.recebedor5 recebedor \r\n"
 			+ "	from\r\n"
@@ -332,7 +332,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido6, cp.datavencimento, c.taxaremuneracaoinvestidor6,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido6, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor6,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor6 valorface, c.dataInicioInvestidor6,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  6 numeroInvestidor, c.recebedor6 recebedor\r\n"
 			+ "	from\r\n"
@@ -349,7 +349,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido7, cp.datavencimento, c.taxaremuneracaoinvestidor7,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido7, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor7,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor7 valorface, c.dataInicioInvestidor7,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  7 numeroInvestidor, c.recebedor7 recebedor \r\n"
 			+ "	from\r\n"
@@ -366,7 +366,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido8, cp.datavencimento, c.taxaremuneracaoinvestidor8,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido8, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor8,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor8 valorface, c.dataInicioInvestidor8,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  8 numeroInvestidor, c.recebedor8 recebedor \r\n"
 			+ "	from\r\n"
@@ -383,7 +383,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido9, cp.datavencimento, c.taxaremuneracaoinvestidor9,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido9, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor9,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor9 valorface, c.dataInicioInvestidor9,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  9 numeroInvestidor, c.recebedor9 recebedor \r\n"
 			+ "	from\r\n"
@@ -400,7 +400,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido10, cp.datavencimento, c.taxaremuneracaoinvestidor10,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido10, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor10,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor10 valorface, c.dataInicioInvestidor10,\r\n"
 			+ "		c.id contrato, pare.id investidor, cp.id parcela,  10 numeroInvestidor, c.recebedor10 recebedor \r\n"
 			+ "	from\r\n"
@@ -576,7 +576,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	(\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido1, cp.datavencimento, c.taxaremuneracaoinvestidor1,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido1, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor1,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor1 valorface, c.dataInicioInvestidor1,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  1 numeroInvestidor, c.recebedor recebedor\r\n"
 			+ "	from\r\n"
@@ -593,7 +593,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido2, cp.datavencimento, c.taxaremuneracaoinvestidor2,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido2, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor2,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor2 valorface, c.dataInicioInvestidor2,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  2 numeroInvestidor, c.recebedor2 recebedor\r\n"
 			+ "	from\r\n"
@@ -610,7 +610,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido3, cp.datavencimento, c.taxaremuneracaoinvestidor3,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido3, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor3,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor3 valorface, c.dataInicioInvestidor3,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  3 numeroInvestidor, c.recebedor3 recebedor \r\n"
 			+ "	from\r\n"
@@ -627,7 +627,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido4, cp.datavencimento, c.taxaremuneracaoinvestidor4,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido4, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor4,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor4 valorface, c.dataInicioInvestidor4,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  4 numeroInvestidor, c.recebedor4 recebedor \r\n"
 			+ "	from\r\n"
@@ -644,7 +644,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido5, cp.datavencimento, c.taxaremuneracaoinvestidor5,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido5, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor5,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor5 valorface, c.dataInicioInvestidor5,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  5 numeroInvestidor, c.recebedor5 recebedor \r\n"
 			+ "	from\r\n"
@@ -661,7 +661,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido6, cp.datavencimento, c.taxaremuneracaoinvestidor6,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido6, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor6,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor6 valorface, c.dataInicioInvestidor6,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  6 numeroInvestidor, c.recebedor6 recebedor\r\n"
 			+ "	from\r\n"
@@ -678,7 +678,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido7, cp.datavencimento, c.taxaremuneracaoinvestidor7,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido7, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor7,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor7 valorface, c.dataInicioInvestidor7,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  7 numeroInvestidor, c.recebedor7 recebedor \r\n"
 			+ "	from\r\n"
@@ -695,7 +695,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido8, cp.datavencimento, c.taxaremuneracaoinvestidor8,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido8, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor8,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor8 valorface, c.dataInicioInvestidor8,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  8 numeroInvestidor, c.recebedor8 recebedor \r\n"
 			+ "	from\r\n"
@@ -712,7 +712,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido9, cp.datavencimento, c.taxaremuneracaoinvestidor9,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido9, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor9,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor9 valorface, c.dataInicioInvestidor9,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  9 numeroInvestidor, c.recebedor9 recebedor \r\n"
 			+ "	from\r\n"
@@ -729,7 +729,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "union\r\n"
 			+ "	select\r\n"
 			+ "		pare.nome, pare.cpf, pare.cnpj, pare.agencia, pare.conta,\r\n"
-			+ "		c.numerocontrato, c.recebedorGarantido10, cp.datavencimento, c.taxaremuneracaoinvestidor10,\r\n"
+			+ "		c.numerocontrato, c.recebedorGarantido10, cp.datavencimento, cp.databaixa, c.taxaremuneracaoinvestidor10,\r\n"
 			+ "		cp.parcelamensal, cp.capitalizacao, cp.amortizacao, cp.valorliquido, c.vlrInvestidor10 valorface, c.dataInicioInvestidor10,\r\n"
 			+ "		cp.saldoCredorAtualizado, c.id contrato, pare.id investidor, cp.id parcela,  10 numeroInvestidor, c.recebedor10 recebedor \r\n"
 			+ "	from\r\n"
@@ -779,7 +779,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 						i++;
 						ps.setBoolean(i, envelope);
 					}
-				
+					System.out.println(ps);
 					rs = ps.executeQuery();
 
 					DebenturesRelatorio debenture = new DebenturesRelatorio();
@@ -822,6 +822,16 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 							numeroContratoantigo = debenture.getNumerocontrato();
 							numeroInvestidoAntigo = debenture.getNumeroInvestidor();
 							debenture.setCalculos(Copy(listaDatasCalculo));
+							if(!CommonsUtil.semValor(parcelaMensal)) {
+								SaquesDebentures saque = new SaquesDebentures();
+								saque.setValorSaque(parcelaMensal);
+								if(!CommonsUtil.semValor(rs.getDate("databaixa")))
+									saque.setDataSaque(rs.getDate("databaixa"));
+								else
+									saque.setDataSaque(rs.getDate("datavencimento"));
+								saque.setCalculos(Copy(listaDatasCalculo));
+								debenture.getSaques().add(saque);
+							}
 						} else if(CommonsUtil.mesmoValor(rs.getString("numerocontrato"), numeroContratoantigo)
 							&& CommonsUtil.mesmoValor(rs.getInt("numeroinvestidor"), numeroInvestidoAntigo)) {
 							SaquesDebentures saque = new SaquesDebentures();
@@ -832,7 +842,10 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 								parcelaMensal = capitalizacao.add(amortizacao);
 							}
 							saque.setValorSaque(parcelaMensal);
-							saque.setDataSaque(rs.getDate("datavencimento"));
+							if(!CommonsUtil.semValor(rs.getDate("databaixa")))
+								saque.setDataSaque(rs.getDate("databaixa"));
+							else
+								saque.setDataSaque(rs.getDate("datavencimento"));
 							saque.setCalculos(Copy(listaDatasCalculo));
 							debenture.getSaques().add(saque);
 						}
@@ -924,7 +937,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 							
 							SaquesDebentures saque = new SaquesDebentures();
 							saque.setValorSaque(rs.getBigDecimal("saldocredoratualizado"));
-							saque.setDataSaque(rs.getDate("datavencimento"));
+							saque.setDataSaque(rs.getDate("databaixa"));
 							saque.setCalculos(Copy(listaDatasCalculo));
 							debenture.getSaques().add(saque);
 							listaDenbentures.add(debenture);

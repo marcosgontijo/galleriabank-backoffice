@@ -11,7 +11,7 @@
         <many-to-one name="imovelEstoque"
 			class="com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque"
 			lazy="false">
-			<column name="IMOVELESTOQUE"/>
+			<column name="IMOVELESTOQUE" />
 		</many-to-one>
         
         <property name="numeroMatricula" type="java.lang.String">
@@ -159,6 +159,8 @@
 		<property name="valorLeilao" type="big_decimal">
 			<column name="valorLeilao" />
 		</property> 
+		
+	
 		
 
     </class>

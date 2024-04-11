@@ -24,7 +24,7 @@
             <column name="NAME" not-null="true"/>
         </property>
         <property name="level" type="int">
-            <column name="LEVELUSR" not-null="true"/>
+            <column name="LEVELUSR"/>
         </property>
         <property name="login" type="java.lang.String">
             <column name="LOGIN" not-null="true" unique="true"/>
@@ -88,6 +88,9 @@
         <property name="userIuguPosto" type="boolean">
             <column name="userIuguPosto" />
         </property>    
+        <property name="userInterno" type="boolean">
+            <column name="userInterno" not-null="true" default="false"/>
+        </property>        
         <property name="userInvestidor" type="boolean">
             <column name="userInvestidor" />
         </property>   
@@ -237,7 +240,19 @@
 		<property name="userPlanejamento" type="boolean">
 			<column name="userPlanejamento" not-null="true" default="false" />
 		</property>
-
+		
+		<property name="profileCartorio" type="boolean">
+			<column name="profileCartorio" not-null="true" default="false" />
+		</property>
+		
+		<property name="profileJuridicoCobranca" type="boolean">
+			<column name="profileJuridicoCobranca" not-null="true" default="false" />
+		</property>
+		
+		<property name="profileCompliance" type="boolean">
+			<column name="profileCompliance" not-null="true" default="false" />
+		</property>
+		
 
     </class>
 </hibernate-mapping>

@@ -1,14 +1,21 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,13 +29,29 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.starkbank.Balance;
 import com.starkbank.BoletoPayment;
+import com.starkbank.BrcodePayment;
 import com.starkbank.DictKey;
+import com.starkbank.PaymentPreview;
 import com.starkbank.Project;
 import com.starkbank.Settings;
 import com.starkbank.Transfer;
@@ -38,14 +61,20 @@ import com.starkbank.ellipticcurve.Signature;
 import com.starkbank.utils.Generator;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankTax;
+import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankTaxDAO;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 @ManagedBean(name = "starkBankAPI")
 @SessionScoped
@@ -54,6 +83,16 @@ public class StarkBankAPI{
 	private Date dataInicio;
 	private Date dataFim;
 	private List<StarkBankBoleto> listBoletos;
+	
+	private StarkBankBaixa contaIndividual = new StarkBankBaixa();
+	private StarkBankBaixa selectedContaIndividual = new StarkBankBaixa();
+	private List<StarkBankBaixa> contasIndividual= new ArrayList<StarkBankBaixa>();
+	
+	private String nomeComprovanteStarkBank = "";
+	private String pathComprovanteStarkBank = ""; 
+	
+	StreamedContent downloadComprovanteStarkBank;
+	public boolean comprovanteStarkBankGerado;
     
 	/*
 	 * VALIDAÇÃO DAS CHAVES DE SEGURANÇA*/
@@ -76,8 +115,636 @@ public class StarkBankAPI{
         System.out.println("Verification status: " + verified);
         */
     }
-
     
+    public String clearFieldsContaIndividual() {
+    	this.contaIndividual = new StarkBankBaixa();
+    	contasIndividual= new ArrayList<StarkBankBaixa>();
+    
+    	getContasIndividualBD();
+    	
+    	return "/Atendimento/Cobranca/CobrancaContaIndividualStarkBank.xhtml";
+    }
+    
+    public void getContasIndividualBD() {
+    	StarkBankBaixaDAO sBBDao = new StarkBankBaixaDAO();
+    	
+    	this.contasIndividual = sBBDao.findByFilter("contaIndividual", true);    	
+    }
+    
+    public void cadastrarContaIndividual() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		StarkBankBaixaDAO sBBDao = new StarkBankBaixaDAO();
+		
+		this.contaIndividual.setContaIndividual(true);
+		this.contaIndividual.setStatusPagamento("Aguardando Pagamento");
+		
+		if (this.contaIndividual.getDescricaoStarkBank().length() < 10) {
+			this.contaIndividual.setDescricaoStarkBank("Galleria Bank - Conta Individual - " + this.contaIndividual.getDescricaoStarkBank());
+		}
+		
+		sBBDao.create(this.contaIndividual);
+		
+		getContasIndividualBD();
+		
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"[StarkBank - Pagamento Conta Individual] Cadastro de Conta efetuado com Sucesso!", ""));
+    }
+    
+	public void processarPagamentoContaIndividual() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		boolean finalizaOperacao = false;
+		
+		StarkBankAPI starkBankAPI = new StarkBankAPI();
+
+		if (this.selectedContaIndividual.getFormaPagamento().equals("Boleto")) {
+			
+			System.out.println("processaPagamentoStarkBank - Boleto");
+
+			StarkBankBoleto starkBankBoleto = starkBankAPI.paymentBoleto(
+					this.selectedContaIndividual.getLinhaBoleto(), null,
+					null, this.selectedContaIndividual.getDescricaoStarkBank(),
+					this.selectedContaIndividual.getDocumento(),
+					null);
+
+			if (starkBankBoleto != null) {
+				// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
+				StarkBankBaixa baixa = updateBaixaStarkBank(this.selectedContaIndividual,							
+						String.valueOf(starkBankBoleto.getId()),
+						starkBankBoleto.getCreated(),
+						this.selectedContaIndividual.getValor(),
+						"Pago",
+						starkBankBoleto.getLine());
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Boleto pago sucesso!", ""));
+
+				finalizaOperacao = true;
+			}
+		}
+		
+		if (this.selectedContaIndividual.getFormaPagamento().equals("Imposto")) {
+			
+			System.out.println("processaPagamentoStarkBank - Imposto");
+
+			StarkBankTax starkBankTax = starkBankAPI.paymentTax(
+					this.selectedContaIndividual.getLinhaBoleto(), this.selectedContaIndividual.getDescricaoStarkBank());
+
+			if (starkBankTax != null) {
+				// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
+				StarkBankBaixa baixa = updateBaixaStarkBank(this.selectedContaIndividual,							
+						String.valueOf(starkBankTax.getId()),
+						starkBankTax.getCreated(),
+						this.selectedContaIndividual.getValor(),
+						"Pago",
+						starkBankTax.getLine());
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Imposto pago sucesso!", ""));
+
+				finalizaOperacao = true;
+			}
+		}
+
+		if (this.selectedContaIndividual.getFormaPagamento().equals("Pix") || 
+				this.selectedContaIndividual.getFormaPagamento().equals("PIX")) {
+			
+			System.out.println("processaPagamentoStarkBank - Pix");
+			
+			StarkBankPix starkBankPix = null;
+			
+			System.out.println("processaPagamentoStarkBank - Pix");
+			
+			if (this.selectedContaIndividual.getMetodoPix().equals("Chave Pix")) {
+				starkBankPix = starkBankAPI.paymentPixCodigo(
+						this.selectedContaIndividual.getPix(),
+						this.selectedContaIndividual.getAgencia(),
+						this.selectedContaIndividual.getConta(),
+						this.selectedContaIndividual.getDocumento(),
+						this.selectedContaIndividual.getNomeRecebedor(),
+						this.selectedContaIndividual.getValor(),
+						this.selectedContaIndividual.getFormaPagamento(),
+						null,
+						this.selectedContaIndividual.getTipoContaBancaria());
+			}
+			
+			if (this.selectedContaIndividual.getMetodoPix().equals("Dados Bancários")) {
+				starkBankPix = starkBankAPI.paymentPixDadosBancarios(
+						this.selectedContaIndividual.getIspb(),
+						this.selectedContaIndividual.getAgencia(),
+						this.selectedContaIndividual.getConta(),
+						this.selectedContaIndividual.getDocumento(),
+						this.selectedContaIndividual.getNomeRecebedor(),
+						this.selectedContaIndividual.getValor(),
+						this.selectedContaIndividual.getFormaPagamento(),
+						null,
+						this.selectedContaIndividual.getTipoContaBancaria());
+			}
+			
+			if (this.selectedContaIndividual.getMetodoPix().equals("QR Code Copia e Cola")) {
+				starkBankPix = starkBankAPI.paymentPixQRCode(
+						this.selectedContaIndividual.getPix(),
+						this.selectedContaIndividual.getDocumento(),
+						this.selectedContaIndividual.getValor(),
+						null);
+			}
+			
+			if (starkBankPix != null) {	
+				System.out.println("processaPagamentoStarkBank - Update Baixa");
+				StarkBankBaixa baixa = updateBaixaStarkBank(this.selectedContaIndividual,							
+						String.valueOf(starkBankPix.getId()),
+						starkBankPix.getCreated(),
+						starkBankPix.getAmount(),
+						"Pago",
+						null);
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: PIX efetuado com sucesso!", ""));
+
+				finalizaOperacao = true;
+			}
+		}
+
+		if (this.selectedContaIndividual.getFormaPagamento().equals("TED")) {
+			System.out.println("processaPagamentoStarkBank - TED");
+			
+			StarkBankPix starkBankPix;
+			
+			starkBankPix = starkBankAPI.paymentTED(
+					this.selectedContaIndividual.getBanco(),
+					this.selectedContaIndividual.getAgencia(),
+					this.selectedContaIndividual.getConta(),
+					this.selectedContaIndividual.getDocumento(),
+					this.selectedContaIndividual.getNomeRecebedor(),
+					this.selectedContaIndividual.getValor(),
+					this.selectedContaIndividual.getFormaPagamento(),
+					null,
+					this.selectedContaIndividual.getTipoContaBancaria());
+		
+			if (starkBankPix != null) {
+				StarkBankBaixa baixa = updateBaixaStarkBank(this.selectedContaIndividual,							
+						String.valueOf(starkBankPix.getId()),
+						starkBankPix.getCreated(),
+						starkBankPix.getAmount(),
+						"Pago",
+						null);
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: TED efetuado com sucesso!", ""));
+
+				finalizaOperacao = true;
+			}
+		}
+	
+		/*
+		if (finalizaOperacao) {
+
+		}
+		*/
+	}
+	
+	public StreamedContent getDownloadComprovanteStarkBank(StarkBankBaixa baixaStarkBank) {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		geraReciboPagamentoStarkBank(baixaStarkBank);
+
+		String caminho = this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank;
+		String arquivo = this.nomeComprovanteStarkBank;
+		FileInputStream stream = null;
+
+		try {
+			stream = new FileInputStream(caminho);
+			downloadComprovanteStarkBank = new DefaultStreamedContent(stream, this.pathComprovanteStarkBank,
+					this.nomeComprovanteStarkBank);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println("StarkBank - Comprovante não encontrado!");
+		}
+
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"[Stark Bank - Recibo de Pagamento] Recibo de pagamento gerado com sucesso!", ""));
+
+		return this.downloadComprovanteStarkBank;
+	}
+	
+	public void geraReciboPagamentoStarkBank(StarkBankBaixa baixaStarkBank) {
+		/*
+		 * this.transferenciasObservacoesIUGU = new TransferenciasObservacoesIUGU();
+		 * this.transferenciasObservacoesIUGU.setId(1);
+		 * this.transferenciasObservacoesIUGU.setIdTransferencia(
+		 * "jdsfhdsfhjskfhjhslafdshf"); this.transferenciasObservacoesIUGU.
+		 * setObservacao("asdklfhjksdhfjd dsjfhjhdsfjashgdfj ");
+		 * 
+		 * this.valorItem = new BigDecimal("30000.00");
+		 */
+
+		this.comprovanteStarkBankGerado = false;
+
+		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		/*
+		 * Referência iText - Gerador PDF
+		 * http://www.dicas-l.com.br/arquivo/gerando_pdf_utilizando_java.php#.
+		 * VGpT0_nF_h4
+		 */
+
+		Document doc = null;
+		OutputStream os = null;
+
+		try {
+			/*
+			 * Fonts Utilizadas no PDF
+			 */
+			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
+
+			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font tituloGray = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloGray.setColor(BaseColor.LIGHT_GRAY);
+			
+			Font tituloGreen = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloGreen.setColor(158, 195, 32);
+			
+			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloBranco.setColor(BaseColor.WHITE);
+			Font normal = new Font(FontFamily.HELVETICA, 10);
+			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
+
+			TimeZone zone = TimeZone.getDefault();
+			Locale locale = new Locale("pt", "BR");
+			Calendar date = Calendar.getInstance(zone, locale);
+			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
+			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
+
+			ParametrosDao pDao = new ParametrosDao();
+			/*
+			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
+			 */
+
+			doc = new Document(PageSize.A4);
+			this.nomeComprovanteStarkBank = "Recibo Pagamento -  " + baixaStarkBank.getNomePagador() + ".pdf";
+			this.pathComprovanteStarkBank = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
+
+			os = new FileOutputStream(this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank);
+
+			// Associa a stream de saída ao
+			PdfWriter.getInstance(doc, os);
+
+			// Abre o documento
+			doc.open();
+			/*
+			 * Paragraph p1 = new Paragraph("RECIBO DE PAGAMENTO - " + favorecido, titulo);
+			 * p1.setAlignment(Element.ALIGN_CENTER); p1.setSpacingAfter(10); doc.add(p1);
+			 */
+			PdfPTable table = new PdfPTable(2);
+			//table.setWidthPercentage(100.0f);
+
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/pgto430.png"));
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ImageIO.write(buff, "png", bos);
+			Image img = Image.getInstance(bos.toByteArray());
+
+			img.setAlignment(Element.ALIGN_CENTER);
+
+			PdfPCell cell1 = new PdfPCell(img);
+			cell1.setBorder(0);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Pagador", tituloGreen));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			if (baixaStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+				cell1 = new PdfPCell(new Phrase("Galleria SCD", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CNPJ: 51.604.356/0001-75", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(30f);
+				table.addCell(cell1);
+			} else {
+				cell1 = new PdfPCell(new Phrase("Galleria Correspondente Bancário Eireli", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CNPJ: 34.787.885/0001-32", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+			}
+			
+			cell1 = new PdfPCell(new Phrase("Recebedor", tituloGreen));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			if (baixaStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+				if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")
+						|| baixaStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {	
+					
+					if (baixaStarkBank.getContasPagar() != null) {
+						cell1 = new PdfPCell(new Phrase(baixaStarkBank.getContasPagar().getNomeTed(), titulo));
+						cell1.setBorder(0);
+						cell1.setPaddingLeft(8f);
+						cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+						cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+						cell1.setBackgroundColor(BaseColor.WHITE);
+						cell1.setUseBorderPadding(true);
+						cell1.setPaddingTop(10f);
+						cell1.setPaddingBottom(2f);
+						table.addCell(cell1);
+						
+						cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getContasPagar().getCpfTed(), titulo));
+						cell1.setBorder(0);
+						cell1.setPaddingLeft(8f);
+						cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+						cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						cell1.setBackgroundColor(BaseColor.WHITE);
+						cell1.setUseBorderPadding(true);
+						cell1.setPaddingTop(10f);
+						cell1.setPaddingBottom(2f);
+						table.addCell(cell1);
+					}
+				} else {
+					cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					table.addCell(cell1);
+				}
+			} else {
+				cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+			}
+			
+			if (baixaStarkBank.getContasPagar().getBancoTed() != null && baixaStarkBank.getContasPagar().getAgenciaTed() != null && 
+					baixaStarkBank.getContasPagar().getContaTed() != null) {
+				
+				if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")) {										
+					cell1 = new PdfPCell(new Phrase("Banco: " + baixaStarkBank.getContasPagar().getBancoTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					cell1.setPaddingBottom(2f);	
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("Ag.: " + baixaStarkBank.getContasPagar().getAgenciaTed() + " | C/C: " + baixaStarkBank.getContasPagar().getContaTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("PIX: " + baixaStarkBank.getContasPagar().getPix(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setColspan(2);
+					cell1.setPaddingBottom(20f);	
+					table.addCell(cell1);
+				} else {					
+					cell1 = new PdfPCell(new Phrase("Banco: " + baixaStarkBank.getContasPagar().getBancoTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(20f);	
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("Ag.: " + baixaStarkBank.getContasPagar().getAgenciaTed() + " | C/C: " + baixaStarkBank.getContasPagar().getContaTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(20f);
+					table.addCell(cell1);
+				}
+			}
+			
+			cell1 = new PdfPCell(new Phrase("Transferência - " + baixaStarkBank.getFormaPagamento(), tituloGreen));
+			cell1.setBorder(0);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.LIGHT_GRAY);
+			cell1.setUseBorderPadding(true);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setColspan(2);
+			cell1.setPaddingBottom(10f);			
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Valor: R$ " + df.format(baixaStarkBank.getValor()), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Data do Pagamento: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Boleto")) {	
+				cell1 = new PdfPCell(new Phrase("Linha Digitável: " + baixaStarkBank.getLinhaBoleto(), titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				cell1.setColspan(2);
+				table.addCell(cell1);
+			}
+			
+			cell1 = new PdfPCell(new Phrase("Autenticação: " + baixaStarkBank.getIdTransacao(), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			doc.add(table);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"[Stark Bank - Recibo de Pagamento] Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente!"
+							+ e,
+					""));
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"[Stark Bank - Recibo de Pagamento] Ocorreu um problema ao gerar o PDF!" + e, ""));
+		} finally {
+			this.comprovanteStarkBankGerado = true;
+
+			if (doc != null) {
+				// fechamento do documento
+				doc.close();
+			}
+			if (os != null) {
+				// fechamento da stream de saída
+				try {
+					os.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public StarkBankBaixa updateBaixaStarkBank(StarkBankBaixa starkBankBaixa, String idTransacao, Date dataPagamento,
+			BigDecimal valorPago, String statusPagamento, String linhaBoleto) {
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+
+		starkBankBaixa.setDataPagamento(dataPagamento);
+		starkBankBaixa.setStatusPagamento(statusPagamento);
+		starkBankBaixa.setIdTransacao(idTransacao);
+		starkBankBaixa.setLinhaBoleto(linhaBoleto);
+		starkBankBaixa.setValor(valorPago);
+
+		sbDAO.merge(starkBankBaixa);
+
+		return starkBankBaixa;
+	}
+    
+    public void deletarPagamentoContaIndividual() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		StarkBankBaixaDAO sBBDao = new StarkBankBaixaDAO();
+		sBBDao.delete(this.selectedContaIndividual);
+		
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"[StarkBank - Pagamento Conta Individual] Conta excluída com sucesso!", ""));
+    }
+
     public void testeAutenticacaoManual() {
     	// Set your user Id
     	String accessId = "project/5465772415516672";
@@ -340,6 +1007,107 @@ public class StarkBankAPI{
 		}
 	}
 	
+
+	public static PaymentPreview paymentPreview(String idPagamento) {
+		List<PaymentPreview> previews = new ArrayList<>();
+		
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("id", idPagamento);
+		//params.put("scheduled", DateUtil.getDataHojeAmericano());
+		loginStarkBank();
+		
+		try {
+			previews.add(new PaymentPreview(params));
+			
+			PaymentPreview teste;
+			
+			previews = (List<PaymentPreview>) PaymentPreview.create(previews);
+			
+			if(previews.size() > 0) {
+				//System.out.println(previews);
+				return previews.get(0);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+		//retorno boleto
+		/* 
+			PaymentPreview({
+			    "scheduled": "2023-01-29",
+			    "type": "brcode-payment",
+			    "payment": {
+			        "accountType": "savings",
+			        "allowChange": false,
+			        "amount": 1000.0,
+			        "bankCode": "01705236",
+			        "cashAmount": 0.0,
+			        "cashierBankCode": "",
+			        "cashierType": "",
+			        "discountAmount": 0.0,
+			        "fineAmount": 0.0,
+			        "interestAmount": 0.0,
+			        "name": "Humberto EI",
+			        "nominalAmount": 1000.0,
+			        "reconciliationId": "12345",
+			        "reductionAmount": 0.0,
+			        "status": "created",
+			        "taxId": "27.564.801/0001-36"
+			    },
+			    "id": "00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"
+			})
+		 */
+		// retorno pix qr code
+		/*
+		 * {
+		    "scheduled": "2024-03-28",
+		    "type": "brcode-payment",
+		    "payment": {
+		      "accountType": "payment",
+		      "allowChange": false,
+		      "amount": 800.0,
+		      "bankCode": "10573521",
+		      "cashAmount": 0.0,
+		      "cashierBankCode": "",
+		      "cashierType": "",
+		      "description": "teste",
+		      "discountAmount": 0.0,
+		      "fineAmount": 0.0,
+		      "interestAmount": 0.0,
+		      "keyId": "10743112644",
+		      "name": "Lucas Leal Araujo Murta Rezende",
+		      "nominalAmount": 800.0,
+		      "reconciliationId": "p8b96",
+		      "reductionAmount": 0.0,
+		      "status": "created",
+		      "taxId": "***.431.126-**"
+		    },
+		    "id": "00020126500014br.gov.bcb.pix0111107431126440213presente Jana52040000530398654048.005802BR5924Lucas Leal Araujo Murta 6008Brasilia62090505p8b966304386D"
+		  }
+		 */
+	}
+	
+	public static DictKey dictKey(String idPagamento) {
+		DictKey dictKey = null;
+		loginStarkBank();
+		try {
+			dictKey = DictKey.get(idPagamento);
+			if(!CommonsUtil.semValor(dictKey)) {
+				return dictKey;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+		/*
+			
+		 */
+	}
+	
 	public String paymentBoletoLog(String idBoleto) {
 		
 		loginStarkBank();
@@ -468,6 +1236,31 @@ public class StarkBankAPI{
     	
     	 return taxTransacao;
     }
+	
+	public void getDadosDePagamento() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		loginStarkBank();
+		
+		List<PaymentPreview> previews = new ArrayList<>();
+		
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("id", "34191.09008 71884.170946 05303.220007 3 96520000208889");
+		data.put("scheduled", DateUtil.getDataHojeAmericano());
+
+		try {
+			
+			previews.add(new PaymentPreview(data));	
+			previews = (List<PaymentPreview>) PaymentPreview.create(previews);
+			
+			for (PaymentPreview preview : previews) {
+			    System.out.println(preview);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
 
 	public StarkBankBoleto paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao, String documentoPagadorCustom, String descricaoConta) {
 
@@ -648,6 +1441,68 @@ public class StarkBankAPI{
 		}
     }   
     
+    public StarkBankPix paymentPixQRCode(String qrCode, String documento, BigDecimal valor, String descricaoConta) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
+    	List<BrcodePayment> payments = new ArrayList<>();
+    
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
+    		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
+    	}
+    	
+    	Date dataHoje = DateUtil.gerarDataHoje();
+    	
+    	try {
+    		
+    		List<BrcodePayment.Rule> rules = new ArrayList<>();
+    		rules.add(new BrcodePayment.Rule("resendingLimit", 5));
+	    	
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	String valorStr = valor.toString();
+	    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));	
+	    	data.put("brcode", qrCode);
+	    	data.put("taxId", documento);
+	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    	data.put("scheduled", sdf.format(DateUtil.gerarDataHoje()));
+	    	data.put("description", descricaoConta);
+	    	data.put("tags", new String[]{"pix", "qrcode"});
+	    	data.put("rules", rules);
+	    	payments.add(new BrcodePayment(data));
+	    	
+	    	payments = BrcodePayment.create(payments);
+
+			StarkBankPix pixTransacao = new StarkBankPix();
+	    	for (BrcodePayment transfer : payments){
+				 pixTransacao.setId(Long.valueOf(transfer.id));
+				 pixTransacao.setCreated(DateUtil.convertDateTimeToDate(transfer.created));
+				 pixTransacao.setScheduled(transfer.scheduled);
+				 pixTransacao.setNomeComprovante(transfer.name);
+				 pixTransacao.setAmount(valor);
+				 pixTransacao.setTaxId(documento);
+				 pixTransacao.setPathComprovante(null);
+				 pixTransacao.setNomeComprovante(null);
+	    	}
+	    	
+	    	StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
+	    	starkBankPixDAO.create(pixTransacao);
+	    	
+	    	context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_INFO, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+	    	
+	    	return pixTransacao;
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX! Erro: " + e.getMessage(), "")); 
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
+    
     public StarkBankPix paymentPixCodigo(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta, String tipoContaBancaria) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
@@ -760,6 +1615,12 @@ public class StarkBankAPI{
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
+	    	
+	    	if (tipoContaBancaria != null) {
+	    		if (!tipoContaBancaria.equals("") && tipoContaBancaria.equals("Conta Poupança")) {
+	    			data.put("accountType", "savings");
+	    		}
+	    	}
 	    	
 	    	System.out.println("Payment | " + "PagamentoPIXDadosBancarios-" + DateUtil.todayInMilli());
 	    	System.out.println("Payment | " + data);
@@ -913,5 +1774,61 @@ public class StarkBankAPI{
 
 	public void setListBoletos(List<StarkBankBoleto> listBoletos) {
 		this.listBoletos = listBoletos;
+	}
+
+	public StarkBankBaixa getContaIndividual() {
+		return contaIndividual;
+	}
+
+	public void setContaIndividual(StarkBankBaixa contaIndividual) {
+		this.contaIndividual = contaIndividual;
+	}
+
+	public StarkBankBaixa getSelectedContaIndividual() {
+		return selectedContaIndividual;
+	}
+
+	public void setSelectedContaIndividual(StarkBankBaixa selectedContaIndividual) {
+		this.selectedContaIndividual = selectedContaIndividual;
+	}
+
+	public List<StarkBankBaixa> getContasIndividual() {
+		return contasIndividual;
+	}
+
+	public void setContasIndividual(List<StarkBankBaixa> contasIndividual) {
+		this.contasIndividual = contasIndividual;
+	}
+
+	public String getNomeComprovanteStarkBank() {
+		return nomeComprovanteStarkBank;
+	}
+
+	public void setNomeComprovanteStarkBank(String nomeComprovanteStarkBank) {
+		this.nomeComprovanteStarkBank = nomeComprovanteStarkBank;
+	}
+
+	public String getPathComprovanteStarkBank() {
+		return pathComprovanteStarkBank;
+	}
+
+	public void setPathComprovanteStarkBank(String pathComprovanteStarkBank) {
+		this.pathComprovanteStarkBank = pathComprovanteStarkBank;
+	}
+
+	public StreamedContent getDownloadComprovanteStarkBank() {
+		return downloadComprovanteStarkBank;
+	}
+
+	public void setDownloadComprovanteStarkBank(StreamedContent downloadComprovanteStarkBank) {
+		this.downloadComprovanteStarkBank = downloadComprovanteStarkBank;
+	}
+
+	public boolean isComprovanteStarkBankGerado() {
+		return comprovanteStarkBankGerado;
+	}
+
+	public void setComprovanteStarkBankGerado(boolean comprovanteStarkBankGerado) {
+		this.comprovanteStarkBankGerado = comprovanteStarkBankGerado;
 	}
 }
