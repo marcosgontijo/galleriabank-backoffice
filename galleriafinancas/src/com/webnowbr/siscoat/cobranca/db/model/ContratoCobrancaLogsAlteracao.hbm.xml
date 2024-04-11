@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao" table="contratocobrancalogsalteracao">
+       <id name="id" type="long">
+			<column name="id" />
+			<generator class="increment" />
+		</id>
+   
+		<property name="dataAlteracao" type="java.util.Date">
+            <column name="dataAlteracao" />
+        </property>
+       
+		<property name="usuario" type="java.lang.String">
+			<column name="usuario"   />
+		</property>
+		
+		<property name="observacao" type="java.lang.String">
+			<column name="observacao"  />
+		</property>
+		
+		<many-to-one name="contratoCobranca"  
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contratoCobranca" />
+		</many-to-one>		
+		
+		<property name="statusEsteira" type="java.lang.String">
+			<column name="statusEsteira"   />
+		</property>
+		
+        <set name="detalhes" table="contratocobrancalogsalteracaodetalhe" cascade="all"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="logsalteracao" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe" />
+        </set>  
+        
+        <property name="logJustificado" type="boolean">
+			<column name="logJustificado" not-null="true" default="false"/>
+		</property>
+    </class>
+</hibernate-mapping>

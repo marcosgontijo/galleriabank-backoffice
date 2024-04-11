@@ -80,6 +80,7 @@
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' } 
 	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
+	   		         #{(contratos.imovel.objetoCidade.cidadesVetadas eq true) ? 'cidadesVetadas' : '' }
 	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}"
    		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -151,6 +152,13 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
 			        
+			        <p:column style="text-align: center;" headerText="Cidade"
+						filterBy="#{contratos.nomeCidadeImovel}"
+						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pedir PAJU'}">
+						<h:outputText value="#{contratos.nomeCidadeImovel}" />
+					</p:column>
+			        
 			        <p:column style="text-align: center;" 
 			        	headerText="Valor Aprovado no Comitê (R$)"
 			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
@@ -182,7 +190,7 @@
 			           <p:outputLabel value="#{contratos.analiseComercialData}" >			            	
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 						</p:outputLabel>
-			        </p:column>
+			        </p:column>	
 
 					<p:column style="text-align: center;width: 100px"
 						headerText="Aprovado Comite Por:" 

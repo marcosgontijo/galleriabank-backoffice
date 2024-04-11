@@ -1500,9 +1500,16 @@
 					<h:panelGroup id="starkBankGridImposto" >
 						<h:panelGrid columns="2">
 							<p:outputLabel for="linhaDigitavelImposto" styleClass="labelBold" value="Linha Digitável (sem pontos e espaço): " />
-							<p:inputText id="linhaDigitavelImposto" value="#{contratoCobrancaMB.linhaBoletoOrdemPagamentoStark}" style="width:100px;" required="true"/>	
+							<p:inputText id="linhaDigitavelImposto" value="#{contratoCobrancaMB.linhaBoletoOrdemPagamentoStark}" style="width:250px;" required="true">
+								<p:ajax event="change" listener="#{contratoCobrancaMB.insereDadosStarkBank('imposto')}"
+								update="ContaPagarValorPagoBoletoStarkBankImposto nomeRecebedorContaPagarImpostoStarkBank descricaoImposto" ></p:ajax>
+							</p:inputText>	
+							<p:outputLabel for="nomeRecebedorContaPagarImpostoStarkBank" value="Nome Recebedor:"  style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="nomeRecebedorContaPagarImpostoStarkBank" style="width:250px;"
+								value="#{contratoCobrancaMB.nomeRecebedorOrdemPagamentoStark}" required="true" />
+							
 							<p:outputLabel for="descricaoImposto" styleClass="labelBold" value="Descrição: " />
-							<p:inputText id="descricaoImposto" value="#{contratoCobrancaMB.descricaoOrdemPagamentoStark}" style="width:100px;" required="true"/>						
+							<p:inputText id="descricaoImposto" value="#{contratoCobrancaMB.descricaoOrdemPagamentoStark}" style="width:250px;" required="true"/>						
 							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBankImposto" value="Valor a Pagar: "
 								styleClass="labelBold" />
 							<p:inputText id="ContaPagarValorPagoBoletoStarkBankImposto"

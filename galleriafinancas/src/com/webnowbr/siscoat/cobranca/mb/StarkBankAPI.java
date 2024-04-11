@@ -1024,6 +1024,7 @@ public class StarkBankAPI{
 			previews = (List<PaymentPreview>) PaymentPreview.create(previews);
 			
 			if(previews.size() > 0) {
+				//System.out.println(previews);
 				return previews.get(0);
 			}
 		} catch (Exception e) {

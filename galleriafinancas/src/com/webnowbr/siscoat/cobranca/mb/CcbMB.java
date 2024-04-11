@@ -1357,8 +1357,13 @@ public class CcbMB {
 			this.objetoCcb.setCCBDigito(emitente.getContaDigito());
 		}
 		if(!CommonsUtil.semValor(emitente.getPix())) {
-			this.objetoCcb.setPixBanco(emitente.getPix());
-			this.objetoCcb.setCCBPix(emitente.getPix());
+			String pix = emitente.getPix();
+			if ( CommonsUtil.mesmoValor("TELEFONE",emitente.getTipoPix()) && !pix.startsWith("+55")  ){
+				pix = "+55" + pix;				
+			}
+			
+			this.objetoCcb.setPixBanco(pix);
+			this.objetoCcb.setCCBPix(pix);
 		}
 	}
 	

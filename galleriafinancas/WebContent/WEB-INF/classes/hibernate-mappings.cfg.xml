@@ -3,7 +3,7 @@
                                          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 <session-factory name="">	
-           <mapping resource="com/webnowbr/siscoat/contab/db/model/BalancoPatrimonial.hbm.xml"/>
+        <mapping resource="com/webnowbr/siscoat/contab/db/model/BalancoPatrimonial.hbm.xml"/>
         	
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/SaqueIUGU.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/EmpresaCobranca.hbm.xml"/>
@@ -87,7 +87,12 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoTipoTemplateCampo.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoTipoTemplateBloco.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoTipoTemplate.hbm.xml"/>
-		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Banco.hbm.xml"/>
+		
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComparativoPopPupEsteira.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComparativoCamposEsteira.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaLogsAlteracao.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaLogsAlteracaoDetalhe.hbm.xml"/>
+		
 		<mapping resource="com/webnowbr/siscoat/infra/db/model/MenuFavorito.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/infra/db/model/Termo.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/infra/db/model/TermoUsuario.hbm.xml"/>       					 		
@@ -96,7 +101,6 @@
         <mapping resource="com/webnowbr/siscoat/infra/db/model/User.hbm.xml"/>
         <mapping resource="com/webnowbr/siscoat/infra/db/model/Parametros.hbm.xml"/>
         <mapping resource="com/webnowbr/siscoat/infra/db/model/MenuItem.hbm.xml"/>        
-       
      
         
  </session-factory>

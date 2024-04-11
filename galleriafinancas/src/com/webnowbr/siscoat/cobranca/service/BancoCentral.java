@@ -103,7 +103,7 @@ public class BancoCentral {
 					}
 					Banco bancoBase = bancoDAO.pesquisaBanco(banco.getCnpjBase(), banco.getCodigoBanco());
 
-					if (bancoBase.getCodigoBanco() == null) {
+					if (CommonsUtil.semValor( bancoBase.getCodigoBanco() )) {
 						bancoBase = new Banco();
 					} else {
 						continue;

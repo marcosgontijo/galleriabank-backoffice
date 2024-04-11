@@ -37,6 +37,10 @@
 		    background-color: #e2ef4c;  
 		}
 		
+		.ui-datatable .ui-datatable-data .cidadesVetadas td{
+		    background-color: #e10000;  
+		}
+		
 		.botaoBoletoKobana {
 			background-color: #1ea8ff;  
 			border: 1px solid #168bd5;  
@@ -69,7 +73,7 @@
 		
 		
 		.ui-datatable .ui-datatable-data .linhaRoxa td{
-		    background-color:  #C576F6 !important;  
+		    background-color:  #C576F6;  
 		}
 		
 		.ui-datatable .ui-datatable-data .parcelaAtraso td{
@@ -89,7 +93,7 @@
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaRosa td{
-		    background-color: #ff80ff;
+		    background-color: #ff80ff !important;
 		}
 				
 		.ui-datatable .ui-datatable-data .linhaAzul td{
