@@ -21339,11 +21339,11 @@ public class ContratoCobrancaMB {
 		
 		for (StarkBankBaixa baixas : despesa.getListContasPagarBaixas()) {
 			if (tipoDespesa.equals("Pagamento Carta Split")) {
-				if (baixas.getValor() != null) {
+				if (baixas != null && baixas.getValor() != null && baixas.getStatusPagamento().equals("Aprovado")) {
 					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());
 				}
 			} else {
-				if (baixas.getValor() != null) {
+				if (baixas != null && baixas.getValor() != null && baixas.getStatusPagamento().equals("Aprovado")) {
 					contasPagarValorTotalPagoSum = contasPagarValorTotalPagoSum.add(baixas.getValor());	
 				}
 			}
