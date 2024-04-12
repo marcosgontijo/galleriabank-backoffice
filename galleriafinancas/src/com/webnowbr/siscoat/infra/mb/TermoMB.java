@@ -187,7 +187,7 @@ public class TermoMB {
 			TermoUsuariovo.setDataAceite(user.getDataAceite());
 			TermoUsuariovo.setUsuario(userPesquisa);
 			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(),
-					CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
+					CommonsUtil.formataDataHora(TermoUsuariovo.getDataAceite())));
 
 		}
 
@@ -226,7 +226,7 @@ public class TermoMB {
 				Paragraph paragrafoUsuario = new Paragraph(usuario.getName());
 				paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
 				table.addCell(paragrafoUsuario);
-				Paragraph paragrafoData = new Paragraph(CommonsUtil.formataData(user.getDataAceite()));
+				Paragraph paragrafoData = new Paragraph(CommonsUtil.formataDataHora(user.getDataAceite()));
 				paragrafoData.setAlignment(Element.ALIGN_LEFT);
 				table.addCell(paragrafoData);
 
@@ -657,47 +657,54 @@ public class TermoMB {
 	
 	}
 	public void AbrirDocumentoTermo(Termo termo) throws IOException {
+	    Path arquivo = Paths.get(termo.getPath());
 
-		Path arquivo = Paths.get(termo.getPath());
+	    FacesContext facesContext = FacesContext.getCurrentInstance();
+	    ExternalContext externalContext = facesContext.getExternalContext();
+	    HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+	    byte[] contrato = null;
 
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = facesContext.getExternalContext();
-		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-		BufferedInputStream input = null;
-		BufferedOutputStream output = null;
-		byte[] contrato = null;
-		
-			 try (PDDocument document = PDDocument.load(Files.newInputStream(arquivo))) {
-		            PDFRenderer pdfRenderer = new PDFRenderer(document);
+	    try (PDDocument document = PDDocument.load(Files.newInputStream(arquivo))) {
+	        PDFRenderer pdfRenderer = new PDFRenderer(document);
 
-		            // Iterar sobre as páginas do PDF
-		            for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
-		                // Renderizar a página como uma imagem
-		                BufferedImage bim = pdfRenderer.renderImageWithDPI(pageIndex, 300);
+	        // Renderizar o PDF como uma única imagem
+	        int totalPageWidth = 0;
+	        int totalPageHeight = 0;
+	        for (int i = 0; i < document.getNumberOfPages(); i++) {
+	            totalPageWidth = Math.max(totalPageWidth, pdfRenderer.renderImage(i).getWidth());
+	            totalPageHeight += pdfRenderer.renderImage(i).getHeight();
+	        }
 
-		                // Criar um ByteArrayOutputStream para armazenar os bytes da imagem
-		                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+	        BufferedImage combinedImage = new BufferedImage(totalPageWidth, totalPageHeight, BufferedImage.TYPE_INT_ARGB);
+	        Graphics2D g = combinedImage.createGraphics();
+	        int currentY = 0;
+	        for (int i = 0; i < document.getNumberOfPages(); i++) {
+	            BufferedImage pageImage = pdfRenderer.renderImage(i);
+	            g.drawImage(pageImage, 0, currentY, null);
+	            currentY += pageImage.getHeight();
+	        }
+	        g.dispose();
 
-		                // Escrever a imagem como PNG no ByteArrayOutputStream
-		                ImageIO.write(bim, "png", byteArrayOutputStream);
+	        // Converter a imagem combinada para bytes
+	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+	        ImageIO.write(combinedImage, "png", byteArrayOutputStream);
+	        contrato = byteArrayOutputStream.toByteArray();
+	        byteArrayOutputStream.close();
 
-		                // Obter os bytes da imagem
-		                contrato = byteArrayOutputStream.toByteArray();
-		                byteArrayOutputStream.close();
-			if (CommonsUtil.semValor(contrato)) {
-				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Processos: Ocorreu um problema ao gerar a imagem!", ""));
-				return ;
-			} else {
-		
-			}
-		            }
-		        
-			 }
-		
-			 String base64 = Base64.getEncoder().encodeToString(contrato);
-			
-			base64imagem = "data:image/png;base64," + base64;
+	        if (CommonsUtil.semValor(contrato)) {
+	            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+	                    "Processos: Ocorreu um problema ao gerar a imagem!", ""));
+	            return;
+	        }
+	    } catch (IOException e) {
+	        facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+	                "Processos: Ocorreu um erro ao carregar o arquivo PDF!", ""));
+	        e.printStackTrace();
+	        return;
+	    }
+
+	    String base64 = Base64.getEncoder().encodeToString(contrato);
+	    base64imagem = "data:image/png;base64," + base64;
 	}
 
 	public long buscarIdUsuarioPorNome(String nome, List<User> usuarios) {
