@@ -2004,7 +2004,7 @@ public class CcbService {
 		return null;
 	}
 	
-	public byte[] geraCciAquisicaoFinanciamento() throws IOException{
+	public byte[] geraCciAquisicaoEmprestimo() throws IOException{
 		try {
 			XWPFDocument document;	
 			XWPFRun run;
@@ -2016,7 +2016,7 @@ public class CcbService {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoFinanciamentoCCI.docx"));
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoEmprestimoCCI.docx"));
 				
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Times New Roman");
