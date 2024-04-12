@@ -2534,6 +2534,8 @@ public class CcbService {
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
 			
+			geraPaginaContratoII(document, "9DC83E", false);
+			
 			table = document.getTableArray(1);			
 			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
 			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
