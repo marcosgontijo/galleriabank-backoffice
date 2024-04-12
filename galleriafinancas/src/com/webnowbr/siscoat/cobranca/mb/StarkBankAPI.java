@@ -1185,7 +1185,7 @@ public class StarkBankAPI{
     		List<TaxPayment> payments = new ArrayList<>();
 
     		HashMap<String, Object> data = new HashMap<>();
-    		data.put("barCode", barCode);
+    		data.put("line", barCode.replace(" ", "").replace("-", ""));
     		data.put("description", descricao);
     		//data.put("tags", new String[]{"take", "my", "money"});
     		data.put("scheduled", DateUtil.getDataHojeAmericano());
@@ -1233,7 +1233,7 @@ public class StarkBankAPI{
 			
 			if (!errosStrStarkBank.equals("")) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"[StarkBank - Pagamento Boleto] Falha no pagamento: " + errosStrStarkBank, ""));
+						"[StarkBank - Pagamento Imposto] Falha no pagamento: " + errosStrStarkBank, ""));
 			}
 		}
     	

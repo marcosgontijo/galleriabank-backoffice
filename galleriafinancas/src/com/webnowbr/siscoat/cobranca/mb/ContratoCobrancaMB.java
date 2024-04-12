@@ -21876,6 +21876,7 @@ public class ContratoCobrancaMB {
 			Calendar date = Calendar.getInstance(zone, locale);
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
 			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
+			SimpleDateFormat sdfDataRelPadrao = new SimpleDateFormat("dd/MM/yyyy", locale);
 
 			ParametrosDao pDao = new ParametrosDao();
 			/*
@@ -22151,7 +22152,7 @@ public class ContratoCobrancaMB {
 			cell1.setColspan(2);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("Data do Pagamento: " + sdfDataRel.format(baixaStarkBank.getDataPagamento()), titulo));
+			cell1 = new PdfPCell(new Phrase("Data do Pagamento: " + sdfDataRelPadrao.format(baixaStarkBank.getDataPagamento()), titulo));
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -22163,7 +22164,7 @@ public class ContratoCobrancaMB {
 			cell1.setColspan(2);
 			table.addCell(cell1);
 			
-			if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Boleto")) {	
+			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {	
 				cell1 = new PdfPCell(new Phrase("Sacado do Boleto: " + baixaStarkBank.getNomePagador(), titulo));
 				cell1.setBorder(0);
 				cell1.setPaddingLeft(8f);
@@ -22175,7 +22176,8 @@ public class ContratoCobrancaMB {
 				cell1.setPaddingBottom(2f);
 				cell1.setColspan(2);
 				table.addCell(cell1);
-				
+			}
+			if (baixaStarkBank.getFormaPagamento().equals("Boleto") || baixaStarkBank.getFormaPagamento().equals("Imposto")) {		
 				cell1 = new PdfPCell(new Phrase("Linha Digitável: " + baixaStarkBank.getLinhaBoleto(), titulo));
 				cell1.setBorder(0);
 				cell1.setPaddingLeft(8f);
@@ -22299,7 +22301,7 @@ public class ContratoCobrancaMB {
 			starkBankBaixa.setMetodoPix(this.metodoPixOrdemPagamentoStark);
 		}
 		
-		if (this.formaTransferenciaDespesaBaixa.equals("Boleto")) {
+		if (this.formaTransferenciaDespesaBaixa.equals("Boleto") || this.formaTransferenciaDespesaBaixa.equals("Imposto")) {
 			starkBankBaixa.setLinhaBoleto(this.linhaBoletoOrdemPagamentoStark);
 		}
 
