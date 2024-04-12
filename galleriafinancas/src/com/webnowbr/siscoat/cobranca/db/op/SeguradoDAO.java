@@ -190,7 +190,9 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 						}
 																		
 					}
-				} finally {
+				} catch (Exception e) {
+					e.printStackTrace();
+				}  finally {
 					closeResources(connection, ps, rs);					
 				}
 				return objects;
@@ -255,8 +257,10 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							String numeroparcela = rs.getString("numeroparcela");
 							
 							if(CommonsUtil.semValor(rs.getBigDecimal("saldodevedor"))) {
-								if(!CommonsUtil.mesmoValor(numeroparcela, "Amortização") &&
-										!CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Acerto Saldo")) {
+								if(CommonsUtil.semValor(numeroparcela))
+									seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("valorccb"));
+								else if(!CommonsUtil.mesmoValor(numeroparcela, "Amortização") &&
+									!CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Acerto Saldo")) {
 									String numeroparcelaAnterior = CommonsUtil.stringValue((CommonsUtil.integerValue(numeroparcela) - 1));
 									seguroTabelaVO.setSaldoDevedor(cDao.getSaldoDevedorByContratoNumeroParcela(rs.getString("numerocontrato"), numeroparcelaAnterior));
 									if(CommonsUtil.semValor(seguroTabelaVO.getSaldoDevedor())) {
@@ -314,7 +318,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							seguroTabelaVO.setPorcentagem3(rs.getBigDecimal("porcentagemsegurador"));
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
 								seguroTabelaVO.setCpf3(rs.getString("cpf"));
-							}else {
+							} else {
 								seguroTabelaVO.setCpf3(rs.getString("cnpj"));
 							}							
 							seguroTabelaVO.setNome3(rs.getString("nome"));
@@ -338,7 +342,9 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 						}
 					}
 					
-				} finally {
+				}  catch (Exception e) {
+					e.printStackTrace();
+				}  finally {
 					closeResources(connection, ps, rs);					
 				}
 				return objects;
