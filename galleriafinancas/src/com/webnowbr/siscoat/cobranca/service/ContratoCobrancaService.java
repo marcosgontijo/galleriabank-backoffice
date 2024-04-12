@@ -131,7 +131,7 @@ public class ContratoCobrancaService {
 			
 		contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
 			
-		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoje());
+		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoraAgora());
 		contratoCobrancaLogsAlteracao.setUsuario(usuario.getLogin());
 		contratoCobrancaLogsAlteracao.setStatusEsteira(contratoCobranca.getStatusEsteira());
 		contratoCobrancaLogsAlteracao.setContratoCobranca(contratoCobranca);
