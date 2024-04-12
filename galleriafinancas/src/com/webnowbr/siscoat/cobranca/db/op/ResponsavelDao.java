@@ -282,4 +282,43 @@ public class ResponsavelDao extends HibernateDao <Responsavel,Long> {
 		});	
 	}
 	
+	private static final String QUERY_GET_ASSISTENTE =  "select u.id from infra.users u \r\n"
+			+ "where u.codigoresponsavel = ?";
+	
+	@SuppressWarnings("unchecked")
+	public User getUsersAssistente(Responsavel responsavel) {
+		return (User) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				User user = null;
+				if(CommonsUtil.semValor(responsavel.getResponsavelAssistenteComercial())){
+					return null;
+				}
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+			
+					ps = connection.prepareStatement(QUERY_GET_ASSISTENTE);	
+					
+					ps.setString(1, responsavel.getResponsavelAssistenteComercial().getCodigo());
+					rs = ps.executeQuery();
+			
+					UserDao userDao = new UserDao();
+					while (rs.next()) {
+						user = userDao.findById(rs.getLong(1));
+						/*if(!user.getListResponsavel().contains(responsavel)) {
+							user.getListResponsavel().add(responsavel);
+							userDao.merge(user);
+						}*/
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return user;
+			}
+		});	
+	}
+	
 }
