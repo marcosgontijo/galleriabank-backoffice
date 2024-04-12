@@ -187,7 +187,7 @@ public class TermoMB {
 			TermoUsuariovo.setDataAceite(user.getDataAceite());
 			TermoUsuariovo.setUsuario(userPesquisa);
 			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(),
-					CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
+					CommonsUtil.formataDataHora(TermoUsuariovo.getDataAceite())));
 
 		}
 
@@ -226,7 +226,7 @@ public class TermoMB {
 				Paragraph paragrafoUsuario = new Paragraph(usuario.getName());
 				paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
 				table.addCell(paragrafoUsuario);
-				Paragraph paragrafoData = new Paragraph(CommonsUtil.formataData(user.getDataAceite()));
+				Paragraph paragrafoData = new Paragraph(CommonsUtil.formataDataHora(user.getDataAceite()));
 				paragrafoData.setAlignment(Element.ALIGN_LEFT);
 				table.addCell(paragrafoData);
 
