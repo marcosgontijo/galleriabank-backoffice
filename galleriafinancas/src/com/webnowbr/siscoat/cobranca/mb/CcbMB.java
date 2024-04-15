@@ -645,7 +645,6 @@ public class CcbMB {
 		listaTipoDownload.add("Endossos Em Preto");
 		listaTipoDownload.add("FinanciamentoCCI");
 		listaTipoDownload.add("Aquisicao/Emprestimo");
-		listaTipoDownload.add("AquisicaoFinanciamento");
 		listaTipoDownload.add("Ficha Cadastro Nova");
 		listaTipoDownload.add("Ficha PPE - PF");
 		listaTipoDownload.add("Ficha PLD e FT - PJ");
@@ -659,6 +658,7 @@ public class CcbMB {
 		listaTipoDownload.add("Averbacao");
 		listaTipoDownload.add("Aditamento Carta de Desconto");
 		listaTipoDownload.add("Aditamento Data Parcela");
+		listaTipoDownload.add("Aquisicao/EmprestimoAntigo");
 	}
 	
 	private void listarDownloadsAditamento() {
@@ -844,6 +844,11 @@ public class CcbMB {
 		//Adicionar Despesas
 		this.objetoCcb.getProcessosJucidiais().clear();
 		for(CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+			if(!CommonsUtil.semValor(processo.getContaPagar())&&
+					this.objetoCcb.getDespesasAnexo2().contains(processo.getContaPagar())) {
+				this.objetoCcb.getDespesasAnexo2().remove(processo.getContaPagar());
+			}
+			
 			if(!processo.isSelecionadoComite()) {
 				continue;
 			}
@@ -1817,16 +1822,16 @@ public class CcbMB {
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
-				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aquisicao/Emprestimo")) {
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aquisicao/EmprestimoAntigo")) {
 					arquivo = ccbService.geraCciAquisicao();
 					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AquisicaoCCI.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);					
-				} else if (CommonsUtil.mesmoValor(tipoDownload, "AquisicaoFinanciamento")) {
-					arquivo = ccbService.geraCciAquisicaoFinanciamento();
-					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AquisicaoFinanciamentoCCI.docx";
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aquisicao/Emprestimo")) {
+					arquivo = ccbService.geraCciAquisicaoEmprestimo();
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AquisicaoEmprestimoCCI.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else

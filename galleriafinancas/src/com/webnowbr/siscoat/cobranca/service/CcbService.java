@@ -2004,7 +2004,7 @@ public class CcbService {
 		return null;
 	}
 	
-	public byte[] geraCciAquisicaoFinanciamento() throws IOException{
+	public byte[] geraCciAquisicaoEmprestimo() throws IOException{
 		try {
 			XWPFDocument document;	
 			XWPFRun run;
@@ -2016,7 +2016,7 @@ public class CcbService {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoFinanciamentoCCI.docx"));
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoEmprestimoCCI.docx"));
 				
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Times New Roman");
@@ -2533,6 +2533,8 @@ public class CcbService {
 				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ ") + " + IPCA");
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
+			
+			geraPaginaContratoII(document, "9DC83E", false);
 			
 			table = document.getTableArray(1);			
 			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));

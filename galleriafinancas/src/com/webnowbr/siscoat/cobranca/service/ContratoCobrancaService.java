@@ -131,10 +131,16 @@ public class ContratoCobrancaService {
 			
 		contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
 			
-		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoje());
+		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoraAgora());
+		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.gerarDataHoje());
 		contratoCobrancaLogsAlteracao.setUsuario(usuario.getLogin());
 		contratoCobrancaLogsAlteracao.setStatusEsteira(contratoCobranca.getStatusEsteira());
 		contratoCobrancaLogsAlteracao.setContratoCobranca(contratoCobranca);
+		
+		if(!escondePopPupDeValidacoesSeEstaAtivoOuSeEstiverEmAnalise(contratoCobranca)) {
+			contratoCobrancaLogsAlteracao.setObservacao("POPPUP DE VALIDAÇÃO DESABILITADO!");
+		}
+		
 		contratoCobrancaLogsAlteracaoDao.create(contratoCobrancaLogsAlteracao);
 		
 		return contratoCobrancaLogsAlteracao;
@@ -196,14 +202,16 @@ public class ContratoCobrancaService {
 		logAlteracaoDetalhe.setValorAlterado(valorAtual);
 		logAlteracaoDetalhe.setValorBanco(valorBanco);
 		logAlteracaoDetalhe.setNomeCampo(nomeCampo);
-		adicionaNovoDetalhe(logAlteracaoDetalhe);
+		
+		adicionaNovoDetalhe(logAlteracaoDetalhe, contratoCobranca);
 	}
 	
-	public void adicionaNovoDetalhe(ContratoCobrancaLogsAlteracaoDetalhe logAlteracaoDetalhe) {
+	public void adicionaNovoDetalhe(ContratoCobrancaLogsAlteracaoDetalhe logAlteracaoDetalhe,ContratoCobranca objetoContratoCobranca){
 		ContratoCobrancaLogsAlteracaoDetalheDao contraLogsAlteracaoDetalheDao = new ContratoCobrancaLogsAlteracaoDetalheDao();
-		if (CommonsUtil.semValor(logAlteracaoDetalhe.getId()))
+
+		if (CommonsUtil.semValor(logAlteracaoDetalhe.getId())) {
 			contraLogsAlteracaoDetalheDao.create(logAlteracaoDetalhe);
-		else
+		} else
 			contraLogsAlteracaoDetalheDao.merge(logAlteracaoDetalhe);
 	}
 	

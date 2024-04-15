@@ -528,15 +528,9 @@ public class ImovelEstoqueMB {
 	}
 	public void ApagaImovelEstoque(ImovelEstoque estoque) {
 		ImovelEstoqueDao estoqueDao = new ImovelEstoqueDao();
-		ImovelCobrancaDao cobrancaDao = new ImovelCobrancaDao();
+		
 		ImovelEstoque imovelEstoque = estoqueDao.findById(estoque.getId());
-	    if (imovelEstoque != null) {
-	       ImovelCobranca cobrancas = cobrancaDao.findById(estoque.getObjetoImovelCobranca().getId());
-	      
-	            cobrancas.setImovelEstoque(null);
-	            cobrancaDao.merge(cobrancas); 
-	        
-	    }
+	
 	        estoqueDao.delete(imovelEstoque);
 	        this.consultaEstoque();
 	        this.consultaEstoquePesquisa();

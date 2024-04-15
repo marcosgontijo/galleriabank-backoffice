@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
@@ -31,6 +30,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
+import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
@@ -10205,10 +10205,12 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 		+ "	 from cobranca.contratocobranca c "
 		+ "	 inner join cobranca.contratocobranca_detalhes_join cdj on c.id  = cdj.idcontratocobranca "
 		+ "	 inner join cobranca.contratocobrancadetalhes c2 on cdj.idcontratocobrancadetalhes  = c2.id  and parcelapaga = false "
-		+ "	 where c.status = 'Aprovado' and ( c.recalculaipca or c.corrigidoipcahibrido or c.corrigidoipca or c.corrigidonovoipca ) ";
+		+ "	 where c.status = 'Aprovado' and ( c.recalculaipca or c.corrigidoipcahibrido or c.corrigidoipca or c.corrigidonovoipca ) "
+		+ " and (c2.ipcaatualizou <> ? or c2.ipcaatualizou is null)";
+	
     
     @SuppressWarnings("unchecked")
-	public List<ContratoCobranca> consultaContratosAtualizacaoIPCA() {
+	public List<ContratoCobranca> consultaContratosAtualizacaoIPCA( IPCA ultimoIpca) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -10224,6 +10226,8 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 					ps = connection
 							.prepareStatement(QUERY_CONTRATOS_IPCA);
 
+					ps.setLong(1, ultimoIpca.getId());					
+					
 					rs = ps.executeQuery();
 					
 					while (rs.next()) {

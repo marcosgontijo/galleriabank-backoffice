@@ -68,7 +68,7 @@
 			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" /> 
 			        </p:column>          
                 	<p:column style="text-align: center;width:105px;" headerText="Nome" >
-			            <h:outputText value="#{pagamento.nomePagador}" />
+			            <h:outputText value="#{pagamento.contasPagar.contrato.pagador.nome}" /> 
 			        </p:column>
 			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
 			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
@@ -94,10 +94,10 @@
 			            </h:outputText>
 			        </p:column>		
 			        <p:column style="text-align: center;width:105px;" headerText="Recebedor" >
-			            <h:outputText value="#{pagamento.nomePagador}" />
+			            <h:outputText value="#{pagamento.nomeRecebedor}" />
 			        </p:column>
 					<p:column style="text-align: center;" headerText="Valor (R$)"  >
-						<p:outputLabel value="#{pagamento.nomeRecebedor}" 
+						<p:outputLabel value="#{pagamento.valor}" 
 							style="FONT-SIZE: 10pt;"
 							converter="bigDecimalConverter" />
 					</p:column>   
@@ -215,7 +215,7 @@
 			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" />
 			        </p:column>          
                 	<p:column style="text-align: center;width:105px;" headerText="Nome" >
-			            <h:outputText value="#{pagamento.nomePagador}" />
+			            <h:outputText value="#{pagamento.contasPagar.contrato.pagador.nome}" />
 			        </p:column>
 			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
 			            <h:outputText value="#{pagamento.contasPagar.descricao}" />

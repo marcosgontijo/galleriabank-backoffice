@@ -283,6 +283,7 @@ public class ResponsavelMB {
 			
 			removerUsuariosDoGuardaChuva(userDao, responsavelDao);
 			adicionarGuardaChuvaComercial(userDao, responsavelDao);
+			adicionarGuardaChuvaAssitente(userDao, responsavelDao);
 			
 			objetoResponsavel = new Responsavel();
 		} catch (DAOException e) {
@@ -465,7 +466,18 @@ public class ResponsavelMB {
 			}
 		}
 	}
-
+	
+	private void adicionarGuardaChuvaAssitente(UserDao userDao, ResponsavelDao responsavelDao) {
+		User userComercial = null;
+		userComercial = responsavelDao.getUsersAssistente(objetoResponsavel);
+		if(!CommonsUtil.semValor(userComercial)) {
+			if(!userComercial.getListResponsavel().contains(objetoResponsavel)) {
+				userComercial.getListResponsavel().add(objetoResponsavel);
+				userDao.merge(userComercial);
+			}
+		}
+	}
+	
 	private void removerUsuariosDoGuardaChuva(UserDao userDao, ResponsavelDao responsavelDao) {
 		List<User> listaUsuarios = new ArrayList<User>();
 		listaUsuarios = responsavelDao.getUsersComPermissao(objetoResponsavel);

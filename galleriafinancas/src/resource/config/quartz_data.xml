@@ -29,6 +29,22 @@
 			</simple>
 		</trigger>
 	</schedule>  
+	
+	
+	  <schedule>
+		<job>
+			<name>IpcaJobUnico1</name>
+			<job-class>com.webnowbr.siscoat.job.IpcaJob</job-class>
+		</job>
+		<trigger>
+			<simple>
+				<name>IpcaJobUnicoTrigger1</name>
+				<job-name>IpcaJobUnico1</job-name>
+				<repeat-count>1</repeat-count>
+				<repeat-interval>300000</repeat-interval>
+			</simple>
+		</trigger>
+	</schedule>  
 
 	<schedule>
 		<job>

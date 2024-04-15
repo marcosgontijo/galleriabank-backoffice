@@ -54,6 +54,7 @@ import com.starkbank.DictKey;
 import com.starkbank.PaymentPreview;
 import com.starkbank.Project;
 import com.starkbank.Settings;
+import com.starkbank.TaxPayment;
 import com.starkbank.Transfer;
 import com.starkbank.ellipticcurve.Ecdsa;
 import com.starkbank.ellipticcurve.PrivateKey;
@@ -1180,18 +1181,20 @@ public class StarkBankAPI{
     	Settings.language = "pt-BR";
 
     	try {
-	    	List<BoletoPayment> payments = new ArrayList<>();
-	    	HashMap<String, Object> data = new HashMap<>();
-	    	data.put("line", barCode);    	
+    		
+    		List<TaxPayment> payments = new ArrayList<>();
 
-	    	data.put("scheduled", DateUtil.getDataHojeAmericano());
-	    	data.put("description", descricao);
-	
-			payments.add(new BoletoPayment(data));
-	
-	    	payments = BoletoPayment.create(payments);
+    		HashMap<String, Object> data = new HashMap<>();
+    		data.put("line", barCode.replace(" ", "").replace("-", ""));
+    		data.put("description", descricao);
+    		//data.put("tags", new String[]{"take", "my", "money"});
+    		data.put("scheduled", DateUtil.getDataHojeAmericano());
 
-	    	for (BoletoPayment payment : payments){
+    		payments.add(new TaxPayment(data));
+
+    		payments = TaxPayment.create(payments);
+
+	    	for (TaxPayment payment : payments){
 	    		String tagsStr = "";
 	    		if (payment.tags.length > 0) {
 	    			for (String tag : tags) {
@@ -1203,7 +1206,7 @@ public class StarkBankAPI{
 	    			}
 	    		}
 	    
-	    		taxTransacao = new StarkBankTax(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), tagsStr, payment.description, payment.scheduled,
+	    		taxTransacao = new StarkBankTax(Long.valueOf(payment.id), BigDecimal.valueOf(Long.parseLong(payment.amount)), tagsStr, payment.description, payment.scheduled,
 	    				payment.line, payment.barCode, payment.status, DateUtil.convertDateTimeToDate(payment.created), null, null);
 	    		
 	    		StarkBankTaxDAO starkBankTaxDAO = new StarkBankTaxDAO();
@@ -1230,7 +1233,7 @@ public class StarkBankAPI{
 			
 			if (!errosStrStarkBank.equals("")) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"[StarkBank - Pagamento Boleto] Falha no pagamento: " + errosStrStarkBank, ""));
+						"[StarkBank - Pagamento Imposto] Falha no pagamento: " + errosStrStarkBank, ""));
 			}
 		}
     	
