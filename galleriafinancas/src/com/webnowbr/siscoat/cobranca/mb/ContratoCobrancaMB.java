@@ -4007,6 +4007,12 @@ public class ContratoCobrancaMB {
 			if (objetoContratoCobranca.isComentarioJuricoApenasComConsultas())
 				objetoContratoCobranca.setReanalise(true);
 		}
+		
+		if (!this.objetoContratoCobranca.isAgAssinatura() &&
+				this.objetoContratoCobranca.getAgAssinaturaData() == null) {
+			populateCamposSeguroPagamento();
+		}
+		
 
 		User usuarioLogado = new User();
 		UserDao u = new UserDao();
@@ -10213,26 +10219,7 @@ public class ContratoCobrancaMB {
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
-			this.objetoContratoCobranca.setTxHonorario(BigDecimal.valueOf(20.00));
-			this.objetoContratoCobranca.setTxJuros(BigDecimal.valueOf(1.00));
-			this.objetoContratoCobranca.setTxMulta(BigDecimal.valueOf(2.00));
-			this.objetoContratoCobranca.setCorrigidoIPCA(true);
-			this.objetoContratoCobranca.setTemTxAdm(true);
-			this.objetoContratoCobranca.setTemSeguro(true);
-			this.objetoContratoCobranca.setTemSeguroDFI(true);
-			this.objetoContratoCobranca.setTemSeguroMIP(true);
-			if (CommonsUtil.semValor(this.objetoContratoCobranca.getValorImovel())) {
-				this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
-			}
-			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoAprovadoCCB())) {
-				this.qtdeParcelas = this.objetoContratoCobranca.getPrazoAprovadoCCB().toString();
-			}
-			if (CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
-				this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoCCB());
-			}
-			if (CommonsUtil.semValor(this.objetoContratoCobranca.getTxJurosParcelas())) {
-				this.objetoContratoCobranca.setTxJurosParcelas(this.objetoContratoCobranca.getTaxaAprovada());
-			}
+			populateCamposSeguroPagamento();
 		}
 
 		User usuarioLogado = new User();
@@ -10265,6 +10252,29 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAgPagamentoOperacao.xhtml";
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+		}
+	}
+
+	private void populateCamposSeguroPagamento() {
+		this.objetoContratoCobranca.setTxHonorario(BigDecimal.valueOf(20.00));
+		this.objetoContratoCobranca.setTxJuros(BigDecimal.valueOf(1.00));
+		this.objetoContratoCobranca.setTxMulta(BigDecimal.valueOf(2.00));
+		this.objetoContratoCobranca.setCorrigidoIPCA(true);
+		this.objetoContratoCobranca.setTemTxAdm(true);
+		this.objetoContratoCobranca.setTemSeguro(true);
+		this.objetoContratoCobranca.setTemSeguroDFI(true);
+		this.objetoContratoCobranca.setTemSeguroMIP(true);
+		if (CommonsUtil.semValor(this.objetoContratoCobranca.getValorImovel())) {
+			this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
+		}
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoAprovadoCCB())) {
+			this.qtdeParcelas = this.objetoContratoCobranca.getPrazoAprovadoCCB().toString();
+		}
+		if (CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
+			this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoCCB());
+		}
+		if (CommonsUtil.semValor(this.objetoContratoCobranca.getTxJurosParcelas())) {
+			this.objetoContratoCobranca.setTxJurosParcelas(this.objetoContratoCobranca.getTaxaAprovada());
 		}
 	}
 
