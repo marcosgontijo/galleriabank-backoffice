@@ -42,7 +42,8 @@ public class ContratoCobrancaAlteracaoMB {
 		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 		ContratoCobranca objetoContratoCobranca = new ContratoCobranca();
 		PrimeFaces current = PrimeFaces.current();
-
+		
+		//// SE FOR URL PRE CONTRATO SAI FORA ContratoCobrancaInserirPendente.xhtml
 		this.contratoCobrancaLogsAlteracao = contratoCobrancaService
 				.exibePopPupSeNaoConfirmar(this.loginBean.getUsuarioLogado().getLogin());
 
