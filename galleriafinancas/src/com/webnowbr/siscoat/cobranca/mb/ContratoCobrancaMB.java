@@ -4019,11 +4019,11 @@ public class ContratoCobrancaMB {
 		usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 		// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
-		if (this.objetoContratoCobranca.isPedidoPreLaudo()) {
+		/*if (this.objetoContratoCobranca.isPedidoPreLaudo()) {
 			this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
 			this.objetoContratoCobranca.setPedidoPreLaudoData(new Date());
 			this.objetoContratoCobranca.setPedidoPreLaudoUsuario(loginBean.getUsername());
-		}
+		}*/
 
 		updateCheckList();
 		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
