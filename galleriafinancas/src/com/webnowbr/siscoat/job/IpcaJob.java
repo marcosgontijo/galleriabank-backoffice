@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.job;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -11,12 +12,14 @@ import org.quartz.JobExecutionException;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.service.IpcaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 
 
 
@@ -77,8 +80,12 @@ public class IpcaJob implements Job {
 			LOGGER.info("incio atualizaIPCAPorContrato");
 			LOGGER.info("atualiza o ipca");
 			ipcaService.verificaNovoIPCA();
+			
+//			Date dataIPCA = DateUtil.adicionarMes(contratoCobrancaDetalhes.getDataVencimento(), -2);
+			IPCA ultimoIpca = ipcaDao.getUltimoIPCA();
+			
 			//buscar somente contratos com parcelas para atualizar
-			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.consultaContratosAtualizacaoIPCA();
+			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.consultaContratosAtualizacaoIPCA(ultimoIpca);
 
 			
 			//atualiza o ipca
