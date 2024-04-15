@@ -423,6 +423,7 @@ public class TermoMB {
 
 	public String verificaTermosNaoAssinados() throws IOException {
 		UserDao usuerDao = new UserDao();
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 		// if (CommonsUtil.semValor(termos)) {
 //			TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 		termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
@@ -434,7 +435,7 @@ public class TermoMB {
 			if (!CommonsUtil.semValor(termoUsuario)) {
 				if (CommonsUtil.semValor(termoUsuario.getDataCiencia())) {
 					termoUsuario.setDataCiencia(DateUtil.getDataHoraAgora());
-//							termoUsuarioDao.merge(termoUsuario);
+					termoUsuarioDao.merge(termoUsuario);
 				}
 			} else {
 				if (termo.getId() > 0) {
@@ -443,12 +444,13 @@ public class TermoMB {
 					termoUsuario.setIdTermo(termo.getId());
 					termoUsuario.setIdUsuario(loginBean.getUsuarioLogado().getId());
 					loginBean.getUsuarioLogado().getListTermos().add(termoUsuario);
+					termoUsuarioDao.create(termoUsuario);
 				}
 			}
 
-			termo.setTermoUsuario(termoUsuario);
+//			termo.setTermoUsuario(termoUsuario);
 		}
-		usuerDao.merge(loginBean.getUsuarioLogado());
+//		usuerDao.merge(loginBean.getUsuarioLogado());
 
 		itermo = 0;
 		if (!CommonsUtil.semValor(termos)) {
