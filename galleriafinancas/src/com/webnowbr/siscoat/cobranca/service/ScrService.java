@@ -124,9 +124,9 @@ public class ScrService {
 			
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
 				System.out.println("Erro ao Consultar o SCR BMP Digital - " + myURLConnection.getResponseCode());
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				/*context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Erro ao Consultar o SCR BMP Digital - " + myURLConnection.getResponseCode(),
-						""));
+						""));*/
 			} else {				
 				
 				String stringResponse = getJsonString(myURLConnection.getInputStream());
@@ -148,10 +148,10 @@ public class ScrService {
 					return scResult;
 								
 				} else {
-					// TODO Auto-generated catch block
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					System.out.println("SCR: Ocorreu um problema ao consultar o SCR! (Mensagem: " + scResult.getMensagemOperador()+ ")");
+					/*context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"SCR: Ocorreu um problema ao consultar o SCR! (Mensagem: " + scResult.getMensagemOperador()+ ")",
-							""));
+							""));*/
 				}				
 			}
 
