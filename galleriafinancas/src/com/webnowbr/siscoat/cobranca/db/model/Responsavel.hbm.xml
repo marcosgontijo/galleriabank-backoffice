@@ -124,7 +124,7 @@
 		<set name="taxasComissao" table="comissaoresponsavel"  cascade="merge"
                  lazy="false" fetch="select">
             <key>
-                <column name="responsavel" not-null="true" />
+                <column name="responsavel" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel" />
         </set>
