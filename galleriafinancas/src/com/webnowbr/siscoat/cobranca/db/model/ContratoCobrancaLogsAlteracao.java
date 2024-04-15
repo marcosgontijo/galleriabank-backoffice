@@ -13,8 +13,8 @@ public class ContratoCobrancaLogsAlteracao {
 
 	private long id;
 	private Date dataAlteracao;
-	private String usuario;
 	private String observacao;
+	private String usuario;
 	private String statusEsteira;
 	private ContratoCobranca contratoCobranca;
 	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes =  new HashSet<ContratoCobrancaLogsAlteracaoDetalhe>();
