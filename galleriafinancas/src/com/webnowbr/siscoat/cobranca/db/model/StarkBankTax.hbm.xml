@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.StarkBankTax" table="StarkBankTax">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id> 
+        <property name="amount" type="big_decimal">
+            <column name="amount" />
+       	</property> 
+        <property name="description" type="java.lang.String">
+            <column name="description"/>
+        </property>
+        <property name="line" type="java.lang.String">
+            <column name="line"/>
+        </property>	
+        <property name="barCode" type="java.lang.String">
+            <column name="barCode"/>
+        </property>	
+        <property name="scheduled" type="java.lang.String">
+            <column name="scheduled"/>
+        </property>	
+         <property name="tags" type="java.lang.String">
+            <column name="tags"/>
+        </property>	   
+        <property name="status" type="java.lang.String">
+            <column name="status"/>
+        </property>	 
+        <property name="created" type="java.util.Date">
+            <column name="created"/>
+        </property>	              
+       	<property name="pathComprovante" type="java.lang.String">
+            <column name="pathComprovante"/>
+        </property>	 
+        <property name="nomeComprovante" type="java.lang.String">
+            <column name="nomeComprovante"/>
+        </property>	
+        <property name="motivoFalha" type="java.lang.String">
+            <column name="motivoFalha"/>
+        </property>	                 
+    </class>
+</hibernate-mapping>

@@ -74,7 +74,7 @@
 			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{estoque}" />
 			      		
 		                </p:commandButton>
-		                <p:commandButton icon="ui-icon-trash" action="#{imovelEstoqueMB.ApagaImovelEstoque(estoque.imovel.imovelEstoque)}" update="@all">
+		                <p:commandButton icon="ui-icon-trash" action="#{imovelEstoqueMB.ApagaImovelEstoque(estoque.imovel.imovelEstoque)}" update="dtEstoque">
 		              	<p:confirm header="Confirmação" message="Deseja Excluir o item selecionado?"/>
 		                </p:commandButton>
 		            </p:column>			        		               		        			        			           			 		
