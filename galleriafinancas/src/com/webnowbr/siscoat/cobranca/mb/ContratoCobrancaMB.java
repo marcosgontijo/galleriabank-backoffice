@@ -3981,7 +3981,6 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-<<<<<<< Updated upstream
 		if (!objetoContratoCobranca.isAgAssinatura()
 				&& CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
 			if (objetoContratoCobranca.isPajuVencido() || objetoContratoCobranca.isComentarioJuricoComPajuVencido())
@@ -3997,39 +3996,12 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getAgAssinaturaData() == null) {
 			populateCamposSeguroPagamento();
 		}
-		
-=======
-			if (!objetoContratoCobranca.isAgAssinatura()
-					&& CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
-				if (objetoContratoCobranca.isPajuVencido() || objetoContratoCobranca.isComentarioJuricoComPajuVencido())
-					objetoContratoCobranca.setReanalise(true);
-				if ("RJ;PR".contains(objetoContratoCobranca.getImovel().getEstado())
-						&& !objetoContratoCobranca.isReanaliseJuridico())
-					objetoContratoCobranca.setReanalise(true);
-				if (objetoContratoCobranca.isComentarioJuricoApenasComConsultas())
-					objetoContratoCobranca.setReanalise(true);
-			}
->>>>>>> Stashed changes
+
 
 			User usuarioLogado = new User();
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-<<<<<<< Updated upstream
-		// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
-		/*if (this.objetoContratoCobranca.isPedidoPreLaudo()) {
-			this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
-			this.objetoContratoCobranca.setPedidoPreLaudoData(new Date());
-			this.objetoContratoCobranca.setPedidoPreLaudoUsuario(loginBean.getUsername());
-		}*/
-=======
-			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
-			if (this.objetoContratoCobranca.isPedidoPreLaudo()) {
-				this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
-				this.objetoContratoCobranca.setPedidoPreLaudoData(new Date());
-				this.objetoContratoCobranca.setPedidoPreLaudoUsuario(loginBean.getUsername());
-			}
->>>>>>> Stashed changes
 
 			updateCheckList();
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());

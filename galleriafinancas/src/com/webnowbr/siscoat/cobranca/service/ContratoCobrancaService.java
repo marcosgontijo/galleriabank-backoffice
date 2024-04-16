@@ -131,11 +131,8 @@ public class ContratoCobrancaService {
 			
 		contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
 			
-<<<<<<< Updated upstream
+
 		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoraAgora());
-=======
-		contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.gerarDataHoje());
->>>>>>> Stashed changes
 		contratoCobrancaLogsAlteracao.setUsuario(usuario.getLogin());
 		contratoCobrancaLogsAlteracao.setStatusEsteira(contratoCobranca.getStatusEsteira());
 		contratoCobrancaLogsAlteracao.setContratoCobranca(contratoCobranca);
