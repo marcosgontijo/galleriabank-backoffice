@@ -4930,6 +4930,14 @@ public class CcbService {
 			run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
 			run.setColor("000000");
+			
+			if(objetoCcb.getObjetoContratoCobranca().isOperacaoFundo()) {
+				if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Cartório")
+							|| CommonsUtil.mesmoValor(despesa.getDescricao(), "Laudo De Avaliação e Parecer Jurídico")
+							|| CommonsUtil.mesmoValor(despesa.getDescricao(), "Laudo")) {
+					continue;
+				}
+			}
 			if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Cartório") || CommonsUtil.mesmoValor(despesa.getDescricao(), "Registro")) {
 				run.setText("Custas Cartorárias");
 			} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Certidão de Casamento")) {

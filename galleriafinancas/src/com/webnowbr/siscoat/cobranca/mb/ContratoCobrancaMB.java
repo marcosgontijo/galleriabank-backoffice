@@ -20368,13 +20368,13 @@ public class ContratoCobrancaMB {
 			}
 		}
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
-		if (!CommonsUtil.semValor(contasPagarSelecionada.getContaPagarOriginal()) && 
+		/*if (!CommonsUtil.semValor(contasPagarSelecionada.getContaPagarOriginal()) && 
 				contasPagarSelecionada.getContaPagarOriginal().getId() > 0) {
 			contasPagarSelecionada.getContaPagarOriginal().setEditada(true);
 			contasPagarSelecionada.getContaPagarOriginal().setContrato(null);
 			this.objetoContratoCobranca.getListContasPagar().remove(contasPagarSelecionada.getContaPagarOriginal());
 			contasPagarDao.merge(contasPagarSelecionada.getContaPagarOriginal());
-		} 
+		}*/ 
 		
 		if (contasPagarSelecionada.getId() <= 0) {
 			this.contasPagarSelecionada.setDataCriacao(DateUtil.gerarDataHoje());
@@ -22927,13 +22927,13 @@ public class ContratoCobrancaMB {
 
 	public void editarConta(ContasPagar conta) {
 		this.addContasPagar = true;
-		if(conta.getDescricao().contains("Processo")) {
+		//if(conta.getDescricao().contains("Processo")) {
 			contasPagarSelecionada = conta;
-		} else {
-			contasPagarSelecionada = new ContasPagar(conta);
-			contasPagarSelecionada.setContaPagarOriginal(conta);
+		//} else {
+		//	contasPagarSelecionada = new ContasPagar(conta);
+		//	contasPagarSelecionada.setContaPagarOriginal(conta);
 			//despesaSelecionada = conta;
-		}
+		//}
 	}
 
 	public void removerSegurado(Segurado segurado) {

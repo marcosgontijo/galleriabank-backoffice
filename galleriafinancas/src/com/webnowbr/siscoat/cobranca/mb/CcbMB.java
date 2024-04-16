@@ -467,14 +467,14 @@ public class CcbMB {
 		
 		this.objetoCcb.getDespesasAnexo2().add(despesaSelecionada);
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
-		if (!CommonsUtil.semValor(despesaSelecionada.getContaPagarOriginal()) && 
+		/*if (!CommonsUtil.semValor(despesaSelecionada.getContaPagarOriginal()) && 
 				despesaSelecionada.getContaPagarOriginal().getId() > 0) {
 			despesaSelecionada.getContaPagarOriginal().setEditada(true);
 			despesaSelecionada.getContaPagarOriginal().setContrato(null);
 			this.objetoContratoCobranca.getListContasPagar().remove(despesaSelecionada.getContaPagarOriginal());
 			this.objetoCcb.getDespesasAnexo2().remove(despesaSelecionada.getContaPagarOriginal());
 			contasPagarDao.merge(despesaSelecionada.getContaPagarOriginal());
-		} 
+		} */
 		
 		if (despesaSelecionada.getId() <= 0) {
 			this.despesaSelecionada.setDataCriacao(DateUtil.gerarDataHoje());
@@ -509,13 +509,13 @@ public class CcbMB {
 	}
 	
 	public void editDespesa(ContasPagar conta) {
-		if(conta.getDescricao().contains("Processo")) {
+		//if(conta.getDescricao().contains("Processo")) {
 			despesaSelecionada = conta;
-		} else {
-			despesaSelecionada = new ContasPagar(conta);
-			despesaSelecionada.setContaPagarOriginal(conta);
-			//despesaSelecionada = conta;
-		}
+		//}  else {
+		//	despesaSelecionada = new ContasPagar(conta);
+		//	despesaSelecionada.setContaPagarOriginal(conta);
+		//	despesaSelecionada = conta;
+		//}
 		
 	}
 	
@@ -786,8 +786,16 @@ public class CcbMB {
 		
 		if(!this.objetoCcb.getDespesasAnexo2().isEmpty()) {
 			for(ContasPagar despesas : this.objetoCcb.getDespesasAnexo2()) {
-				if(!CommonsUtil.semValor(despesas.getValor()))
+				if(!CommonsUtil.semValor(despesas.getValor())) {
+					if(objetoCcb.getObjetoContratoCobranca().isOperacaoFundo()) {
+						if(CommonsUtil.mesmoValor(despesas.getDescricao(), "Cartório")
+									|| CommonsUtil.mesmoValor(despesas.getDescricao(), "Laudo De Avaliação e Parecer Jurídico")
+									|| CommonsUtil.mesmoValor(despesas.getDescricao(), "Laudo")) {
+							continue;
+						}
+					}
 					total = total.add(despesas.getValor());
+				}
 			}
 		}
 		
@@ -2146,10 +2154,7 @@ public class CcbMB {
 		}		
 		custoEmissaoPercentual = objetoCcb.getPercentualCustoEmissao();
 
-		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
-				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
-			custoEmissaoValor = objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
-		}
+		custoEmissaoValor = calcularCustoEmissao(custoEmissaoValor, custoEmissaoPercentual);
 		
 		if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getCarencia())) {
 			this.objetoCcb.setNumeroParcelasPagamento(CommonsUtil.stringValue(Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(objetoCcb.getCarencia())));
@@ -2377,6 +2382,23 @@ public class CcbMB {
 		atualizaValorTransferencia();
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	
+	}
+
+	private BigDecimal calcularCustoEmissao(BigDecimal custoEmissaoValor, final BigDecimal custoEmissaoPercentual) {
+		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
+				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+			custoEmissaoValor = objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+			if(objetoCcb.getObjetoContratoCobranca().isOperacaoFundo()) {
+				for(ContasPagar conta : objetoCcb.getDespesasAnexo2()) {
+					if(CommonsUtil.mesmoValor(conta.getDescricao(), "Cartório")
+							|| CommonsUtil.mesmoValor(conta.getDescricao(), "Laudo De Avaliação e Parecer Jurídico")
+							|| CommonsUtil.mesmoValor(conta.getDescricao(), "Laudo")) {
+						custoEmissaoValor = custoEmissaoValor.subtract(conta.getValor());
+					}
+				}
+			}
+		}
+		return custoEmissaoValor;
 	}
 		
 	public String clearFieldsConsultarCcb() {
