@@ -15207,13 +15207,6 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-		//TODO Verificar se aqui ele irá realizar pesquisa de NFs, aparentemente aqui só pesquisa com status Pendente
-		/*if (status.equals("Ag. Emissão NFs")) {
-			this.tituloTelaConsultaPreStatus = "Ag. Emissão NFs";
-		}
-		if (status.equals("Ag. Pagamento NFs")) {
-			this.tituloTelaConsultaPreStatus = "Ag. Pagamento NFs";
-		}*/
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
@@ -15228,15 +15221,7 @@ public class ContratoCobrancaMB {
 
 		User user = getUsuarioLogado();
 
-		/*if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
-				&& !CommonsUtil.semValor(user)
-				&& user.getId() > 0
-				&& user.isProfilePajuLuvison()) {
-			status = "Comentario Luvison";
-			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		} else {*/
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		//}
 
 		if (status.equals("Análise Reprovada")) {
 			for (ContratoCobranca contratos : this.contratosPendentes) {
@@ -38558,4 +38543,36 @@ public class ContratoCobrancaMB {
 	public void setDisableBotao(boolean disableBotao) {
 		this.disableBotao = disableBotao;
 	}
+	
+	public boolean idadeMaiorQue69(ContratoCobranca contratoCobranca) {
+		
+//		List<PagadorRecebedor> pagadorRecebedorList = new ArrayList<PagadorRecebedor>();
+		
+//		for (PagadorRecebedorAdicionais pagadorAdicional : contratoCobranca.getListaPagadores()) {
+//			pagadorRecebedorList.add(pagadorAdicional.getPessoa());
+//			System.out.println("PAGADOR ADICIONAL -> " + pagadorAdicional);
+//		}
+		
+		List<PagadorRecebedor> pagadorRecebedorList = contratoCobranca.getListaPagadores()
+            .stream()
+            .map(PagadorRecebedorAdicionais::getPessoa)
+            .collect(Collectors.toList());
+		
+		System.out.println("PAGADOR RECEBER LIST: " + pagadorRecebedorList);
+		
+		//pagadorRecebedorList.add(contratoCobranca.getPagador());
+		
+		//um faz o map 
+		// o outro faz o filter 
+		
+		for(PagadorRecebedor idades : pagadorRecebedorList) {
+			if(CommonsUtil.intValue(idades.getIdade()) >= 69 || CommonsUtil.intValue(idades.getIdadeConjuge()) >= 69 ) {
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
 }

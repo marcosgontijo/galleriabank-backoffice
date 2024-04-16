@@ -7517,8 +7517,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_CONTRATOS_CRM_COMITE = "select * " +
 			" from cobranca.analisecomite ";
-			
 	
+	private static final String QUERY_CONTRATOS_PAGADOR_RECEBEDOR_69 = "select * " +
+			" from cobranca.pagadorrecebedoradicionais ";
+			
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> geraConsultaContratosCRM(final String codResponsavel, final List<Responsavel> listResponsavel, final String tipoConsulta) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -7537,7 +7539,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					// Verifica o tipo da consulta de contratos
 					if (tipoConsulta.equals("Todos")) {
-						//
 						query = query + " and res.codigo != 'lead' and c.statusLead != 'Em Tratamento'";
 						order = " order by id desc";
 					}
@@ -7951,6 +7952,42 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (!CommonsUtil.semValor(idsContratoCobranca)) {
 						query = QUERY_CONTRATOS_CRM_COMITE;
+						query = query + " where contratocobranca in (" + String.join(",", idsContratoCobranca) + " ) ";
+						// connection = getConnection();
+						ps = connection.prepareStatement(query);
+
+						// (0, CommonsUtil.getArray(idsContratoCobranca ));
+						rs = ps.executeQuery();
+						while (rs.next()) {
+
+							Long idCobranca = rs.getLong("contratocobranca");
+
+							ContratoCobranca contratoCobrancaFind = objects.stream()
+									.filter(c -> CommonsUtil.mesmoValor(c.getId(), idCobranca)).findFirst()
+									.orElse(null);
+							if (contratoCobrancaFind.getListaAnaliseComite() == null) {
+								contratoCobrancaFind.setListaAnaliseComite(new HashSet<AnaliseComite>());
+							}
+							AnaliseComite analiseComite = new AnaliseComite();
+							
+							String votoComiteBD = rs.getString("VotoAnaliseComite");
+							String marcadorVoto = "";
+							
+							if(CommonsUtil.mesmoValor(votoComiteBD, "Aprovado")) {
+								marcadorVoto = " ✓";
+							} else if(CommonsUtil.mesmoValor(votoComiteBD, "Reprovado")) {
+								marcadorVoto = " X";
+							} else {
+								marcadorVoto = " -";
+							}
+							
+							analiseComite.setUsuarioComite(rs.getString("usuarioComite") + marcadorVoto);
+							contratoCobrancaFind.getListaAnaliseComite().add(analiseComite);
+						}
+					}
+					
+					if (!CommonsUtil.semValor(idsContratoCobranca)) {
+						query = QUERY_CONTRATOS_PAGADOR_RECEBEDOR_69;
 						query = query + " where contratocobranca in (" + String.join(",", idsContratoCobranca) + " ) ";
 						// connection = getConnection();
 						ps = connection.prepareStatement(query);
