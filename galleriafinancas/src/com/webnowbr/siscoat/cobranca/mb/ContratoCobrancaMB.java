@@ -229,6 +229,7 @@ import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.PlanilhaRestituicaoDetalhesVO;
 import com.webnowbr.siscoat.cobranca.vo.PlanilhaRestituicaoVO;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsultaDao;
@@ -38536,19 +38537,55 @@ public class ContratoCobrancaMB {
 		planilhaRestituicaoVO.setNome(objetoContratoCobranca.getPagador().getNome());
 		planilhaRestituicaoVO
 				.setCpfCnpj(CommonsUtil.formataCnpjCpf(objetoContratoCobranca.getPagador().getCpfCnpj(), false));
-		if (CommonsUtil.semValor( objetoCcb )) {
-			buscaObjetoCcb();			
+		if (CommonsUtil.semValor(objetoCcb)) {
+			buscaObjetoCcb();
 		}
-		if (!CommonsUtil.semValor( objetoCcb )) 
-		planilhaRestituicaoVO.setNumeroCcb(objetoCcb.getNumeroCcb());
-		
+		if (!CommonsUtil.semValor(objetoCcb))
+			planilhaRestituicaoVO.setNumeroCcb(objetoCcb.getNumeroCcb());
+
 		planilhaRestituicaoVO.setValorCartaSplitGalleria(objetoContratoCobranca.getValorCartaSplitGalleria());
 		planilhaRestituicaoVO.setSomaValorPago(objetoContratoCobranca.getSomaValorPago());
 		planilhaRestituicaoVO.setContaPagarValorTotal(valoSobraDepsesasCalculado);
 
 		planilhaRestituicaoVO.setListContasPagar(objetoContratoCobranca.getListContasPagar().stream()
-				.filter(c -> !c.getDescricao().startsWith("Carta Split")).collect(Collectors.toSet()));
+				.filter(c -> !c.getDescricao().startsWith("Carta Split"))
+				.map(c -> new PlanilhaRestituicaoDetalhesVO(c.getDescricao(), c.getValor(),
+						c.isContaPaga(), c.getDataPagamento(), c.getDataVencimento(), c.getValorPagamento(),
+						c.getNumeroDocumento()))
+				.collect(Collectors.toSet()));
 		
+		BigDecimal totalValorPago = planilhaRestituicaoVO.getListContasPagar().stream()
+			       .map(PlanilhaRestituicaoDetalhesVO::getValorPagamento) // map
+			       .reduce(BigDecimal.ZERO, BigDecimal::add);
 		
+		if (!CommonsUtil.mesmoValor(totalValorPago, planilhaRestituicaoVO.getSomaValorPago())) {
+			FacesContext context = FacesContext.getCurrentInstance(); 
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Valor pago está incosistente !" ,
+							""));
+			return;
+		}
+			
+
+		RelatoriosService relatoriosService = new RelatoriosService();
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		
+	
+		
+		try {
+			JasperPrint jp = relatoriosService.geraPDFPPlanilhaRestituicao(planilhaRestituicaoVO);
+			
+			String nomeArquivoDownload = String.format("Galleria Bank - Restituicao %s.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(jp);
+			gerador.close();
+			
+		} catch (JRException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

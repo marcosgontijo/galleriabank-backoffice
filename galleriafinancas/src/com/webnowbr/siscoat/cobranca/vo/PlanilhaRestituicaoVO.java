@@ -1,11 +1,12 @@
 package com.webnowbr.siscoat.cobranca.vo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Set;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 
-public class PlanilhaRestituicaoVO {
+public class PlanilhaRestituicaoVO  implements Serializable  {
 
 	private String nome;
 	private String cpfCnpj;
@@ -15,7 +16,7 @@ public class PlanilhaRestituicaoVO {
 	private BigDecimal somaValorPago;
 	private BigDecimal contaPagarValorTotal;
 
-	private Set<ContasPagar> listContasPagar;
+	private Set<PlanilhaRestituicaoDetalhesVO> listContasPagar;
 
 	public String getNome() {
 		return nome;
@@ -66,11 +67,11 @@ public class PlanilhaRestituicaoVO {
 		this.contaPagarValorTotal = contaPagarValorTotal;
 	}
 
-	public Set<ContasPagar> getListContasPagar() {
+	public Set<PlanilhaRestituicaoDetalhesVO> getListContasPagar() {
 		return listContasPagar;
 	}
 
-	public void setListContasPagar(Set<ContasPagar> listContasPagar) {
+	public void setListContasPagar(Set<PlanilhaRestituicaoDetalhesVO> listContasPagar) {
 		this.listContasPagar = listContasPagar;
 	}
 
