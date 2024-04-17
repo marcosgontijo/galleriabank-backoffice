@@ -69,9 +69,7 @@
 		    border: 100px;
 		    font-size: 25px !important;
 		}
-		
-		
-		
+k		
 		.ui-datatable .ui-datatable-data .linhaRoxa td{
 		    background-color:  #C576F6;  
 		}
@@ -114,6 +112,10 @@
 		
 		.ui-datatable .ui-datatable-data .linhaAqua td {
 		    background-color: #7FFFD4;
+		}
+		
+		.ui-datatable .ui-datatable-data .linhaPreta td {
+		    background-color: #1c1010;
 		}
 		
 		.campoRequerido {
