@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.model.request.FichaIndividualRequest;
 import com.webnowbr.siscoat.cobranca.model.request.TermoCienciaRequest;
+import com.webnowbr.siscoat.cobranca.vo.PlanilhaRestituicaoVO;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ReportUtil;
@@ -62,6 +64,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.data.JsonDataSource;
 
 public class RelatoriosService {
@@ -557,6 +560,42 @@ public class RelatoriosService {
 
 		return JasperFillManager.fillReport(rptTermoCiencia, parameters, dataSource);
 
+	}
+
+	
+
+	public byte[] geraPDFPPlanilhaRestituicaoByteArray(PlanilhaRestituicaoVO planilhaRestituicaoVO) throws JRException, IOException {
+		JasperPrint jp = geraPDFPPlanilhaRestituicao(planilhaRestituicaoVO);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		JasperExportManager.exportReportToPdfStream(jp, bos);
+
+		return bos.toByteArray();
+	}
+	
+	public JasperPrint geraPDFPPlanilhaRestituicao(PlanilhaRestituicaoVO planilhaRestituicaoVO) throws JRException, IOException {
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("PlanilhaRestituicao");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBankTransp.png");
+			
+		JasperReport rptDetalhe = ReportUtil.getRelatorio("PlanilhaRestituicao_Detalhe");
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+
+		parameters.put("SUBREPORT_DETALHE_DESPESA", rptDetalhe);
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+
+		
+		 String json =   GsonUtil.toJson(planilhaRestituicaoVO);
+		 
+		 InputStream jsonInput = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+
+         // Create a JsonDataSource with your JSON data
+         JsonDataSource dataSource = new JsonDataSource(jsonInput);
+         
+//		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 	}
 
 }
