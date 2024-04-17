@@ -81,7 +81,8 @@
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' } 
 	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
 	   		         #{(contratos.imovel.objetoCidade.cidadesVetadas eq true) ? 'cidadesVetadas' : '' }
-	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}"
+	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}
+					 #{(contratoCobrancaMB.idadeMaiorQue69(contratos) eq true) ? 'linhaPreta' : ''}"	   		         
 	   		         
    		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -285,9 +286,6 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-		                </p:commandButton>
-		                 <p:commandButton value="MARCOS" action="#{contratoCobrancaMB.idadeMaiorQue69(contratos)}" ajax="false" icon="ui-icon-pencil" title="Editar">
-		                
 		                </p:commandButton>
 		                						
 						<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  

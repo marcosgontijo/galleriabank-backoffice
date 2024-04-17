@@ -115,7 +115,7 @@ k
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaPreta td {
-		    background-color: #1c1010;
+		    background-color: rgb(171, 170, 148) !important;
 		}
 		
 		.campoRequerido {

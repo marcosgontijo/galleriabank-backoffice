@@ -33,6 +33,7 @@ import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.RelatorioB3;
@@ -7501,14 +7502,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONTRATOS_CRM = "select im.tipo, c.taxapreaprovada , c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
+	private static final String QUERY_CONTRATOS_CRM = "select im.tipo, c.taxapreaprovada , c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome nomepagador, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, " +
 			" im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, " +
-			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues, c.analiseComercialData " +
+			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues, c.analiseComercialData,"
+			+ " pr.dtnascimento, pr.dtnascimentoconjuge " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -7518,7 +7520,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_CONTRATOS_CRM_COMITE = "select * " +
 			" from cobranca.analisecomite ";
 	
-	private static final String QUERY_CONTRATOS_PAGADOR_RECEBEDOR_69 = "select * " +
+	private static final String QUERY_CONTRATOS_PAGADOR_RECEBEDOR_MAIS_DE_69ANOS = "select * " +
 			" from cobranca.pagadorrecebedoradicionais ";
 			
 	@SuppressWarnings("unchecked")
@@ -7919,6 +7921,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(43));
 						contratoCobranca.setContratoConferido(rs.getBoolean(44));
 						contratoCobranca.getPagador().setId(rs.getLong("idPagador"));
+						contratoCobranca.getPagador().setDtNascimento(rs.getDate("dtnascimento"));
+						contratoCobranca.getPagador().setDtNascimentoConjuge(rs.getDate("dtnascimentoconjuge"));
+						contratoCobranca.getPagador().setNome(rs.getString("nomepagador"));
 						contratoCobranca.setAgEnvioCartorio(rs.getBoolean(45));
 						contratoCobranca.setReanalise(rs.getBoolean(46));						
 						contratoCobranca.setReanalisePronta(rs.getBoolean(47));					
@@ -7987,12 +7992,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					if (!CommonsUtil.semValor(idsContratoCobranca)) {
-						query = QUERY_CONTRATOS_PAGADOR_RECEBEDOR_69;
+						query = QUERY_CONTRATOS_PAGADOR_RECEBEDOR_MAIS_DE_69ANOS;
 						query = query + " where contratocobranca in (" + String.join(",", idsContratoCobranca) + " ) ";
 						// connection = getConnection();
 						ps = connection.prepareStatement(query);
 
-						// (0, CommonsUtil.getArray(idsContratoCobranca ));
 						rs = ps.executeQuery();
 						while (rs.next()) {
 
@@ -8001,24 +8005,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							ContratoCobranca contratoCobrancaFind = objects.stream()
 									.filter(c -> CommonsUtil.mesmoValor(c.getId(), idCobranca)).findFirst()
 									.orElse(null);
-							if (contratoCobrancaFind.getListaAnaliseComite() == null) {
-								contratoCobrancaFind.setListaAnaliseComite(new HashSet<AnaliseComite>());
+							if (contratoCobrancaFind.getListaPagadores() == null) {
+								contratoCobrancaFind.setListaPagadores(new HashSet<PagadorRecebedorAdicionais>());
 							}
-							AnaliseComite analiseComite = new AnaliseComite();
-							
-							String votoComiteBD = rs.getString("VotoAnaliseComite");
-							String marcadorVoto = "";
-							
-							if(CommonsUtil.mesmoValor(votoComiteBD, "Aprovado")) {
-								marcadorVoto = " ✓";
-							} else if(CommonsUtil.mesmoValor(votoComiteBD, "Reprovado")) {
-								marcadorVoto = " X";
-							} else {
-								marcadorVoto = " -";
-							}
-							
-							analiseComite.setUsuarioComite(rs.getString("usuarioComite") + marcadorVoto);
-							contratoCobrancaFind.getListaAnaliseComite().add(analiseComite);
+							PagadorRecebedorAdicionaisDao recebedorAdicionaisDao = new PagadorRecebedorAdicionaisDao();
+							PagadorRecebedorAdicionais pagadorAdicional = recebedorAdicionaisDao.findById(rs.getLong("id"));
+														
+							contratoCobrancaFind.getListaPagadores().add(pagadorAdicional);
 						}
 					}
 

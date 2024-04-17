@@ -39,6 +39,7 @@ public class PagadorRecebedor implements Serializable {
 	private String email;
 	private Date dtNascimento;
 	private String idade;
+	private Long idadeJaCalculada;
 	private String nomePai;
 	private String nomeMae;
 	private String observacao1;
@@ -415,7 +416,7 @@ public class PagadorRecebedor implements Serializable {
 	}
 	
 	
-	public void calcularIdadeConjuge() {
+	public long calcularIdadeConjuge() {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
@@ -426,7 +427,9 @@ public class PagadorRecebedor implements Serializable {
 			idadeLong = idadeLong / 30;
 			idadeLong = idadeLong / 12;
 		    this.setIdadeConjuge(CommonsUtil.stringValue(idadeLong));
+		    return idadeLong;
 		}
+		return 0;
 	}
 	
 	public void criarConjugeNoSistema() {
@@ -2444,4 +2447,5 @@ public class PagadorRecebedor implements Serializable {
 	public String getOrigem() {
 		return origem;
 	}
+
 }
