@@ -132,103 +132,7 @@
 							</h:panelGrid>
 						</p:panel>
 					</h:panelGroup>
-				<!-- </ui:repeat> -->	
-
-				<!-- <h:panelGroup id="RecebidoPajulaudoPanel"
-					style="margin-bottom:20px;">
-					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" header="Recebido PAJU e laudo">
-						<h:panelGrid columns="2">
-						
-							<h:panelGrid columns="2">
-							
-								<p:outputLabel for="valorPreLaudo"
-									value="Valor Pré Laudo: " styleClass="labelBold" />
-								<p:inputText id="valorPreLaudo"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:300px;"
-									disabled="#{contratoCobrancaMB.deleteMode}" />
-							
-								<p:outputLabel for="valorMercadoImovel"
-									value="Valor de mercado do imóvel: " styleClass="labelBold" />
-								<p:inputText id="valorMercadoImovel"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter"
-									required="true"
-									style="FONT-SIZE: 10pt;width:300px;"
-									disabled="#{contratoCobrancaMB.deleteMode}" />
-	
-								<p:outputLabel for="valorVendaForcadaImovel"
-									value="Valor de venda forçada do imóvel: "
-									styleClass="labelBold" />
-								<p:inputText id="valorVendaForcadaImovel"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorVendaForcadaImovel}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:300px;"
-									disabled="#{contratoCobrancaMB.deleteMode}" />
-							</h:panelGrid>
-						
-							<h:panelGrid columns="2">
-								<p:outputLabel for="NumeroMatriculaLaudoPaju" value="Numero Matrícula: " />
-								<p:inputText id="NumeroMatriculaLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}"
-									label="NumeroMatricula" onblur="" style="width:400px;" />
-
-								<p:outputLabel for="EnderecoImovelLaudoPaju" value="Endereço: " />
-								<p:inputText id="EnderecoImovelLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
-									label="Endereço" onblur="" style="width:400px;" />
-
-								<p:outputLabel for="linkGMapsImovelLaudoPaju" value="Link Google Maps: " />
-								<p:inputText id="linkGMapsImovelLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-									label="Link Google Maps" style="width:400px;" />
-
-								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
-								<p:autoComplete id="TipoLaudoPaju" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-									completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
-									autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
-									itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
-									itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
-									scrollHeight="250">
-								</p:autoComplete>
-
-								<p:outputLabel for="AreaTotalLaudoPaju"
-									value="Área Total / Terreno (metros):  " />
-								<p:inputText id="AreaTotalLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
-									style="width:150px;" />
-
-								<p:outputLabel for="AreaConstruidaLaudoPaju"
-									value="Área Útil / Construída (metros): " />
-								<p:inputText id="AreaConstruidaLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
-									style="width:150px;" />
-
-							</h:panelGrid>
-						
-						</h:panelGrid>
-						
-						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
-							<p:outputLabel for="comentarioJuridico"
-								value="Comentario Juridico: " styleClass="labelBold" />
-							<p:inputTextarea id="comentarioJuridico" rows="10" cols="48"
-								counter="display" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
-							<p:outputLabel id="display" />
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup> -->
 				
-				<!-- <ui:repeat value="#{contratoCobrancaMB.listPreLaudoImoveisRelac}" var="objetoImovelCobranca"> -->
 					<!-- painel do detalhe imovel-->
 					<ui:param name="objetoImovelCobranca" value="#{objetoImovelCobranca}"/>
 					<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia - Matrícula #{objetoImovelCobranca.numeroMatricula}"
@@ -429,19 +333,11 @@
 											<f:selectItem itemValue="" itemLabel="" />
 											<f:selectItem itemValue="Bom" itemLabel="Bom" />
 											<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
-											<p:ajax update="pedirLaudoBtn" event="valueChange" />
 										</p:selectOneMenu>
 									</shiro:hasAnyRoles>
 								
 								</h:panelGrid>
 								<h:panelGrid columns="3">
-									<p:outputLabel styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}">Laudo Pedido: </p:outputLabel>								
-									<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" 
-										onLabel="Laudo Pronto" offLabel="Laudo Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:80px"
-										disabled="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq null or contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq ''}"
-										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo
-										and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}"/>			
 									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.atualizaContratoPreLaudoCompass}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
 										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />			
 									</p:commandButton>
