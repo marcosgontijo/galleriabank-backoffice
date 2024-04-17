@@ -1838,6 +1838,21 @@
 												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}"
 												styleClass="labelBold" />
 										</shiro:lacksRole>
+										
+										<p:outputLabel value="Operação CRI? "
+											styleClass="labelBold" />
+										<shiro:hasAnyRoles name="ROOT, COMITEEDITAR, PROFILE_CONTRATO">
+											<p:selectBooleanCheckbox
+												value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoCRI}" />
+										</shiro:hasAnyRoles>
+										<shiro:lacksRole name="ROOT">
+											<p:outputLabel value="Sim"
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.operacaoCRI}"
+												styleClass="labelBold" />
+											<p:outputLabel value="Não"
+												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.operacaoCRI}"
+												styleClass="labelBold" />
+										</shiro:lacksRole>
 			
 									</h:panelGrid>
 									<h:panelGroup>

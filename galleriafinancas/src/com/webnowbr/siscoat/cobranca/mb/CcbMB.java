@@ -787,7 +787,7 @@ public class CcbMB {
 		if(!this.objetoCcb.getDespesasAnexo2().isEmpty()) {
 			for(ContasPagar despesas : this.objetoCcb.getDespesasAnexo2()) {
 				if(!CommonsUtil.semValor(despesas.getValor())) {
-					if(objetoCcb.getObjetoContratoCobranca().isOperacaoFundo()) {
+					if(objetoCcb.getObjetoContratoCobranca().isOperacaoCRI()) {
 						if(CommonsUtil.mesmoValor(despesas.getDescricao(), "Cartório")
 									|| CommonsUtil.mesmoValor(despesas.getDescricao(), "Laudo De Avaliação e Parecer Jurídico")
 									|| CommonsUtil.mesmoValor(despesas.getDescricao(), "Laudo")) {
@@ -2388,7 +2388,7 @@ public class CcbMB {
 		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
 			custoEmissaoValor = objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
-			if(objetoCcb.getObjetoContratoCobranca().isOperacaoFundo()) {
+			if(objetoCcb.getObjetoContratoCobranca().isOperacaoCRI()) {
 				for(ContasPagar conta : objetoCcb.getDespesasAnexo2()) {
 					if(CommonsUtil.mesmoValor(conta.getDescricao(), "Cartório")
 							|| CommonsUtil.mesmoValor(conta.getDescricao(), "Laudo De Avaliação e Parecer Jurídico")

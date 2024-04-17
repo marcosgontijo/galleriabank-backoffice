@@ -4931,7 +4931,7 @@ public class CcbService {
 			run.setFontSize(12);
 			run.setColor("000000");
 			
-			if(objetoCcb.getObjetoContratoCobranca().isOperacaoFundo()) {
+			if(objetoCcb.getObjetoContratoCobranca().isOperacaoCRI()) {
 				if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Cartório")
 							|| CommonsUtil.mesmoValor(despesa.getDescricao(), "Laudo De Avaliação e Parecer Jurídico")
 							|| CommonsUtil.mesmoValor(despesa.getDescricao(), "Laudo")) {
