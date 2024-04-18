@@ -38579,11 +38579,16 @@ public class ContratoCobrancaMB {
 		planilhaRestituicaoVO.setContaPagarValorTotal(valoSobraDepsesasCalculado);
 
 		Set<PlanilhaRestituicaoDetalhesVO> listContasPagar = new HashSet<PlanilhaRestituicaoDetalhesVO>();
-		for (ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
+		
+		Set<ContasPagar> listContasPagarFiltro = objetoContratoCobranca.getListContasPagar()
+				.stream().filter(c -> !c.getDescricao().contains("Carta Split"))
+				.collect(Collectors.toSet()); 
+				
+		for (ContasPagar conta : listContasPagarFiltro) {
 			if (conta.isEditada())
 				continue;
 
-			BigDecimal somaValorPago = null;
+			BigDecimal somaValorPago = BigDecimal.ZERO;
 
 			if (conta.getListContasPagarBaixas().size() > 0) {
 				// sub despesas pagto stark bank + pagamentos por fora do starkbank
@@ -38593,7 +38598,7 @@ public class ContratoCobrancaMB {
 
 					if (!conta.getDescricao().contains("Pagamento Carta Split")
 							&& baixas.getStatusPagamento().equals("Aprovado")) {
-						somaValorPago = baixas.getValor();
+						somaValorPago = somaValorPago.add(baixas.getValor());
 					}
 				}
 			} else {
@@ -38601,7 +38606,7 @@ public class ContratoCobrancaMB {
 				if (CommonsUtil.semValor(conta.getValorPagamento()))
 					continue;
 
-				somaValorPago = conta.getValorPagamento();
+				somaValorPago = somaValorPago.add(conta.getValorPagamento());
 			}
 
 			if (somaValorPago != null)

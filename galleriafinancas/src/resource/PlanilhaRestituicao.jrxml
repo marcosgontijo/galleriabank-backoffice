@@ -235,7 +235,7 @@
 			<subreport>
 				<reportElement x="57" y="3" width="310" height="16" uuid="14380e96-8b4b-4220-9b62-e0b2927d255a"/>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("listContasPagar")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["C:\\Galleria\\Branch\\siscoat_galleriafinancas\\galleriafinancas\\src\\resource\\PlanilhaRestituicao_Detalhe.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE_DESPESA}]]></subreportExpression>
 			</subreport>
 			<rectangle>
 				<reportElement x="510" y="-12" width="20" height="29" uuid="bf37be67-153b-4614-9563-4d73a90fbab7"/>
