@@ -10728,19 +10728,12 @@ public class ContratoCobrancaMB {
 
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
 
-			if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
-				this.indexStepsStatusContrato = 17;
-			}else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
-				this.indexStepsStatusContrato = 16;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
-				this.indexStepsStatusContrato = 15;
-			} if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
+			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
 				this.indexStepsStatusContrato = 14;
+			}
+			
+			if (this.objetoContratoCobranca.isNotaSolicitada() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+				this.indexStepsStatusContrato = 15;
 			}
 			
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
@@ -18058,7 +18051,10 @@ public class ContratoCobrancaMB {
 
 		if (!CommonsUtil.semValor(this.objetoCcb)) {
 			CcbDao ccbDao = new CcbDao();
-			this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+			if(ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0)
+				this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+			else
+				this.objetoCcb = null;
 		}
 
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
