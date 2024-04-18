@@ -279,7 +279,7 @@ public class ContratoCobrancaMB {
 	/** Variavel. */
 	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
-	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService() ;
+	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
@@ -292,7 +292,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorMercadoImovelQuarenta;
 	private BigDecimal valorMercadoImovelCinquenta;
 	private BigDecimal valorTotalContrato;
-	 private boolean apagaListaCartorio;
+	private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -383,7 +383,7 @@ public class ContratoCobrancaMB {
 
 	/** Nome do Pagador selecionado pela LoV. */
 	private String nomeGrupoFavorecido;
-	
+
 	private BigDecimal txAdm;
 
 	/** Id Objeto selecionado na LoV - Pagador. */
@@ -10726,19 +10726,12 @@ public class ContratoCobrancaMB {
 
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
 
-			if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
-				this.indexStepsStatusContrato = 17;
-			}else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
-				this.indexStepsStatusContrato = 16;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
-				this.indexStepsStatusContrato = 15;
-			} if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
+			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
 				this.indexStepsStatusContrato = 14;
+			}
+			
+			if (this.objetoContratoCobranca.isNotaSolicitada() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+				this.indexStepsStatusContrato = 15;
 			}
 			
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
@@ -18084,7 +18077,10 @@ public class ContratoCobrancaMB {
 
 	private void buscaObjetoCcb() {
 		CcbDao ccbDao = new CcbDao();
-		this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+		if(ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0)
+			this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+		else
+			this.objetoCcb = null;
 	}
 
 	public void clearSelectedLovsPendentes() {
@@ -34835,8 +34831,7 @@ public class ContratoCobrancaMB {
 	public List<FileUploaded> listaArquivosNotaFiscal() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf"))
-				.collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf")).collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosComite() {
@@ -38568,7 +38563,6 @@ public class ContratoCobrancaMB {
 		this.disableBotao = disableBotao;
 	}
 
-
 	public void gerarPlanilhaRestituicao() {
 		PlanilhaRestituicaoVO planilhaRestituicaoVO = new PlanilhaRestituicaoVO();
 		planilhaRestituicaoVO.setNome(objetoContratoCobranca.getPagador().getNome());
@@ -38606,9 +38600,7 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-		
-	
-		
+
 		try {
 			JasperPrint jp = relatoriosService.geraPDFPPlanilhaRestituicao(planilhaRestituicaoVO);
 
