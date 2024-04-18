@@ -34787,21 +34787,24 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivos() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "numContrato"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "numContrato")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosInterno() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "interno"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "interno")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosFaltante() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "faltante"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "faltante")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
@@ -34817,42 +34820,49 @@ public class ContratoCobrancaMB {
 	public List<FileUploaded> listaArquivosJuridico() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "juridico"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "juridico")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
-	
+
 	public List<FileUploaded> listaArquivosPreLaudo() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pre-laudo"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pre-laudo")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
-	} 
-	
-	
+	}
+
 	public List<FileUploaded> listaArquivosNotaFiscal() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosComite() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "comite"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "comite")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public Collection<FileUploaded> listaArquivosPagar() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")).collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
+				.collect(Collectors.toList());
 	}
 
 	public Collection<FileUploaded> listaArquivosContasPagar(ContasPagar conta) {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")).collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
+				.collect(Collectors.toList());
 
 		/*
 		 * if (CommonsUtil.semValor(conta.getFileListId())) { return new
@@ -34876,7 +34886,9 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivosCci() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "cci")).collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "cci") 
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
+				.collect(Collectors.toList());
 	}
 
 	public void listaTodasSubpastas() {
