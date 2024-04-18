@@ -4,12 +4,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -30,11 +33,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 
 /** ManagedBean. */
@@ -59,6 +64,7 @@ public class ImovelEstoqueMB {
 	private List<ContratoCobranca> listaImovelTudo;
 	private List<ContratoCobranca> listaImovelVendido;
 	private List<ContratoCobranca> listaImovelEmEsdtoque;
+	private BigDecimal valorPresenteTotal;
 	/**
 	 * Construtor.
 	 */
@@ -67,6 +73,8 @@ public class ImovelEstoqueMB {
 		objetoImovelCobranca = new ImovelCobranca();
 		objetoImovelEstoque = new ImovelEstoque();
 
+	}
+	public void valorpresenteTotal() {
 	}
 
 	public void consultaEstoque() {
@@ -121,6 +129,7 @@ public class ImovelEstoqueMB {
 		     if(objetoImovelEstoque.getId() <= 0) {
 		    	 objetoImovelEstoque.setQuitado(false);
 		    	 objetoImovelEstoque.setStatusAtual("Estoque");
+		    	 objetoImovelEstoque.setDataConsolidado(DateUtil.getDataHoje());
 					imovelEstoqueDao.create(objetoImovelEstoque);
 
 				}
@@ -140,8 +149,8 @@ public class ImovelEstoqueMB {
 	}
 
 	public String editarEstoque() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		
+	
 
 		if (CommonsUtil.semValor(this.objetoImovelEstoque)) {
 			objetoImovelEstoque = new ImovelEstoque();
@@ -151,8 +160,64 @@ public class ImovelEstoqueMB {
 			preencherCamposComDadosContrato(); // Chama o método para preencher os campos com os dados do contrato
 		}
 		
+		calcularValorPresenteTotalContrato(objetoContratoCobranca);
+		
+		
+		
+		
 
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
+	}
+	public BigDecimal calcularValorPresenteTotalContrato(ContratoCobranca contrato) {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+
+		BigDecimal valorPresenteTotalContrato = BigDecimal.ZERO;
+		BigDecimal juros = contrato.getTxJurosParcelas();
+
+		for (ContratoCobrancaDetalhes parcelas : contrato.getListContratoCobrancaDetalhes()) {
+			BigDecimal valorPresenteParcela = BigDecimal.ZERO;
+			BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+			BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+			quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+
+			quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+
+			/*
+			 * if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { quantidadeDeMeses =
+			 * quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); }
+			 */
+
+			Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+
+			juros = juros.divide(BigDecimal.valueOf(100));
+			juros = juros.add(BigDecimal.ONE);
+
+			double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+
+			valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor), MathContext.DECIMAL128);
+			valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+			if (parcelas.getDataVencimento().before(DateUtil.getDataHoje())) {
+				if (!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+				}
+				if (!CommonsUtil.semValor(parcelas.getSeguroMIP())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+				}
+				if (!CommonsUtil.semValor(parcelas.getTaxaAdm())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+				}
+			}
+
+			valorPresenteTotalContrato = valorPresenteTotalContrato.add(valorPresenteParcela);
+		}
+		this.valorPresenteTotal = valorPresenteTotalContrato;
+
+		return valorPresenteTotalContrato;
 	}
 
 
@@ -606,5 +671,13 @@ public class ImovelEstoqueMB {
 	public void setParametroPesquisa(String parametroPesquisa) {
 		this.parametroPesquisa = parametroPesquisa;
 	}
+	public BigDecimal getValorPresenteTotal() {
+		return valorPresenteTotal;
+	}
+	public void setValorPresenteTotal(BigDecimal valorPresenteTotal) {
+		this.valorPresenteTotal = valorPresenteTotal;
+	}
+
+
 
 }

@@ -49,7 +49,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 
@@ -2014,13 +2016,19 @@ public class CommonsUtil {
 	public static String convertToXml(Object object) {
 	    try {
 	        // Convert object to JSON
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        String json = objectMapper.writeValueAsString(object);
+	        String json =   GsonUtil.toJson(object);
 	        
-	        // Convert JSON to XML
-	        XmlMapper xmlMapper = new XmlMapper();
-	        Object xmlObj = xmlMapper.readValue(json, Object.class);
-	        return xmlMapper.writeValueAsString(xmlObj);
+	        ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(json);
+
+            // Create XML Mapper
+            XmlMapper xmlMapper = new XmlMapper();
+
+            // Convert JSON to XML
+            ObjectNode objectNode = (ObjectNode) jsonNode;
+//            objectNode = objectNode.putObject("dados");
+            String xml = xmlMapper.writeValueAsString(objectNode);
+            return xml.replace("ObjectNode", "dados");
 	    } catch (IOException e) {
 	        e.printStackTrace(); // Handle IOException appropriately
 	        return null;
