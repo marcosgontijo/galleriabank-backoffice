@@ -10729,19 +10729,12 @@ public class ContratoCobrancaMB {
 
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
 
-			if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
-				this.indexStepsStatusContrato = 17;
-			}else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
-				this.indexStepsStatusContrato = 16;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
-				this.indexStepsStatusContrato = 15;
-			} if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
+			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
 				this.indexStepsStatusContrato = 14;
+			}
+			
+			if (this.objetoContratoCobranca.isNotaSolicitada() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+				this.indexStepsStatusContrato = 15;
 			}
 			
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
@@ -18087,7 +18080,10 @@ public class ContratoCobrancaMB {
 
 	private void buscaObjetoCcb() {
 		CcbDao ccbDao = new CcbDao();
-		this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+		if(ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0)
+			this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+		else
+			this.objetoCcb = null;
 	}
 
 	public void clearSelectedLovsPendentes() {
@@ -34791,21 +34787,24 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivos() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "numContrato"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "numContrato")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosInterno() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "interno"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "interno")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosFaltante() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "faltante"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "faltante")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
@@ -34821,42 +34820,49 @@ public class ContratoCobrancaMB {
 	public List<FileUploaded> listaArquivosJuridico() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "juridico"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "juridico")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
-	
+
 	public List<FileUploaded> listaArquivosPreLaudo() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pre-laudo"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pre-laudo")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
-	} 
-	
-	
+	}
+
 	public List<FileUploaded> listaArquivosNotaFiscal() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosComite() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "comite"))
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "comite")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
 				.collect(Collectors.toList());
 	}
 
 	public Collection<FileUploaded> listaArquivosPagar() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")).collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
+				.collect(Collectors.toList());
 	}
 
 	public Collection<FileUploaded> listaArquivosContasPagar(ContasPagar conta) {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")).collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pagar")
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
+				.collect(Collectors.toList());
 
 		/*
 		 * if (CommonsUtil.semValor(conta.getFileListId())) { return new
@@ -34880,7 +34886,9 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivosCci() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "cci")).collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "cci") 
+						&& !CommonsUtil.mesmoValor(f.getName(), "image"))
+				.collect(Collectors.toList());
 	}
 
 	public void listaTodasSubpastas() {
@@ -38609,7 +38617,6 @@ public class ContratoCobrancaMB {
 		
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-		
 	
 		
 		try {
