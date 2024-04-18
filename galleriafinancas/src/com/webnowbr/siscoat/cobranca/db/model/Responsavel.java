@@ -191,6 +191,10 @@ public class Responsavel implements Serializable {
 		}
 		return null;
 	}
+	
+	public void resetarWhatsappTakeblip() {
+		whatsAppNumero = null;
+	}
 
 	public void salvarDadosBancarios() {
 		dadosBancariosOriginal = new PagadorReceborDadosBancarios(this);

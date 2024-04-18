@@ -10730,18 +10730,17 @@ public class ContratoCobrancaMB {
 					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
 					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 17;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+			}else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
 					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
 					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 16;
 			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
 					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
 				this.indexStepsStatusContrato = 15;
-			}
-			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
+			} if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
 				this.indexStepsStatusContrato = 14;
 			}
-
+			
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) {
@@ -22107,7 +22106,7 @@ public class ContratoCobrancaMB {
 				 * cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 				 * cell1.setBackgroundColor(BaseColor.WHITE); cell1.setUseBorderPadding(true);
 				 * cell1.setPaddingTop(10f); cell1.setPaddingBottom(20f); table.addCell(cell1);
-				 * 
+				 *
 				 * cell1 = new PdfPCell(new Phrase("Ag.: " +
 				 * baixaStarkBank.getContasPagar().getAgenciaTed() + " | C/C: " +
 				 * baixaStarkBank.getContasPagar().getContaTed(), titulo)); cell1.setBorder(0);
@@ -34836,7 +34835,8 @@ public class ContratoCobrancaMB {
 	public List<FileUploaded> listaArquivosNotaFiscal() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf")).collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf"))
+				.collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosComite() {
@@ -38606,7 +38606,9 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
+		
+	
+		
 		try {
 			JasperPrint jp = relatoriosService.geraPDFPPlanilhaRestituicao(planilhaRestituicaoVO);
 

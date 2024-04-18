@@ -115,11 +115,11 @@
 										</ui:fragment>
 										<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 15 }">
 											<ui:fragment >
-												<h:panelGrid columns="2"
+												<h:panelGrid columns="1"
 													style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 													-moz-border-radius: 5px;
 													border-radius: 5px; padding: 10px;">
-													<h:panelGrid columns="1">
+													<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitida}">
 														<p:outputLabel styleClass="labelBold">Nota Fiscal Emitida</p:outputLabel>
 														<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
 															<p:selectBooleanButton id="notaFiscalEmitida"
@@ -128,34 +128,21 @@
 																offIcon="ui-icon-close" style="width:=60px" />
 														</shiro:hasAnyRoles>
 													</h:panelGrid>
-												</h:panelGrid>
-											</ui:fragment>
-											<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 15 }">
-												<h:panelGrid columns="2"
-													style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
-													-moz-border-radius: 5px;
-													border-radius: 5px; padding: 10px;">
-													<h:panelGrid columns="1">
+													
+													<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.notaFiscalAgendada}">
 														<p:outputLabel styleClass="labelBold">Nota Fiscal Agendada</p:outputLabel>
 														<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
 															<p:selectBooleanButton id="notaFiscalAgendada"
 																value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalAgendada}"
 																onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-																offIcon="ui-icon-close" style="width:=60px" />
+																offIcon="ui-icon-close" style="width:=60px " />
 														</shiro:hasAnyRoles>
 													</h:panelGrid>
-												</h:panelGrid>
-											</ui:fragment>
-											
-											<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 17}">
-												<h:panelGrid columns="2"
-													style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
-													-moz-border-radius: 5px;
-													border-radius: 5px; padding: 10px;">
-													<h:panelGrid columns="1">
+													
+													<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}">
 														<p:outputLabel styleClass="labelBold">Nota Fiscal Paga</p:outputLabel>
 														<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
-															<p:selectBooleanButton id="notaFiscalPaga"
+															<p:selectBooleanButton id="notaFiscalPaga" 
 																value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}"
 																onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 																offIcon="ui-icon-close" style="width:=60px" />
