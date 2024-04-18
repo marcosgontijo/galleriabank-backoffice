@@ -97,7 +97,7 @@
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField textAdjust="ScaleFont">
 				<reportElement x="3" y="2" width="152" height="18" uuid="bdc6938f-cfe7-4ce2-9470-efd8040ec45c"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>

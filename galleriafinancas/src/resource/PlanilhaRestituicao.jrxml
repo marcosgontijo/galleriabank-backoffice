@@ -153,8 +153,10 @@
 			<rectangle radius="0">
 				<reportElement stretchType="ContainerHeight" mode="Opaque" x="20" y="0" width="510" height="138" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="e72e58fc-3573-4b68-afc0-1d0ddc0f7fd1"/>
 			</rectangle>
-			<rectangle radius="20">
-				<reportElement mode="Opaque" x="60" y="10" width="430" height="110" forecolor="#739C2D" backcolor="#739C2D" uuid="39fa6b6f-0979-4a72-9ce1-1a961152a69f"/>
+			<rectangle radius="0">
+				<reportElement mode="Opaque" x="61" y="10" width="426" height="110" forecolor="#739C2D" backcolor="#739C2D" uuid="39fa6b6f-0979-4a72-9ce1-1a961152a69f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 			</rectangle>
 			<staticText>
 				<reportElement mode="Transparent" x="110" y="21" width="174" height="25" forecolor="#000000" backcolor="rgba(255, 255, 255, 0.0)" uuid="2e0f40ff-290d-45f9-9e27-6313d4def3d8">
@@ -233,7 +235,7 @@
 			<subreport>
 				<reportElement x="57" y="3" width="310" height="16" uuid="14380e96-8b4b-4220-9b62-e0b2927d255a"/>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("listContasPagar")]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE_DESPESA}]]></subreportExpression>
+				<subreportExpression><![CDATA["C:\\Galleria\\Branch\\siscoat_galleriafinancas\\galleriafinancas\\src\\resource\\PlanilhaRestituicao_Detalhe.jasper"]]></subreportExpression>
 			</subreport>
 			<rectangle>
 				<reportElement x="510" y="-12" width="20" height="29" uuid="bf37be67-153b-4614-9563-4d73a90fbab7"/>
