@@ -168,8 +168,7 @@
 						<p:inputText id="TelCelular"
 							value="#{responsavelMB.objetoResponsavel.telCelular}"
 							styleClass="phone" label="Telefone Celular" >
-							<p:ajax event="valueChange" update="WhatsApp" 
-								listener="#{responsavelMB.objetoResponsavel.resetarWhatsappTakeblip()}" />
+							<p:ajax event="valueChange" listener="#{responsavelMB.objetoResponsavel.resetarWhatsappTakeblip()}" />
 						</p:inputText>
 							
 						<p:outputLabel for="Cep" value="Cep: " />
