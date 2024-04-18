@@ -716,6 +716,7 @@ public class ContratoCobranca implements Serializable {
 	private String obsValidacaoDocumentos;
 	private int carenciaComite;
 	private boolean operacaoFundo;
+	private boolean operacaoCRI;
 	private BigDecimal valorTotalProcessos;
 	private BigDecimal valorTotalProcessosSelecionados;
 	private BigDecimal valorTotalAverbacao;
@@ -8038,4 +8039,12 @@ public class ContratoCobranca implements Serializable {
 	public void setValorPreLaudo2(BigDecimal valorPreLaudo2) {
 		this.valorPreLaudo2 = valorPreLaudo2;
 	}
+
+	public boolean isOperacaoCRI() {
+		return operacaoCRI;
+	}
+
+	public void setOperacaoCRI(boolean operacaoCRI) {
+		this.operacaoCRI = operacaoCRI;
+	}	
 }

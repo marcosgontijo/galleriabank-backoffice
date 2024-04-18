@@ -81,7 +81,9 @@
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' } 
 	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
 	   		         #{(contratos.imovel.objetoCidade.cidadesVetadas eq true) ? 'cidadesVetadas' : '' }
-	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}"
+	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}
+					 #{(contratoCobrancaMB.idadeMaiorQue69(contratos) eq true) ? 'linhaPreta' : ''}"	   		         
+	   		         
    		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"

@@ -2465,6 +2465,10 @@
 		<property name="contemSegredoJustica" type="boolean">
 			<column name="contemSegredoJustica" not-null="true" default="false"/>
 		</property>	
+		
+		<property name="operacaoCRI" type="boolean">
+			<column name="operacaoCRI" not-null="true" default="false"/>
+		</property>	
 	
 	</class>
 </hibernate-mapping>

@@ -1838,6 +1838,21 @@
 												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}"
 												styleClass="labelBold" />
 										</shiro:lacksRole>
+										
+										<p:outputLabel value="Operação CRI? "
+											styleClass="labelBold" />
+										<shiro:hasAnyRoles name="ROOT, COMITEEDITAR, PROFILE_CONTRATO">
+											<p:selectBooleanCheckbox
+												value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoCRI}" />
+										</shiro:hasAnyRoles>
+										<shiro:lacksRole name="ROOT">
+											<p:outputLabel value="Sim"
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.operacaoCRI}"
+												styleClass="labelBold" />
+											<p:outputLabel value="Não"
+												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.operacaoCRI}"
+												styleClass="labelBold" />
+										</shiro:lacksRole>
 			
 									</h:panelGrid>
 									<h:panelGroup>
@@ -2519,6 +2534,13 @@
 												icon="ui-icon ui-icon-plus" ajax="true"
 												oncomplete="PF('pessoaDialog').show();"
 												update="pessoaDialogdlg" />
+												
+											<p:outputLabel value="Atualizar Valores: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:commandButton
+												action="#{contratoCobrancaMB.atualizarValorProcessoEmLote()}"
+												icon="ui-icon ui-icon-arrowrefresh-1-e" ajax="true"
+												update="form:pessoasProcessos" />
 										</h:panelGrid>
 									</h:panelGrid>
 			
