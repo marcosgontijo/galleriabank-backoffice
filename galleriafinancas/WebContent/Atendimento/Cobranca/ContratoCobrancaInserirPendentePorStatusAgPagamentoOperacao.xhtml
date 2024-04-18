@@ -483,7 +483,8 @@
 									update="ContasPagarPanel" />
 							</shiro:hasAnyRoles>
 						</f:facet>
-						
+						<p:commandButton value="Planilha Restituição" ajax="false" icon="ui-icon-document" 
+													action="#{contratoCobrancaMB.gerarPlanilhaRestituicao}" />
 						<h:panelGrid columns="2">
 							<p:outputLabel for="ContaPagarValorTotalDespesa"
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
