@@ -279,7 +279,7 @@ public class ContratoCobrancaMB {
 	/** Variavel. */
 	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
-	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService() ;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
@@ -292,7 +292,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorMercadoImovelQuarenta;
 	private BigDecimal valorMercadoImovelCinquenta;
 	private BigDecimal valorTotalContrato;
-	private boolean apagaListaCartorio;
+	 private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -383,7 +383,7 @@ public class ContratoCobrancaMB {
 
 	/** Nome do Pagador selecionado pela LoV. */
 	private String nomeGrupoFavorecido;
-
+	
 	private BigDecimal txAdm;
 
 	/** Id Objeto selecionado na LoV - Pagador. */

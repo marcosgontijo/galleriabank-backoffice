@@ -172,4 +172,5 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 			}
 		});
 	}
+	
 }
