@@ -1248,7 +1248,7 @@
 									value="Observação das Exigências: " styleClass="labelBold" />
 								<p:inputTextarea id="exigenciasCartorioObservacao" rows="10"
 									cols="48" maxlength="3000" onblur=""
-									counterTemplate="{0} characters remaining." autoResize="false"
+									counterTemplate="{0} caracteres disponíveis." autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioObservacao}" />
 
 								<p:outputLabel for="notificacaoCartorioData"
@@ -1265,7 +1265,7 @@
 								value="Descrição da pendência: " styleClass="labelBold" />
 							<p:inputTextarea id="pendenciaCartorioObservacao" rows="10"
 								cols="48" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis." autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaCartorioObservacao}" />
 						</h:panelGrid>
 					</p:panel>
@@ -1349,7 +1349,7 @@
 									value="Observação Validação Docs: " styleClass="labelBold" />
 								<h:inputTextarea id="obsValidacaoDocumentos" rows="10" cols="48"
 									maxlength="3000" onblur=""
-									counterTemplate="{0} characters remaining." autoResize="false"
+									counterTemplate="{0} caracteres disponíveis." autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.obsValidacaoDocumentos}">
 									<p:ajax process="@this" partialSubmit="true" />
 								</h:inputTextarea>
@@ -1368,7 +1368,7 @@
 							<h:inputTextarea id="comentarioPendencia"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
 								rows="10" cols="50" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis." autoResize="false"
 								style="FONT-SIZE: 10pt; width: 300px;">
 								<p:ajax process="@this" partialSubmit="true" />
 							</h:inputTextarea>
@@ -1480,7 +1480,7 @@
 								value="Comentários comitê: " styleClass="labelBold" />
 							<p:outputLabel id="comentarioComiteView" rows="10" cols="48"
 								maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis." autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}" />
 
 							<p:outputLabel value="---------------------------------------"
@@ -1493,7 +1493,7 @@
 							<p:outputLabel id="processosQuitarComite" rows="10" cols="48"
 								maxlength="3000" onblur=""
 								style="width: 312px; FONT-SIZE: 10pt; white-space: pre-wrap;"
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis" autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
 						</h:panelGrid>
 					</p:panel>
@@ -1569,7 +1569,7 @@
 							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: "
 								styleClass="labelBold" />
 							<p:inputTextarea id="motivo" rows="10" cols="48" maxlength="3000"
-								onblur="" counterTemplate="{0} characters remaining."
+								onblur="" counterTemplate="{0} ters remaining."
 								autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" />
 							<p:outputLabel id="quemReprovou" value="Quem analisou?"
@@ -1605,7 +1605,7 @@
 								value="Motivo Pendência Analise: " styleClass="labelBold" />
 							<p:inputTextarea id="motivoPendente" rows="10" cols="48"
 								maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveisters remaining." autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoPendenteAnalise}" />
 							<p:outputLabel id="quemPendenciou" value="Quem analisou?"
 								style="cursor:pointer" styleClass="labelBold" />
@@ -1778,14 +1778,14 @@
 								value="Observação Avaliação: " styleClass="labelBold" />
 							<p:inputTextarea id="avaliacaoLaudoObservacao" rows="5" cols="84"
 								maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis" autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />
 
 							<p:outputLabel for="comentarioContatoAgendaLaudoAvaliacao"
 								value="Comentário da Avaliação: " styleClass="labelBold" />
 							<p:inputTextarea id="comentarioContatoAgendaLaudoAvaliacao"
 								rows="5" cols="84" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis" autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioContatoAgendaLaudoAvaliacao}"
 								readonly="true" />
 
@@ -1793,7 +1793,7 @@
 								styleClass="labelBold" />
 							<p:inputTextarea id="geracaoLaudo" rows="5" cols="84"
 								maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis" autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.geracaoLaudoObservacao}" />
 
 						</h:panelGrid>
@@ -1923,7 +1923,7 @@
 								and contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno ne null}">
 								<p:inputTextarea id="processosPajuInterno" rows="10" cols="48"
 									counter="display" maxlength="3000" onblur=""
-									counterTemplate="{0} characters remaining." autoResize="false"
+									counterTemplate="{0} caracteres disponíveis" autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno}">
 									<p:ajax process="@this" partialSubmit="true" />
 								</p:inputTextarea>
@@ -1935,7 +1935,7 @@
 							<h:panelGroup>
 								<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
 									counter="display2" maxlength="3000" onblur=""
-									counterTemplate="{0} characters remaining." autoResize="false"
+									counterTemplate="{0} caracteres disponíveis" autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}">
 									<p:ajax process="@this" partialSubmit="true" />
 								</p:inputTextarea>
@@ -1973,7 +1973,7 @@
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel
-										value="#{pessoasProcessos.nome} - #{pessoasProcessos.cpfCnpj}"
+										value="#{pessoasProcessos.nome} - #{pessoasProcessos.cpfCnpj} - #{contratoCobrancaMB.getMotivoAnalise(pessoasProcessos.cpfCnpj)}"
 										style="FONT-SIZE: 15pt;" styleClass="ui-panel-title labelBold" />
 									<p:outputLabel value="R$ " style="FONT-SIZE: 15pt;"
 										styleClass="labelBold" />
@@ -3734,7 +3734,7 @@
 							<h:inputTextarea id="observacaoPagamento"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoPagamento}"
 								rows="10" cols="48" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis." autoResize="false"
 								style="FONT-SIZE: 10pt;width:400px;">
 								<p:ajax process="@this" partialSubmit="true" />
 							</h:inputTextarea>
@@ -6351,7 +6351,7 @@
 								styleClass="labelBold" />
 							<p:inputTextarea id="motivoReprova" rows="10" cols="48"
 								maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								counterTemplate="{0} caracteres disponíveis." autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" />
 						</h:panelGrid>
 					</h:panelGrid>
@@ -6742,7 +6742,7 @@
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<h:inputTextarea rows="5" cols="25" maxlength="3000" onblur=""
-							counterTemplate="{0} characters remaining." autoResize="false"
+							counterTemplate="{0} caracteres disponíveis." autoResize="false"
 							value="#{contratoCobrancaMB.processoSelecionado.observacao}">
 							<p:ajax process="@this" partialSubmit="true" />
 						</h:inputTextarea>
