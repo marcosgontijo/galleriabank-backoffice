@@ -20935,7 +20935,7 @@ public class ContratoCobrancaMB {
 
 				// documento do recebedor
 				if (CommonsUtil.mesmoValor(entry.getKey(), "taxId"))
-					documentoRecebedorOrdemPagamentoStark = CommonsUtil.stringValue(entry.getValue());
+					documentoRecebedorOrdemPagamentoStark = CommonsUtil.valorStringSomenteNumLetras(entry.getValue());
 
 				// nome do recebedor
 				if (CommonsUtil.mesmoValor(entry.getKey(), "name"))
@@ -20943,7 +20943,7 @@ public class ContratoCobrancaMB {
 
 				// documento do pagador
 				if (CommonsUtil.mesmoValor(entry.getKey(), "payerTaxId")) {
-					String documentoPagador = CommonsUtil.stringValue(entry.getValue());
+					String documentoPagador = CommonsUtil.valorStringSomenteNumLetras(entry.getValue());
 				}
 
 				// nome do pagador
@@ -20992,7 +20992,7 @@ public class ContratoCobrancaMB {
 
 		// nome do recebedor
 		if (!CommonsUtil.semValor(previsao.taxId))
-			documentoRecebedorOrdemPagamentoStark = previsao.taxId;
+			documentoRecebedorOrdemPagamentoStark = CommonsUtil.valorStringSomenteNumLetras(previsao.taxId);
 
 		if (!CommonsUtil.semValor(previsao.accountType)) {
 			if (CommonsUtil.mesmoValor(previsao.accountType, "saving")) {

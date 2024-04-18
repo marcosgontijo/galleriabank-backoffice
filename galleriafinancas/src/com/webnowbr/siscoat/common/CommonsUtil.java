@@ -2034,4 +2034,13 @@ public class CommonsUtil {
 	        return null;
 	    }
 	}
+	
+	public static String valorStringSomenteNumLetras(String s) {
+		return CommonsUtil.removeEspacos(CommonsUtil.somenteLetrasNumeros(s));
+	}
+	
+	public static String valorStringSomenteNumLetras(Object o) {
+		return CommonsUtil.valorStringSomenteNumLetras(CommonsUtil.stringValue(o));
+	}
+	
 }
