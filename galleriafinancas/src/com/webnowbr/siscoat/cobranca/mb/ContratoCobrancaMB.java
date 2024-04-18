@@ -10729,11 +10729,11 @@ public class ContratoCobrancaMB {
 			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
 				this.indexStepsStatusContrato = 14;
 			}
+
 			
 			if (this.objetoContratoCobranca.isNotaSolicitada() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
 				this.indexStepsStatusContrato = 15;
 			}
-			
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) {
@@ -38578,11 +38578,39 @@ public class ContratoCobrancaMB {
 		planilhaRestituicaoVO.setSomaValorPago(objetoContratoCobranca.getSomaValorPago());
 		planilhaRestituicaoVO.setContaPagarValorTotal(valoSobraDepsesasCalculado);
 
-		planilhaRestituicaoVO.setListContasPagar(objetoContratoCobranca.getListContasPagar().stream()
-				.filter(c -> !c.getDescricao().contains("Carta Split"))
-				.map(c -> new PlanilhaRestituicaoDetalhesVO(c.getDescricao(), c.getValor(), c.isContaPaga(),
-						c.getDataPagamento(), c.getDataVencimento(), c.getValorPagamento(), c.getNumeroDocumento()))
-				.collect(Collectors.toSet()));
+		Set<PlanilhaRestituicaoDetalhesVO> listContasPagar = new HashSet<PlanilhaRestituicaoDetalhesVO>();
+		for (ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
+			if (conta.isEditada())
+				continue;
+
+			BigDecimal somaValorPago = null;
+
+			if (conta.getListContasPagarBaixas().size() > 0) {
+				// sub despesas pagto stark bank + pagamentos por fora do starkbank
+				for (StarkBankBaixa baixas : conta.getListContasPagarBaixas()) {
+					if (CommonsUtil.semValor(baixas) || CommonsUtil.semValor(baixas.getValor()))
+						continue;
+
+					if (!conta.getDescricao().contains("Pagamento Carta Split")
+							&& baixas.getStatusPagamento().equals("Aprovado")) {
+						somaValorPago = baixas.getValor();
+					}
+				}
+			} else {
+				// despesas legadas
+				if (CommonsUtil.semValor(conta.getValorPagamento()))
+					continue;
+
+				somaValorPago = conta.getValorPagamento();
+			}
+
+			if (somaValorPago != null)
+				listContasPagar.add(new PlanilhaRestituicaoDetalhesVO(conta.getDescricao(), conta.getValor(),
+						conta.isContaPaga(), conta.getDataPagamento(), conta.getDataVencimento(), somaValorPago,
+						conta.getNumeroDocumento()));
+		}
+
+		planilhaRestituicaoVO.setListContasPagar(listContasPagar);
 
 		BigDecimal totalValorPago = planilhaRestituicaoVO.getListContasPagar().stream()
 				.filter(v -> !CommonsUtil.semValor(v.getValorPagamento()))
