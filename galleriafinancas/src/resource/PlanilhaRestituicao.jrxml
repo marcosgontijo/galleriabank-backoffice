@@ -44,14 +44,14 @@
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<rectangle radius="20">
+				<reportElement stretchType="ContainerHeight" mode="Opaque" x="20" y="100" width="510" height="690" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="c6349af4-7cab-482b-b2a4-c1b51ecd1990"/>
+			</rectangle>
 		</band>
 	</background>
 	<pageHeader>
 		<band height="195" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<rectangle radius="14">
-				<reportElement mode="Opaque" x="20" y="91" width="510" height="64" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="4f208cde-5175-45b4-8ed9-4ca81ba317a6"/>
-			</rectangle>
 			<staticText>
 				<reportElement x="54" y="115" width="440" height="30" uuid="1c19bfbe-633f-47c0-bf3d-9cda01e809f9"/>
 				<textElement textAlignment="Center">
@@ -70,9 +70,6 @@
 	</pageHeader>
 	<detail>
 		<band height="98" splitType="Stretch">
-			<rectangle radius="0">
-				<reportElement mode="Opaque" x="20" y="-40" width="510" height="138" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="da898cb5-f446-4947-880d-0c8988c6599d"/>
-			</rectangle>
 			<textField pattern="#,##0.00">
 				<reportElement mode="Transparent" x="180" y="17" width="110" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="65b037b8-93c9-4964-8b19-1854290f6880">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -136,23 +133,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroCcb}]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement x="20" y="-57" width="20" height="29" uuid="b5c4d922-ffad-499d-a9b7-d5cd7dbba9fd"/>
-				<graphicElement>
-					<pen lineColor="#FFFFFF"/>
-				</graphicElement>
-			</rectangle>
-			<rectangle>
-				<reportElement x="510" y="-59" width="20" height="29" uuid="d54c85c2-0ebf-4371-be9e-1f429b962074"/>
-				<graphicElement>
-					<pen lineColor="#FFFFFF"/>
-				</graphicElement>
-			</rectangle>
 		</band>
 		<band height="138">
-			<rectangle radius="0">
-				<reportElement stretchType="ContainerHeight" mode="Opaque" x="20" y="0" width="510" height="138" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="e72e58fc-3573-4b68-afc0-1d0ddc0f7fd1"/>
-			</rectangle>
 			<rectangle radius="0">
 				<reportElement mode="Opaque" x="61" y="10" width="426" height="110" forecolor="#739C2D" backcolor="#739C2D" uuid="39fa6b6f-0979-4a72-9ce1-1a961152a69f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -229,26 +211,11 @@
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</band>
 		<band height="19">
-			<rectangle radius="20">
-				<reportElement stretchType="ContainerHeight" mode="Opaque" x="20" y="0" width="510" height="19" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="602ec914-3478-4794-a266-e88884e7fb7c"/>
-			</rectangle>
 			<subreport>
 				<reportElement x="57" y="3" width="310" height="16" uuid="14380e96-8b4b-4220-9b62-e0b2927d255a"/>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("listContasPagar")]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE_DESPESA}]]></subreportExpression>
+				<subreportExpression><![CDATA["C:\\Galleria\\Branch\\siscoat_galleriafinancas\\galleriafinancas\\src\\resource\\PlanilhaRestituicao_Detalhe.jasper"]]></subreportExpression>
 			</subreport>
-			<rectangle>
-				<reportElement x="510" y="-12" width="20" height="29" uuid="bf37be67-153b-4614-9563-4d73a90fbab7"/>
-				<graphicElement>
-					<pen lineColor="#FFFFFF"/>
-				</graphicElement>
-			</rectangle>
-			<rectangle>
-				<reportElement x="20" y="-10" width="20" height="29" uuid="916bc03f-5ef1-45c4-a17b-214b55aef58c"/>
-				<graphicElement>
-					<pen lineColor="#FFFFFF"/>
-				</graphicElement>
-			</rectangle>
 		</band>
 		<band splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
