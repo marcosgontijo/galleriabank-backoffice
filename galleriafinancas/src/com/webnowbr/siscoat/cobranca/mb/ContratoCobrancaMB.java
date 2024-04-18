@@ -279,7 +279,7 @@ public class ContratoCobrancaMB {
 	/** Variavel. */
 	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
-	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService() ;
+	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
@@ -292,7 +292,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorMercadoImovelQuarenta;
 	private BigDecimal valorMercadoImovelCinquenta;
 	private BigDecimal valorTotalContrato;
-	 private boolean apagaListaCartorio;
+	private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -383,7 +383,7 @@ public class ContratoCobrancaMB {
 
 	/** Nome do Pagador selecionado pela LoV. */
 	private String nomeGrupoFavorecido;
-	
+
 	private BigDecimal txAdm;
 
 	/** Id Objeto selecionado na LoV - Pagador. */
@@ -10730,17 +10730,18 @@ public class ContratoCobrancaMB {
 					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
 					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 17;
-			}else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
 					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
 					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 16;
 			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
 					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
 				this.indexStepsStatusContrato = 15;
-			} if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
+			}
+			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
 				this.indexStepsStatusContrato = 14;
 			}
-			
+
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) {
@@ -34835,8 +34836,7 @@ public class ContratoCobrancaMB {
 	public List<FileUploaded> listaArquivosNotaFiscal() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
-				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf"))
-				.collect(Collectors.toList());
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf")).collect(Collectors.toList());
 	}
 
 	public List<FileUploaded> listaArquivosComite() {
@@ -38568,7 +38568,6 @@ public class ContratoCobrancaMB {
 		this.disableBotao = disableBotao;
 	}
 
-
 	public void gerarPlanilhaRestituicao() {
 		PlanilhaRestituicaoVO planilhaRestituicaoVO = new PlanilhaRestituicaoVO();
 		planilhaRestituicaoVO.setNome(objetoContratoCobranca.getPagador().getNome());
@@ -38584,11 +38583,39 @@ public class ContratoCobrancaMB {
 		planilhaRestituicaoVO.setSomaValorPago(objetoContratoCobranca.getSomaValorPago());
 		planilhaRestituicaoVO.setContaPagarValorTotal(valoSobraDepsesasCalculado);
 
-		planilhaRestituicaoVO.setListContasPagar(objetoContratoCobranca.getListContasPagar().stream()
-				.filter(c -> !c.getDescricao().contains("Carta Split"))
-				.map(c -> new PlanilhaRestituicaoDetalhesVO(c.getDescricao(), c.getValor(), c.isContaPaga(),
-						c.getDataPagamento(), c.getDataVencimento(), c.getValorPagamento(), c.getNumeroDocumento()))
-				.collect(Collectors.toSet()));
+		Set<PlanilhaRestituicaoDetalhesVO> listContasPagar = new HashSet<PlanilhaRestituicaoDetalhesVO>();
+		for (ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
+			if (conta.isEditada())
+				continue;
+
+			BigDecimal somaValorPago = null;
+
+			if (conta.getListContasPagarBaixas().size() > 0) {
+				// sub despesas pagto stark bank + pagamentos por fora do starkbank
+				for (StarkBankBaixa baixas : conta.getListContasPagarBaixas()) {
+					if (CommonsUtil.semValor(baixas) || CommonsUtil.semValor(baixas.getValor()))
+						continue;
+
+					if (!conta.getDescricao().contains("Pagamento Carta Split")
+							&& baixas.getStatusPagamento().equals("Aprovado")) {
+						somaValorPago = baixas.getValor();
+					}
+				}
+			} else {
+				// despesas legadas
+				if (CommonsUtil.semValor(conta.getValorPagamento()))
+					continue;
+
+				somaValorPago = conta.getValorPagamento();
+			}
+
+			if (somaValorPago != null)
+				listContasPagar.add(new PlanilhaRestituicaoDetalhesVO(conta.getDescricao(), conta.getValor(),
+						conta.isContaPaga(), conta.getDataPagamento(), conta.getDataVencimento(), somaValorPago,
+						conta.getNumeroDocumento()));
+		}
+
+		planilhaRestituicaoVO.setListContasPagar(listContasPagar);
 
 		BigDecimal totalValorPago = planilhaRestituicaoVO.getListContasPagar().stream()
 				.filter(v -> !CommonsUtil.semValor(v.getValorPagamento()))
@@ -38606,9 +38633,7 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-		
-	
-		
+
 		try {
 			JasperPrint jp = relatoriosService.geraPDFPPlanilhaRestituicao(planilhaRestituicaoVO);
 
