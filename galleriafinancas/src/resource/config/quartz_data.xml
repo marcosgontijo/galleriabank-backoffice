@@ -73,5 +73,34 @@
 		</trigger>
 	</schedule>
 	
+		  <schedule>
+		<job>
+			<name>ContratosBaixarJobUnico</name>
+			<job-class>com.webnowbr.siscoat.job.ContratosBaixarJob</job-class>
+		</job>
+		<trigger>
+			<simple>
+				<name>ContratosBaixarJobUnicoTrigger</name>
+				<job-name>ContratosBaixarJobUnico</job-name>
+				<repeat-count>1</repeat-count>
+				<repeat-interval>300000</repeat-interval>
+			</simple>
+		</trigger>
+	</schedule>  
+
+	<schedule>
+		<job>
+			<name>ContratosBaixarAutomaticoJob</name>
+			<job-class>com.webnowbr.siscoat.job.ContratosBaixaroAutomaticoJob</job-class>
+		</job>
+		<trigger>
+			<cron>
+				<name>ContratosBaixaroAutomaticoJobTrigger</name>
+				<job-name>ContratosBaixaroAutomaticoJob</job-name>
+				<cron-expression>0 0 2 * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</schedule>
+	<schedule>
 
 </job-scheduling-data>

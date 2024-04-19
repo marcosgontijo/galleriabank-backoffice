@@ -9567,68 +9567,46 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS = "select "
-			+ "	c.id, "
-			+ "	ContratoResgatadoBaixar, "
-			+ "	ContratoResgatadoData, "
-			+ "	statuslead , "
-			+ "	status "
-			+ "from "
-			+ "	cobranca.contratocobranca c "
-			+ "where "
-			+ "	((status != 'Aprovado' "
-			+ "		and status != 'Baixado' "
-			+ "		and status != 'Desistência Cliente' "
-			+ "		and analiseReprovada = false "
-			+ "		and c.statusLead = 'Completo' "
-			+ "		and agAssinatura = true "
-			+ "		and ( DATE_PART( 'day', ? ::timestamp - c.ContratoResgatadoData ) > 30 "
-			+ "			or ContratoResgatadoData is null)) "
-			+ "	or ( (c.statusLead = 'Em Tratamento' or c.statusLead = 'Ag. Contato' or c.statusLead = 'Ag. Doc.') "
-			+ "		and status != 'Aprovado' "
-			+ "		and status != 'Reprovado' "
-			+ "		and status != 'Baixado' "
-			+ "		and status != 'Desistência Cliente')) "
-			+ "	and (DATE_PART('day', ? ::timestamp - c.dataultimaatualizacao) > 30 "
-			+ "		or dataultimaatualizacao is null)";
+	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS = "SELECT " +
+            "c.id, " +
+            "ContratoResgatadoBaixar, " +
+            "ContratoResgatadoData, " +
+            "dataultimaatualizacao, " +
+            "statuslead, " +
+            "status " +
+        "FROM " +
+            "cobranca.contratocobranca c " +
+        "WHERE " +
+            "( " +
+                "( " +
+                    "status NOT IN ('Aprovado', 'Baixado', 'Desistência Cliente') " +
+                    "AND analiseReprovada = false " +
+                    "AND c.statusLead = 'Completo' " +
+                    "AND agAssinatura = true " +
+                ") " +
+                "OR ( " +
+                    "c.statusLead IN ('Em Tratamento', 'Ag. Contato', 'Ag. Doc.') " +
+                    "AND status NOT IN ('Aprovado', 'Reprovado', 'Baixado', 'Desistência Cliente') " +
+                ") " +
+            ");";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> ConsultaContratosASeremBaixados(final Date dataInicio) {
+	public List<ContratoCobranca> ConsultaContratosASeremBaixados() {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
 				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
-	
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				TimeZone zone = TimeZone.getDefault();
-				Locale locale = new Locale("pt", "BR");
-				Calendar dataHoje = Calendar.getInstance(zone, locale);
-				Date auxDataHoje = dataHoje.getTime();
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS);
-					
-					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
-					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelInicioSQL);
-					
 					rs = ps.executeQuery();
 					while (rs.next()) {
-						ContratoCobranca contratoCobranca = new ContratoCobranca();
-						Date data = rs.getDate("ContratoResgatadoData");
-						boolean baixar = true;
-						if (rs.getBoolean("ContratoResgatadoBaixar")) {
-							if (DateUtil.getDifferenceDays(data, auxDataHoje) <= 15) {
-								baixar = false;
-							}
-						}
-						
-						if(baixar) {
-							contratoCobranca.setId(rs.getLong("id"));
-							objects.add(contratoCobranca);	
-						}										
+						ContratoCobranca contratoCobranca = cDao.findById(rs.getLong("id"));
+						objects.add(contratoCobranca);	
 					}
 	
 				} finally {
