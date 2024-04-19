@@ -934,6 +934,10 @@ public class ContratoCobranca implements Serializable {
 	private String inicioComentarioJuridicoUsuario;
 	private Date inicioComentarioJuridicoData;
 	private boolean iniciouComentarioJuridico;
+	
+	private Date dataProvavelBaixa;
+	private boolean acrescimoProvavelBaixaDataUsado;
+	private boolean esteiraLiberadaParaBaixar;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -1623,7 +1627,7 @@ public class ContratoCobranca implements Serializable {
 		if (scoreBaixo700Taxa)
 			potuacao -= 100;
 		if (inicioRelacionamentoInexistenteTaxa)
-			potuacao -= 300;
+			potuacao -= 200;
 		if (riscoTotal20kTaxa)
 			potuacao -= 200;
 		if (riscoTotal50kTaxa)
@@ -8075,4 +8079,28 @@ public class ContratoCobranca implements Serializable {
 	public void setIniciouComentarioJuridico(boolean iniciouComentarioJuridico) {
 		this.iniciouComentarioJuridico = iniciouComentarioJuridico;
 	}	
+
+	public Date getDataProvavelBaixa() {
+		return dataProvavelBaixa;
+	}
+
+	public void setDataProvavelBaixa(Date dataProvavelBaixa) {
+		this.dataProvavelBaixa = dataProvavelBaixa;
+	}
+
+	public boolean isAcrescimoProvavelBaixaDataUsado() {
+		return acrescimoProvavelBaixaDataUsado;
+	}
+
+	public void setAcrescimoProvavelBaixaDataUsado(boolean acrescimoProvavelBaixaDataUsado) {
+		this.acrescimoProvavelBaixaDataUsado = acrescimoProvavelBaixaDataUsado;
+	}
+
+	public boolean isEsteiraLiberadaParaBaixar() {
+		return esteiraLiberadaParaBaixar;
+	}
+
+	public void setEsteiraLiberadaParaBaixar(boolean esteiraLiberadaParaBaixar) {
+		this.esteiraLiberadaParaBaixar = esteiraLiberadaParaBaixar;
+	}
 }

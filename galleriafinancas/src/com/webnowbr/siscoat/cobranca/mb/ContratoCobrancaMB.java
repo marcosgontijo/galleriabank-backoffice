@@ -5623,6 +5623,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getInicioAnaliseData());
 				this.objetoContratoCobranca.setInicioAnaliseUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setDataProvavelBaixa(DateUtil.adicionarDias(this.objetoContratoCobranca.getInicioAnaliseData(), 30));
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
@@ -5637,6 +5639,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAnaliseReprovadaData());
 				this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5653,12 +5656,15 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca
 							.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
 					this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
-				}
+					this.objetoContratoCobranca.setDataProvavelBaixa(DateUtil.adicionarDias(DateUtil.gerarDataHoje(), 10));
+					this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);				}
 
 				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente")
 						&& this.objetoContratoCobranca.getAnalisePendenciadaData() == null) {
 					this.objetoContratoCobranca.setAnalisePendenciadaData(DateUtil.gerarDataHoje());
 					this.objetoContratoCobranca.setAnalisePendenciadaUsuario(getNomeUsuarioLogado());
+					this.objetoContratoCobranca.setDataProvavelBaixa(DateUtil.adicionarDias(DateUtil.gerarDataHoje(), 10));
+					this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 				}
 			} else {
 				if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
@@ -5698,6 +5704,7 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca
 							.setDataUltimaAtualizacao(this.objetoContratoCobranca.getMatriculaAprovadaData());
 					this.objetoContratoCobranca.setMatriculaAprovadaUsuario(getNomeUsuarioLogado());
+                    this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 				}
 			}
 		}
@@ -5713,6 +5720,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoPreLaudoComercialData());
 				this.objetoContratoCobranca.setPedidoPreLaudoComercialUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5727,6 +5735,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoPreLaudoData());
 				this.objetoContratoCobranca.setPedidoPreLaudoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5741,6 +5750,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoLaudoPajuComercialData());
 				this.objetoContratoCobranca.setPedidoLaudoPajuComercialUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5754,6 +5764,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setPedidoLaudoData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoLaudoData());
 				this.objetoContratoCobranca.setPedidoLaudoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5768,6 +5779,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPagtoLaudoConfirmadaData());
 				this.objetoContratoCobranca.setPagtoLaudoConfirmadaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5782,6 +5794,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getLaudoRecebidoData());
 				this.objetoContratoCobranca.setLaudoRecebidoUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5796,6 +5809,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPajurFavoravelData());
 				this.objetoContratoCobranca.setPajurFavoravelUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
+                this.objetoContratoCobranca.setDataProvavelBaixa(DateUtil.adicionarDias(DateUtil.getDataHoje(), 30));
 			}
 		}
 
@@ -5810,6 +5825,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPendenciaLaudoPajuData());
 				this.objetoContratoCobranca.setPendenciaLaudoPajuUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
+                this.objetoContratoCobranca.setDataProvavelBaixa(DateUtil.adicionarDias(DateUtil.getDataHoje(), 10));
 			}
 		}
 
@@ -5824,6 +5841,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAnaliseComercialData());
 				this.objetoContratoCobranca.setAnaliseComercialUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
+                this.objetoContratoCobranca.setDataProvavelBaixa(DateUtil.adicionarDias(DateUtil.getDataHoje(), 30));
 			}
 		}
 
@@ -5837,6 +5856,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getComentarioJuridicoEsteiraData());
 				this.objetoContratoCobranca.setComentarioJuridicoEsteiraUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
@@ -5850,6 +5870,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getComentarioJuridicoInternoData());
 				this.objetoContratoCobranca.setComentarioJuridicoInternoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
@@ -5863,6 +5884,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPreAprovadoComiteData());
 				this.objetoContratoCobranca.setPreAprovadoComiteUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
@@ -5877,13 +5899,13 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getDocumentosComiteData());
 				this.objetoContratoCobranca.setDocumentosComiteUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
 		if (!this.objetoContratoCobranca.isAprovadoComite()) {
 			this.objetoContratoCobranca.setAprovadoComiteData(null);
 			this.objetoContratoCobranca.setAprovadoComiteUsuario(null);
-
 		} else {
 			if (this.objetoContratoCobranca.getAprovadoComiteData() == null) {
 				this.objetoContratoCobranca.setStatus("Pendente");
@@ -5892,6 +5914,8 @@ public class ContratoCobrancaMB {
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAprovadoComiteData());
 				concluirComite(this.objetoContratoCobranca);
 				this.objetoContratoCobranca.setAprovadoComiteUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setDataProvavelBaixa(DateUtil.adicionarDias(DateUtil.getDataHoje(), 30));
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
@@ -5904,6 +5928,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setOkClienteData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getOkClienteData());
 				this.objetoContratoCobranca.setOkClienteUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setDataProvavelBaixa(this.objetoContratoCobranca.getAprovadoComiteData());
+				this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
@@ -5918,6 +5944,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getDocumentosCompletosData());
 				this.objetoContratoCobranca.setDocumentosCompletosUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setDataProvavelBaixa(this.objetoContratoCobranca.getAprovadoComiteData());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
 			}
 		}
 
@@ -5932,6 +5960,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getReanaliseProntaData());
 				this.objetoContratoCobranca.setReanaliseProntaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5947,6 +5976,7 @@ public class ContratoCobrancaMB {
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPajuAtualizadoData());
 				this.objetoContratoCobranca.setPajuAtualizadoUsuario(getNomeUsuarioLogado());
 				this.objetoContratoCobranca.setDataPajuComentado(this.objetoContratoCobranca.getPajuAtualizadoData());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5962,6 +5992,7 @@ public class ContratoCobrancaMB {
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getReanaliseJuridicoData());
 				this.objetoContratoCobranca.setReanaliseJuridicoUsuario(getNomeUsuarioLogado());
 				this.objetoContratoCobranca.setReanalise(false);
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -5976,6 +6007,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCertificadoEmitidoData());
 				this.objetoContratoCobranca.setCertificadoEmitidoUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
+                this.objetoContratoCobranca.setDataProvavelBaixa(this.objetoContratoCobranca.getAprovadoComiteData());
 			}
 		}
 
@@ -5989,6 +6022,9 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setCcbProntaData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCcbProntaData());
 				this.objetoContratoCobranca.setCcbProntaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
+                this.objetoContratoCobranca.setDataProvavelBaixa(this.objetoContratoCobranca.getAprovadoComiteData());
 
 				try {
 					CcbDao ccbDao = new CcbDao();
@@ -6020,6 +6056,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getContratoConferidoData());
 				this.objetoContratoCobranca.setContratoConferidoUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(true);
+                this.objetoContratoCobranca.setDataProvavelBaixa(this.objetoContratoCobranca.getAprovadoComiteData());
 			}
 		}
 
@@ -6032,6 +6070,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAgAssinaturaData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAgAssinaturaData());
 				this.objetoContratoCobranca.setAgAssinaturaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -6047,6 +6086,7 @@ public class ContratoCobrancaMB {
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAgEnvioCartorioData());
 				this.objetoContratoCobranca
 						.setNotificacaoCartorioData(DateUtil.adicionarDias(DateUtil.gerarDataHoje(), 5));
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -6074,6 +6114,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setResolucaoExigenciaCartorioUsuario(getNomeUsuarioLogado());
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getResolucaoExigenciaCartorioData());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -6088,6 +6129,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAgRegistroUsuario(getNomeUsuarioLogado());
 
 				this.objetoContratoCobranca.setStatusContrato("Aprovado");
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -6099,6 +6141,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setOperacaoPagaData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getOperacaoPagaData());
 				this.objetoContratoCobranca.setOperacaoPagaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -6111,6 +6154,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getNotaFiscalEmitidaData());
 				this.objetoContratoCobranca.setNotaFiscalEmitidaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -6123,6 +6167,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getNotaFiscalPagaData());
 				this.objetoContratoCobranca.setNotaFiscalPagaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -6134,6 +6179,7 @@ public class ContratoCobrancaMB {
 			if (this.objetoContratoCobranca.getSolicitarNotaData() == null) {
 				this.objetoContratoCobranca.setSolicitarNotaData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setSolicitarNotaUsuario(getNomeUsuarioLogado());
+                this.objetoContratoCobranca.setEsteiraLiberadaParaBaixar(false);
 			}
 		}
 
@@ -8470,6 +8516,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void baixarPreContrato() {
+		System.out.println("baixarPreContrato()");
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setStatus("Baixado");
 		this.objetoContratoCobranca.setStatusContrato("Baixado");
@@ -8504,6 +8551,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void baixarPreContratoSemMensagem() {
+		System.out.println("baixarPreContratoSemMensagem()");
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setStatus("Baixado");
 		this.objetoContratoCobranca.setStatusContrato("Baixado");
@@ -8516,6 +8564,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void baixarPreContratoAutomatico() {
+		System.out.println("baixarPreContratoAutomatico()");
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
@@ -8524,7 +8573,7 @@ public class ContratoCobrancaMB {
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
 
-		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosASeremBaixados(auxDataHoje);
+		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosASeremBaixados();
 
 		for (ContratoCobranca contratos : this.contratosPendentes) {
 
@@ -14492,7 +14541,7 @@ public class ContratoCobrancaMB {
 
 	public String geraConsultaContratosPendentes() {
 		if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
-			this.baixarPreContratoAutomatico();
+//			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
 		}
@@ -15103,7 +15152,7 @@ public class ContratoCobrancaMB {
 
 	public String geraConsultaContratosPorStatus(String status) {
 		if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
-			this.baixarPreContratoAutomatico();
+//			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
 		}

@@ -2482,5 +2482,14 @@
 			<column name="operacaoCRI" not-null="true" default="false"/>
 		</property>	
 	
+		<property name="dataProvavelBaixa" type="java.util.Date">
+			<column name="dataProvavelBaixa" />
+		</property>
+		<property name="acrescimoProvavelBaixaDataUsado" type="boolean">
+			<column name="acrescimoProvavelBaixaDataUsado" not-null="true" default="false"/>
+		</property>	
+		<property name="esteiraLiberadaParaBaixar" type="boolean">
+			<column name="esteiraLiberadaParaBaixar" not-null="true" default="false"/>
+		</property>
 	</class>
 </hibernate-mapping>
