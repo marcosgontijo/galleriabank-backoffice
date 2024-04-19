@@ -32450,9 +32450,9 @@ public class ContratoCobrancaMB {
 					todosLaudosComValor = false;
 					imoveis.setPreLaudoEntregue(false);
 				} else {
-					if (CommonsUtil.mesmoValor(imoveis.getId(), objetoContratoCobranca.getImovel().getId())) {
+					/*if (CommonsUtil.mesmoValor(imoveis.getId(), objetoContratoCobranca.getImovel().getId())) {
 						objetoContratoCobranca.setValorPreLaudo(imoveis.getValorPreLaudo());
-					}
+					}*/
 					imoveis.setPreLaudoEntregue(true);
 				}
 				imovelDao.merge(imoveis);

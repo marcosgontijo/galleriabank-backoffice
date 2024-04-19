@@ -201,6 +201,15 @@
 					converter="bigDecimalConverter" />
 			</h:panelGroup>
 
+			<p:outputLabel for="valorPreLaudoImovel"
+				value="Qual o valor Pré-Laudo do imóvel? " />
+			<p:inputText id="valorPreLaudoImovel"
+				disabled="#{contratoCobrancaMB.inserirImovelDisable}"
+				value="#{contratoCobrancaMB.objetoImovelCobranca.valorPreLaudo}"
+				onkeypress="return isNumberKey(event);"
+				onkeydown="FormataValor(this, 13, event, 2);"
+				converter="bigDecimalConverter" />
+
 			<p:outputLabel for="valorEstimado"
 				value="Qual o valor estimado do imóvel? " />
 			<p:inputText id="valorEstimado"
