@@ -38624,5 +38624,28 @@ public class ContratoCobrancaMB {
 		return pagadorRecebedorList.stream().filter(p -> CommonsUtil.intValue(p.calcularIdadeLong()) >= 69
 				|| CommonsUtil.intValue(p.calcularIdadeConjuge()) >= 69).findAny().isPresent();
 	}
+	
+	public void advogadoIniciouComentarioJuridico() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean advogadoIniciouAnalise = this.objetoContratoCobranca.isIniciouComentarioJuridico();
+
+		if (!advogadoIniciouAnalise) {
+
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			this.objetoContratoCobranca.setInicioComentarioJuridicoUsuario(this.loginBean.getUsuarioLogado().getLogin());
+			this.objetoContratoCobranca.setInicioComentarioJuridicoData(DateUtil.gerarDataHoje());
+			this.objetoContratoCobranca.setIniciouComentarioJuridico(true);
+			
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			
+			context.addMessage(null,new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Comentário Jurídico iniciado por: " + this.objetoContratoCobranca.getInicioComentarioJuridicoUsuario(),""));
+		} else {
+			context.addMessage(null,new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato já foi iniciado o comentário jurídico por : "
+							+ this.objetoContratoCobranca.getInicioComentarioJuridicoUsuario(),""));
+		}
+
+	}
 
 }

@@ -128,7 +128,9 @@
 						<h:outputText value="#{contratos.preAprovadoComiteUsuario}"  escape="false"/>
 					</p:column>
 			        
-			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
+			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" 
+			    		filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}"
+			    		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'}">
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>
 			        
@@ -146,11 +148,11 @@
 			        </p:column>	    
     
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)"
-			        	rendered="#!{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
+			        	rendered="#{!(contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Assinatura' 
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'
-			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.'}">
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.')}">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
 			        
@@ -185,7 +187,16 @@
 						</p:outputLabel>
 			        </p:column>
 					
-					<p:column style="text-align:center;" headerText="Advogado(a)" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
+					<p:column style="text-align: center;width: 100px" headerText="Data Entrada Esteira" 
+				         filterBy="#{contratos.analiseComercialData}" filterMatchMode="contains" sortBy="#{contratos.analiseComercialData}"
+				         rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
+				        			or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
+			           <p:outputLabel value="#{contratos.analiseComercialData}" >			            	
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+						</p:outputLabel>
+			        </p:column>	
+					
+					<p:column style="text-align:center;width: 90px" headerText="Advogado(a)" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
 							<p:outputLabel value="#{contratos.inicioComentarioJuridicoUsuario}"></p:outputLabel>
 							<br></br>
 							<p:outputLabel value="#{contratos.inicioComentarioJuridicoData}" >			            	
@@ -202,12 +213,7 @@
 						</p:repeat>	
 					</p:column>
 
-					<p:column style="text-align: center;" headerText="Cidade"
-						filterBy="#{contratos.nomeCidadeImovel}"
-						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}"
-						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pedir PAJU'}">
-						<h:outputText value="#{contratos.nomeCidadeImovel}" />
-					</p:column>
+					
 					<p:column style="text-align: center;" headerText="Taxa pré aprovada"
 						filterBy="#{contratos.taxaPreAprovada}"
 						filterMatchMode="contains" sortBy="#{contratos.taxaPreAprovada}"
